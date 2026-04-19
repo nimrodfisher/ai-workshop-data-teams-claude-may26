@@ -8,13 +8,14 @@ Used in live workshops to demonstrate structured AI-assisted data analysis.
 
 ```
 ├── AGENTS.md                    # How the agent behaves in this repo — read first
-├── skills/                      # The six phases of an analysis
+├── skills/                      # The seven phases of an analysis
 │   ├── hypothesis-framer/       # 1. Turn questions into testable hypotheses
 │   ├── data-qa/                 # 2. Validate data before analysis
 │   ├── eda/                     # 3. Explore distributions, relationships, time
-│   ├── synthesis/               # 4. Turn findings into conclusions
-│   ├── validation/              # 5. Stress-test the conclusions
-│   ├── data-storytelling/       # 6. Build the HTML report + PDF summary
+│   ├── deep-analysis/           # 4. Drill in: quantify effects, decompose drivers
+│   ├── synthesis/               # 5. Turn findings into conclusions
+│   ├── validation/              # 6. Stress-test the conclusions
+│   ├── data-storytelling/       # 7. Build the HTML report + PDF summary
 │   └── _shared/references/      # Protocols used by all skills
 ├── analyses/                    # One folder per completed analysis
 │   └── _template/               # Scaffold to copy when starting a new analysis
@@ -25,7 +26,7 @@ Used in live workshops to demonstrate structured AI-assisted data analysis.
 
 ## The Flow
 
-Every analysis runs through six phases, in order, with a user-confirmed checkpoint between each:
+Every analysis runs through seven phases, in order, with a user-confirmed checkpoint between each:
 
 ```
 Business question
@@ -36,11 +37,13 @@ Business question
       ↓ (checkpoint)
 3. EDA                  — distributions, relationships, segments, time
       ↓ (checkpoint)
-4. Synthesis            — conclusions mapped to hypotheses
+4. Deep Analysis        — quantify effects, decompose drivers, apply methods
       ↓ (checkpoint)
-5. Validation           — sensitivity, alternatives, red-team
+5. Synthesis            — conclusions mapped to hypotheses
       ↓ (checkpoint)
-6. Data Storytelling    — report.html + summary.pdf
+6. Validation           — sensitivity, alternatives, red-team
+      ↓ (checkpoint)
+7. Data Storytelling    — report.html + summary.pdf
       ↓
 Learning files updated
 ```
