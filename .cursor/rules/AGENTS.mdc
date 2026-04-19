@@ -44,9 +44,10 @@ Run these in order for every analysis. Each has a `SKILL.md` under `skills/`:
 1. **hypothesis-framer** — Turn the business question into testable hypotheses.
 2. **data-qa** — Validate completeness, consistency, and coverage before analysis.
 3. **eda** — Explore distributions, relationships, segments, time patterns.
-4. **synthesis** — Draw conclusions; connect findings back to hypotheses.
-5. **validation** — Stress-test conclusions; check robustness and alternatives.
-6. **data-storytelling** — Build the HTML report and PDF summary.
+4. **deep-analysis** — Drill into hypotheses with rigorous methods; quantify effects and decompose drivers.
+5. **synthesis** — Draw conclusions; connect findings back to hypotheses.
+6. **validation** — Stress-test conclusions; check robustness and alternatives.
+7. **data-storytelling** — Build the HTML report and PDF summary.
 
 Between each phase, STOP at the checkpoint. See `skills/_shared/references/checkpoint-protocol.md`.
 

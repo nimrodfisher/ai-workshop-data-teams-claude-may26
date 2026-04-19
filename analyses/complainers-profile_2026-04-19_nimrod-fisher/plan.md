@@ -9,7 +9,7 @@
 - **Analyst:** Nimrod Fisher
 - **Date started:** 2026-04-19
 - **Slug:** complainers-profile
-- **Status:** In Progress
+- **Status:** Complete
 
 ---
 
@@ -137,4 +137,8 @@ flowchart TD
 
 ### Validation Complete — (pending)
 
-### Deliverables Ready — (pending)
+### Deliverables Ready — 2026-04-19
+- **Summary:** Headline: activity spikes 1.6× in 30 days pre-ticket in 45% of Enterprise + Free accounts. Category routing signal (Free=billing, Pro=feature_request). 4 concrete recommendations.
+- **Artifacts:** `deliverables/report.html`, `deliverables/summary.pdf.html`
+- **User decision:** Accepted
+- **Notes:** Analysis complete. Learning files updated.

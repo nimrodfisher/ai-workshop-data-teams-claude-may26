@@ -83,7 +83,27 @@ Page 2 (if needed)
 └── What we couldn't answer / follow-ups
 ```
 
-Generate from markdown using a tool like `pandoc`, or render the HTML hero + key findings to PDF directly.
+**Do NOT save a `.pdf.html` file and call it a PDF. The output must be a real binary `.pdf` file.**
+
+Generate the PDF using headless Chrome (available on this machine):
+
+```powershell
+# 1. Write the summary as a print-ready HTML file at a temp path
+$tmp = "$env:TEMP\summary_tmp.html"
+# ... write HTML content to $tmp ...
+
+# 2. Render to PDF using headless Chrome
+& "C:\Program Files\Google\Chrome\Application\chrome.exe" `
+  --headless --disable-gpu `
+  --print-to-pdf="<analysis-folder>\deliverables\summary.pdf" `
+  --print-to-pdf-no-header `
+  "file:///$tmp"
+
+# 3. Delete the temp HTML file — only summary.pdf belongs in deliverables/
+Remove-Item $tmp
+```
+
+If Chrome is not at that path, check: `Get-ChildItem "C:\Program Files\Google\Chrome\Application\chrome.exe"` or use `msedge.exe` at `C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe` with the same flags. Never fall back to saving an HTML file named `.pdf`.
 
 ## What to Leave Out
 
