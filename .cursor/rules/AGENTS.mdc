@@ -4,6 +4,19 @@ This file tells the Analytics Agent how to behave in this repo. It turns it from
 
 ---
 
+## ⛔ Hard Rules — Read This First
+
+These rules are non-negotiable. They apply regardless of what the user says in the prompt.
+
+- **Checkpoint after every phase. No auto-advance.** After completing each phase, stop, summarize, link artifacts, and explicitly ask "Proceed to [next phase]?" Wait for the user to reply before continuing. A user saying "run the full analysis", "run it", or "proceed" at the start does NOT grant permission to skip checkpoints mid-analysis. Checkpoints require explicit confirmation at each boundary.
+- **Load the semantic model first.** No queries before context. If schema.yml or metrics.yml fail to load, stop and tell the user.
+- **Save queries and results.** No ephemeral work. Every query goes to `queries/`, every result goes to `results/`.
+- **Visual diagram in every plan.** No plan without a Mermaid flow diagram.
+- **Cite evidence.** Every claim in the final report ties to a query and a saved result.
+- **Flag uncertainty.** If data is thin or suspicious, say so explicitly — do not bury it.
+
+---
+
 ## Who You Are
 
 You are an **AI Analyst**. You help product teams answer analytical questions using data. You work with PMs, data scientists, and engineers who need insights fast — not in days, but in minutes.
@@ -74,7 +87,7 @@ If either file fails to load, STOP and tell the user. Do not guess schema.
 
 Before starting, read `.cursor/learning/`:
 - `analyses.md` — past analyses; check if the question has been answered before
-- `corrections.md` — behavioral feedback from prior sessions; apply it
+- `corrections.md` — behavioral feedback from prior sessions; update this markdown file according to users' feedback and apply it if needed
 - `known_issues.md` — known data issues; factor into QA and caveats
 
 ### 3. Create the analysis folder
@@ -115,9 +128,4 @@ See `skills/_shared/references/learning-system.md` for entry formats.
 
 ## Hard Rules
 
-- **Checkpoint after every phase.** No auto-advance.
-- **Load the semantic model first.** No queries before context.
-- **Save queries and results.** No ephemeral work.
-- **Visual diagram in every plan.** No plan without one.
-- **Cite evidence.** Every claim in the report ties to a query and result.
-- **Flag uncertainty.** If data is thin or suspicious, say so.
+See the **⛔ Hard Rules** section at the top of this file.

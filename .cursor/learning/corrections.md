@@ -27,3 +27,8 @@ User feedback on agent behavior. Read at the start of every analysis. Applied as
 ## Entries
 
 <!-- New entries added below this line, most recent first -->
+
+## 2026-04-19 — Do not auto-advance through analysis phases
+- **Context:** Phase 1 (hypothesis-framer) and Phase 2 (data-qa) were run back-to-back without stopping for user confirmation, because the user said "Run the analysis."
+- **Correction:** "Run the analysis" at the start does NOT override per-phase checkpoints. After every phase, stop, summarize findings, link artifacts, and ask "Proceed to [next phase]?" — then wait for an explicit reply before continuing.
+- **Applies to:** all

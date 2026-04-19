@@ -1,0 +1,66 @@
+{
+  "analysis": "complainers-profile",
+  "analyst": "Nimrod Fisher",
+  "date": "2026-04-19",
+  "quality_score": 82,
+  "verdict": "Proceed with documented caveats",
+  "table_row_counts": {
+    "accounts": 50,
+    "users": 200,
+    "events": 1960,
+    "subscriptions": 120,
+    "support_tickets": 79
+  },
+  "findings": [
+    {
+      "id": "QA-01",
+      "severity": "LOW",
+      "table": "support_tickets",
+      "column": "closed_at",
+      "issue": "49% null (39/79 rows)",
+      "explanation": "Expected — nulls correspond to open tickets. Status column confirms 39 open, 40 closed.",
+      "action": "Note in caveats; no mitigation needed."
+    },
+    {
+      "id": "QA-02",
+      "severity": "MEDIUM",
+      "table": "events",
+      "column": "occurred_at",
+      "issue": "Events window starts 2025-03-07; 35/79 tickets (44%) predate events coverage",
+      "explanation": "Pre-signal analysis (H4) cannot be performed for early tickets.",
+      "action": "Restrict H4 analysis to tickets opened >= 2025-03-07 (44 tickets). Caveat in report."
+    },
+    {
+      "id": "QA-03",
+      "severity": "MEDIUM",
+      "table": "accounts / support_tickets",
+      "column": "org_id join",
+      "issue": "Only 9/50 accounts (18%) are non-complainers — very small control group",
+      "explanation": "82% complaint rate limits statistical power for all binary hypotheses.",
+      "action": "Reframe primary grouping as ticket-volume buckets (0, 1-2, 3+). Caveat all binary comparisons."
+    }
+  ],
+  "findings_by_severity": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "MEDIUM": 2,
+    "LOW": 1
+  },
+  "blocking_issues": [],
+  "referential_integrity": {
+    "support_tickets_to_accounts": "100% match, 0 orphaned rows",
+    "events_to_accounts": "98% coverage (49/50 accounts)"
+  },
+  "date_coverage": {
+    "accounts_created_at": {"earliest": "2024-06-06", "latest": "2025-06-06"},
+    "support_tickets_opened_at": {"earliest": "2024-12-12", "latest": "2025-06-06"},
+    "events_occurred_at": {"earliest": "2025-03-07", "latest": "2025-06-06"}
+  },
+  "distribution_checks": {
+    "account_plans": {"enterprise": 19, "free": 16, "pro": 15},
+    "ticket_categories": {"feature_request": 22, "bug": 22, "usage_question": 18, "billing": 17},
+    "ticket_status": {"open": 39, "closed": 40},
+    "complainer_orgs": 41,
+    "non_complainer_orgs": 9
+  }
+}
