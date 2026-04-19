@@ -1,0 +1,29 @@
+# Corrections
+
+User feedback on agent behavior. Read at the start of every analysis. Applied as durable behavioral changes, not one-off adjustments.
+
+## How to Use This File
+
+**At start of analysis:** read every entry. Where a correction applies to the current phase, follow it.
+
+**When a user corrects you:**
+1. Acknowledge the correction in-conversation.
+2. Immediately append an entry below.
+3. Apply the correction for the rest of the analysis.
+
+**Conflict handling:** if a new correction contradicts an existing one, surface the conflict to the user and ask which to keep.
+
+## Entry Format
+
+```markdown
+## <YYYY-MM-DD> — <Short title>
+- **Context:** <what phase / what the agent did>
+- **Correction:** <what the user said to do differently>
+- **Applies to:** hypothesis-framer / data-qa / eda / synthesis / validation / data-storytelling / all
+```
+
+---
+
+## Entries
+
+<!-- New entries added below this line, most recent first -->
