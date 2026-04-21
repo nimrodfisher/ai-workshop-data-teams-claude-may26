@@ -1,0 +1,14 @@
+metric,value
+first_event,2025-03-07
+last_event,2025-06-06
+total_events,1960
+active_days,92
+events_last_7d_of_window,0
+events_last_30d_of_window,438
+total_complainers,36
+first_cd_before_events_start,18
+first_cd_partial_coverage,4
+first_cd_full_30d_coverage,14
+first_cd_after_events_end,0
+earliest_complaint,2024-12-12
+latest_complaint,2025-06-03

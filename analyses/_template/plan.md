@@ -5,6 +5,20 @@
 
 ---
 
+## Results Folder Conventions (do not skip)
+
+- **Per-phase subfolders** under `results/` — never a flat layout:
+  - `results/qa/` — `qa-report.md`, `qa-summary.json`, one `.csv` per QA query
+  - `results/eda/` — `eda-findings.md`, chart SVGs, one `.csv` per EDA query
+  - `results/deep-analysis/` — `deep-analysis.md`, method charts, one `.csv` per DA query
+  - `results/synthesis/` — `synthesis.md` (md only)
+  - `results/validation/` — `validation.md`, any validation charts, one `.csv` per validation query
+- **CSV for every query return.** Filename matches the `.sql` file exactly (e.g., `04_eda-engagement.sql` → `results/eda/04_eda-engagement.csv`).
+- **Every SVG chart** must include `viewBox` + `preserveAspectRatio="xMidYMid meet"` so it scales without clipping in `report.html` and `summary.pdf`.
+- **Final deliverables:** `deliverables/report.html`, `deliverables/summary.pdf`, `deliverables/notebook.ipynb` (standalone debug notebook — spec: `.cursor/skills/_shared/references/debug-notebook.md`).
+
+---
+
 ## Meta
 
 - **Analyst:** <name>
@@ -85,30 +99,36 @@ flowchart TD
 
 ### Data QA Complete — <YYYY-MM-DD HH:MM>
 - **Summary:** quality score, findings by severity
-- **Artifacts:** `results/qa-report.md`, `results/qa-summary.json`
+- **Artifacts:** `results/qa/qa-report.md`, `results/qa/qa-summary.json`, `results/qa/*.csv`
 - **User decision:**
 - **Notes:**
 
 ### EDA Complete — <YYYY-MM-DD HH:MM>
 - **Summary:** key findings
-- **Artifacts:** `results/eda-findings.md`, charts
+- **Artifacts:** `results/eda/eda-findings.md`, `results/eda/*.svg`, `results/eda/*.csv`
+- **User decision:**
+- **Notes:**
+
+### Deep Analysis Complete — <YYYY-MM-DD HH:MM>
+- **Summary:** quantified effects per hypothesis
+- **Artifacts:** `results/deep-analysis/deep-analysis.md`, `results/deep-analysis/*.svg`, `results/deep-analysis/*.csv`
 - **User decision:**
 - **Notes:**
 
 ### Synthesis Drafted — <YYYY-MM-DD HH:MM>
 - **Summary:** headline conclusion, evidence per hypothesis
-- **Artifacts:** `results/synthesis.md`
+- **Artifacts:** `results/synthesis/synthesis.md`
 - **User decision:**
 - **Notes:**
 
 ### Validation Complete — <YYYY-MM-DD HH:MM>
 - **Summary:** which conclusions survived, which were narrowed
-- **Artifacts:** `results/validation.md`, revised `synthesis.md`
+- **Artifacts:** `results/validation/validation.md`, `results/validation/*.csv`, revised `results/synthesis/synthesis.md`
 - **User decision:**
 - **Notes:**
 
 ### Deliverables Ready — <YYYY-MM-DD HH:MM>
 - **Summary:** final answer, recommendations
-- **Artifacts:** `deliverables/report.html`, `deliverables/summary.pdf`
+- **Artifacts:** `deliverables/report.html`, `deliverables/summary.pdf`, `deliverables/notebook.ipynb`
 - **User decision:** Accepted / Revised
 - **Notes:**

@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Complainer-User Profile — Analysis Report</title>
+<style>
+  :root {
+    --bg: #fafafa; --card: #ffffff; --ink: #1a1a1a; --muted: #5a5a5a;
+    --line: #e2e2e2; --accent: #b4381f; --accent-bg: #fdf1ee;
+    --good: #2a7f4f; --good-bg: #eaf6ef; --warn: #b3840d; --warn-bg: #fdf7e3;
+    --code: #f4f4f4;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font: 15.5px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+  header.hero { border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 32px; }
+  .eyebrow { color: var(--muted); font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 6px 0 12px; }
+  h2 { font-size: 22px; margin: 36px 0 14px; padding-top: 10px; border-top: 1px solid var(--line); }
+  h3 { font-size: 17px; margin: 22px 0 8px; }
+  p { margin: 0 0 12px; }
+  .lede { font-size: 17px; color: #2a2a2a; }
+  .answer { background: var(--accent-bg); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 6px; margin: 18px 0 8px; }
+  .answer strong { color: var(--accent); }
+  .meta { color: var(--muted); font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 22px; margin: 18px 0; }
+  .card svg { width: 100%; height: auto; max-width: 100%; display: block; }
+  .card-title { font-weight: 600; font-size: 15.5px; margin: 0 0 8px; color: var(--ink); }
+  .card-note { color: var(--muted); font-size: 13.5px; margin-top: 10px; }
+  .tag { display: inline-block; font-size: 11.5px; letter-spacing: .03em; padding: 2px 8px; border-radius: 999px; margin-right: 6px; }
+  .tag.ok { background: var(--good-bg); color: var(--good); }
+  .tag.warn { background: var(--warn-bg); color: var(--warn); }
+  .tag.bad { background: var(--accent-bg); color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 6px; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); }
+  th { font-weight: 600; color: var(--muted); font-size: 13px; letter-spacing: .02em; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .kicker { text-transform: uppercase; font-size: 11.5px; color: var(--muted); letter-spacing: .05em; }
+  ul { margin: 6px 0 12px 20px; padding: 0; }
+  li { margin: 3px 0; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 16px; margin: 10px 0; }
+  details > summary { cursor: pointer; font-weight: 600; font-size: 15px; padding: 4px 0; list-style: none; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] > summary { border-bottom: 1px solid var(--line); margin-bottom: 12px; padding-bottom: 10px; }
+  code { background: var(--code); padding: 2px 6px; border-radius: 4px; font-size: 13.5px; font-family: Menlo, Consolas, monospace; }
+  .foot { color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 40px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Analysis Report · 2026-04-20</div>
+  <h1>Who files complaints — and can we predict it?</h1>
+  <p class="lede">We looked for observable user attributes that distinguish people who file complaint-like support tickets (<code>bug</code> or <code>billing</code>) from those who don't, to inform a decision on building a proactive-outreach watch list.</p>
+  <div class="answer">
+    <div class="kicker">Headline answer</div>
+    <p style="margin-top:8px;font-size:16.5px;"><strong>One attribute reliably distinguishes complainers in this dataset:</strong> users on the Free plan complain at <strong>~1.9× the rate of paid users</strong> (28.0% vs 14.7%, χ² p = 0.034, RR 1.91 [95% CI 1.06, 3.44]). Role, tenure, and industry do not distinguish. Pre-complaint engagement <em>cannot be tested</em> at current event-data coverage.</p>
+  </div>
+  <p class="meta">Analyst: liati · Snapshot window: 2024-06-17 → 2025-06-17 (12 months) · N = 200 users, 36 complainers (18.0% baseline)</p>
+</header>
+
+<h2>Why this matters</h2>
+<p>If we can identify complainers before they complain, we can proactively check in. The proposal was: build a watch list from a static attribute set (<em>plan, role, tenure, engagement</em>) so customer-success can triage before a ticket is filed. The question we came in with: <em>do any of these attributes actually work?</em></p>
+<p>The short answer is <strong>one does (plan), and the others either don't or can't be evaluated at current data coverage</strong>. The report below lays out the evidence, the caveats, and a concrete watch-list recommendation that accounts for the data we actually have.</p>
+
+<h2>Evidence</h2>
+
+<div class="card">
+  <div class="card-title"><span class="tag ok">Finding 1 · Confirmed (narrowed)</span> Free users complain ~1.9× as often as paid users</div>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" font-family="Arial, Helvetica, sans-serif">
+    <rect width="800" height="500" fill="#ffffff"/>
+    <text x="400" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#111">Free vs Paid: complaint rate with 95% CI</text>
+    <text x="400" y="56" text-anchor="middle" font-size="13" fill="#555">n=200 users; chi2=4.52 df=1 p=0.034; RR=1.91 [1.06, 3.44]</text>
+    <line x1="110" y1="420" x2="720" y2="420" stroke="#333" stroke-width="1.5"/>
+    <line x1="110" y1="100" x2="110" y2="420" stroke="#333" stroke-width="1.5"/>
+    <g font-size="11" fill="#555">
+      <line x1="110" y1="420" x2="720" y2="420" stroke="#e6e6e6"/>
+      <line x1="110" y1="356" x2="720" y2="356" stroke="#e6e6e6"/>
+      <line x1="110" y1="292" x2="720" y2="292" stroke="#e6e6e6"/>
+      <line x1="110" y1="228" x2="720" y2="228" stroke="#e6e6e6"/>
+      <line x1="110" y1="164" x2="720" y2="164" stroke="#e6e6e6"/>
+      <line x1="110" y1="100" x2="720" y2="100" stroke="#e6e6e6"/>
+      <text x="100" y="424" text-anchor="end">0%</text>
+      <text x="100" y="360" text-anchor="end">10%</text>
+      <text x="100" y="296" text-anchor="end">20%</text>
+      <text x="100" y="232" text-anchor="end">30%</text>
+      <text x="100" y="168" text-anchor="end">40%</text>
+      <text x="100" y="104" text-anchor="end">50%</text>
+    </g>
+    <rect x="200" y="240.8" width="140" height="179.2" fill="#b4381f" opacity="0.85"/>
+    <line x1="270" y1="153.76" x2="270" y2="307.6" stroke="#333" stroke-width="2"/>
+    <line x1="255" y1="153.76" x2="285" y2="153.76" stroke="#333" stroke-width="2"/>
+    <line x1="255" y1="307.6" x2="285" y2="307.6" stroke="#333" stroke-width="2"/>
+    <text x="270" y="230" text-anchor="middle" font-size="14" font-weight="700" fill="#222">28.0%</text>
+    <text x="270" y="440" text-anchor="middle" font-size="13" fill="#333">Free (n=50, 14 comp)</text>
+    <rect x="460" y="326.1" width="140" height="93.9" fill="#2a7f4f" opacity="0.85"/>
+    <line x1="530" y1="284.32" x2="530" y2="356.3" stroke="#333" stroke-width="2"/>
+    <line x1="515" y1="284.32" x2="545" y2="284.32" stroke="#333" stroke-width="2"/>
+    <line x1="515" y1="356.3" x2="545" y2="356.3" stroke="#333" stroke-width="2"/>
+    <text x="530" y="316" text-anchor="middle" font-size="14" font-weight="700" fill="#222">14.7%</text>
+    <text x="530" y="440" text-anchor="middle" font-size="13" fill="#333">Paid (n=150, 22 comp)</text>
+    <line x1="110" y1="304.8" x2="720" y2="304.8" stroke="#888" stroke-dasharray="4,4"/>
+    <text x="715" y="300" text-anchor="end" font-size="11" fill="#666">overall 18.0%</text>
+    <text x="400" y="478" text-anchor="middle" font-size="11" fill="#666">Error bars: 95% Wilson CI. Pro (13.6%) and Enterprise (15.4%) collapsed into "Paid".</text>
+  </svg>
+  <p class="card-note">Free users file complaints roughly twice as often as paid users. The effect is robust to every tested alternative complaint definition (bug-only 1.2×, billing-only 3.0×, bug+billing+usage 1.55×) and survives when conditioning on tenure (Free = 28% at both newer and older cohorts — so it is not a proxy for "newer users"). <strong>Caveat:</strong> 34 of 36 complaints in this dataset occurred in the second half of the window (2024-12-17 → 2025-06-17), so this is a 6-month observation, not a 12-month one.</p>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="tag bad">Finding 2 · Refuted</span> Role and tenure do not distinguish complainers</div>
+  <table>
+    <thead><tr><th>Attribute</th><th>Comparison</th><th class="num">Lift range</th><th class="num">p-value</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>Role</td><td>admin vs analyst vs viewer</td><td class="num">1.0× – 1.2×</td><td class="num">0.737</td><td><span class="tag bad">refuted</span></td></tr>
+      <tr><td>Tenure</td><td>4 buckets (&lt;90d / 90-180d / 180-270d / 270d+)</td><td class="num">0.6× – 1.32×</td><td class="num">0.30</td><td><span class="tag bad">refuted</span></td></tr>
+      <tr><td>Industry</td><td>7 industries at account level</td><td class="num">–</td><td class="num">n/a</td><td><span class="tag warn">underpowered</span></td></tr>
+    </tbody>
+  </table>
+  <p class="card-note">No role, tenure, or industry segment meets the plan's pre-registered 1.3× lift + p &lt; 0.05 bar. The largest tenure lift (&lt;90 days: 1.32×) is borderline and doesn't survive its own p-test. These attributes are not actionable for targeting — don't build on them. <em>Side finding:</em> within paid users, complaint rate declines with tenure (17% newer → 11% older); within free users, it doesn't (28%/28%). Flagged for follow-up.</p>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="tag warn">Finding 3 · Inconclusive</span> Pre-complaint engagement cannot be tested at current data coverage</div>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 340" preserveAspectRatio="xMidYMid meet" font-family="system-ui, -apple-system, Segoe UI, sans-serif">
+    <style>
+      .st-title { font-size: 18px; font-weight: 600; fill: #111; }
+      .st-sub   { font-size: 12px; fill: #555; }
+      .st-axis  { stroke: #888; stroke-width: 1; }
+      .st-tick  { font-size: 11px; fill: #444; }
+      .st-lbl   { font-size: 12px; fill: #222; font-weight: 500; }
+      .st-note  { font-size: 11px; fill: #444; font-style: italic; }
+    </style>
+    <text x="30" y="30" class="st-title">Event data covers 90 of 365 window days — half of complainers fall outside coverage</text>
+    <text x="30" y="50" class="st-sub">Analysis window: 2024-06-17 to 2025-06-17. Events: 2025-03-07 to 2025-06-06. 36 complainers plotted by first-complaint date.</text>
+    <line x1="80" y1="230" x2="760" y2="230" class="st-axis" />
+    <g class="st-tick" text-anchor="middle">
+      <text x="80"  y="250">2024-06-17</text>
+      <text x="245" y="250">2024-09-17</text>
+      <text x="385" y="250">2024-12-17</text>
+      <text x="528" y="250">2025-03-17</text>
+      <text x="668" y="250">2025-06-17</text>
+    </g>
+    <rect x="80"  y="110" width="680" height="28" fill="#f3d7d0" stroke="#c96e58" />
+    <text x="85" y="105" class="st-lbl" fill="#8a3b28">Analysis window (365 days)</text>
+    <rect x="510" y="150" width="145" height="28" fill="#cfe4d3" stroke="#3c8a5a" />
+    <text x="515" y="145" class="st-lbl" fill="#25633f">Event data coverage (~90 days: 2025-03-07 → 2025-06-06)</text>
+    <g class="st-tick" text-anchor="middle">
+      <text x="510" y="200">2025-03-07</text>
+      <text x="655" y="200">2025-06-06</text>
+    </g>
+    <line x1="510" y1="178" x2="510" y2="192" stroke="#3c8a5a" />
+    <line x1="655" y1="178" x2="655" y2="192" stroke="#3c8a5a" />
+    <g fill="#2a4b7c" opacity="0.85">
+      <circle cx="395" cy="230" r="4" /><circle cx="405" cy="230" r="4" /><circle cx="415" cy="230" r="4" />
+      <circle cx="425" cy="230" r="4" /><circle cx="435" cy="230" r="4" /><circle cx="445" cy="230" r="4" />
+      <circle cx="455" cy="230" r="4" /><circle cx="465" cy="230" r="4" /><circle cx="475" cy="230" r="4" />
+      <circle cx="485" cy="230" r="4" /><circle cx="495" cy="230" r="4" /><circle cx="505" cy="230" r="4" />
+      <circle cx="515" cy="230" r="4" /><circle cx="525" cy="230" r="4" /><circle cx="535" cy="230" r="4" />
+      <circle cx="545" cy="230" r="4" /><circle cx="555" cy="230" r="4" /><circle cx="565" cy="230" r="4" />
+      <circle cx="575" cy="230" r="4" /><circle cx="585" cy="230" r="4" /><circle cx="595" cy="230" r="4" />
+      <circle cx="605" cy="230" r="4" /><circle cx="615" cy="230" r="4" /><circle cx="625" cy="230" r="4" />
+      <circle cx="635" cy="230" r="4" /><circle cx="645" cy="230" r="4" /><circle cx="655" cy="230" r="4" />
+      <circle cx="665" cy="230" r="4" />
+    </g>
+    <g fill="#c9495a" opacity="0.9">
+      <circle cx="390" cy="230" r="5" /><circle cx="400" cy="230" r="5" /><circle cx="410" cy="230" r="5" />
+      <circle cx="420" cy="230" r="5" /><circle cx="430" cy="230" r="5" /><circle cx="440" cy="230" r="5" />
+      <circle cx="450" cy="230" r="5" /><circle cx="460" cy="230" r="5" />
+    </g>
+    <text x="80" y="275" class="st-lbl" fill="#c9495a">● 18 complainers (red): first complaint BEFORE event coverage → pre-complaint event window is structurally empty, not behavioral.</text>
+    <text x="80" y="292" class="st-lbl" fill="#2a4b7c">● 18 complainers (blue): first complaint inside event coverage → some have full 30d pre-window, others partial.</text>
+    <text x="80" y="314" class="st-note">Implication: earlier "disengagement" finding was a data artifact. Corrected subset (n=14) actually shows complainers MORE engaged (median 5 vs 2).</text>
+  </svg>
+  <p class="card-note">The <code>events</code> table covers only ~90 of the 365 days in the analysis window. Half of complainers have their first complaint before event data even begins, which forces their pre-complaint event windows to be structurally zero (not behavioral). After restricting to the 14 complainers whose pre-complaint window is fully inside event coverage, complainers actually have <em>higher</em> median engagement (5 events vs 2, z = +2.27, p ≈ 0.023) — but n=14 is too small for a decision-grade claim. <strong>We cannot testably answer the engagement question with this dataset.</strong></p>
+</div>
+
+<div class="card">
+  <div class="card-title"><span class="tag ok">Finding 4 · Watch-list rule performance</span> Only <code>plan='free'</code> gives a clean, unconfounded signal</div>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" preserveAspectRatio="xMidYMid meet" font-family="system-ui, -apple-system, Segoe UI, sans-serif">
+    <rect width="800" height="440" fill="#ffffff"/>
+    <text x="400" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#111">Watch-list rule precision and recall (baseline 18.0%)</text>
+    <text x="400" y="50" text-anchor="middle" font-size="12" fill="#555">Each bar: precision (dark) with recall shown to the right. Lift = precision ÷ baseline.</text>
+    <line x1="260" y1="90" x2="260" y2="400" stroke="#bbb" stroke-dasharray="3,3"/>
+    <text x="260" y="82" text-anchor="middle" font-size="11" fill="#666">baseline 18%</text>
+    <g font-size="12" fill="#222">
+      <text x="250" y="120" text-anchor="end">free AND zero_30</text>
+      <rect x="260" y="105" width="324.2" height="22" fill="#2a7f4f"/>
+      <text x="590" y="121" font-size="12" fill="#222">precision 58.3% · recall 19% · <tspan font-weight="700" fill="#2a7f4f">lift 3.24×</tspan></text>
+      <text x="250" y="160" text-anchor="end">zero_30 only</text>
+      <rect x="260" y="145" width="220.1" height="22" fill="#5aa879"/>
+      <text x="486" y="161" font-size="12" fill="#222">precision 39.6% · recall 58% · <tspan font-weight="700" fill="#5aa879">lift 2.20×</tspan></text>
+      <text x="250" y="200" text-anchor="end">free OR zero_30</text>
+      <rect x="260" y="185" width="171.0" height="22" fill="#7fbd95"/>
+      <text x="437" y="201" font-size="12" fill="#222">precision 30.8% · recall 78% · <tspan font-weight="700" fill="#7fbd95">lift 1.71×</tspan></text>
+      <text x="250" y="240" text-anchor="end">free only (recommended)</text>
+      <rect x="260" y="225" width="155.6" height="22" fill="#b4381f"/>
+      <text x="421" y="241" font-size="12" fill="#222">precision 28.0% · recall 39% · <tspan font-weight="700" fill="#b4381f">lift 1.56×</tspan></text>
+      <text x="250" y="280" text-anchor="end">free AND zero_14</text>
+      <rect x="260" y="265" width="143.4" height="22" fill="#d89a8c"/>
+      <text x="409" y="281" font-size="12" fill="#666">precision 25.8% · recall 22% · lift 1.43×</text>
+      <text x="250" y="320" text-anchor="end">zero_30 &lt; 2 events</text>
+      <rect x="260" y="305" width="121.7" height="22" fill="#d89a8c"/>
+      <text x="388" y="321" font-size="12" fill="#666">precision 21.9% · recall 64% · lift 1.22×</text>
+      <text x="250" y="360" text-anchor="end">free OR zero_14 (old rule)</text>
+      <rect x="260" y="345" width="103.5" height="22" fill="#bbb"/>
+      <text x="370" y="361" font-size="12" fill="#666">precision 18.6% · recall 83% · <tspan font-weight="700" fill="#b3840d">lift 1.04× (near-useless)</tspan></text>
+      <text x="250" y="400" text-anchor="end">zero_14 only</text>
+      <rect x="260" y="385" width="93.9" height="22" fill="#bbb"/>
+      <text x="360" y="401" font-size="12" fill="#666">precision 16.9% · recall 67% · <tspan font-weight="700" fill="#b4381f">lift 0.94× (below baseline)</tspan></text>
+    </g>
+    <text x="400" y="425" text-anchor="middle" font-size="11" fill="#666">The high-precision rules (free AND zero_30, zero_30) rely on the event data — partly artifactual at current 90-day coverage.</text>
+  </svg>
+  <p class="card-note">Several rules look strong on paper, but the rules with the highest lift all include <code>ev_30 = 0</code>, which is confounded with the event-coverage gap (Finding 3). The <em>only unconfounded</em> rule available from today's data is <code>plan = 'free'</code> alone — precision 28%, recall 39%, <strong>lift 1.56×</strong>. Simple, reproducible, honest.</p>
+</div>
+
+<h2>What to do</h2>
+
+<div class="card">
+  <div class="card-title">Recommendations</div>
+  <ol>
+    <li><strong>Deploy a simple <code>plan = 'free'</code> watch list for proactive outreach.</strong> Flags 50 users (25% of the base), catches 14 of 36 complainers (39% recall), at 1.56× baseline precision. Unconfounded and easy to operate.</li>
+    <li><strong>Do not deploy any event-based rule yet.</strong> The <code>ev_14 = 0</code> flag has below-baseline precision (lift 0.94×). The <code>ev_30 = 0</code> and <code>free AND ev_30 = 0</code> rules look strong but are contaminated by the event-coverage gap. Mark these experimental until data coverage is improved.</li>
+    <li><strong>Extend event-data coverage to at least 6 months overlapping the complaint window.</strong> This is the single highest-leverage data improvement. It would let us properly test whether engagement predicts complaints (H2), which was not testable in this snapshot.</li>
+    <li><strong>Do not use <code>role</code>, <code>tenure</code>, or <code>industry</code> as watch-list attributes.</strong> None of them separate complainers from non-complainers at statistical or practical significance.</li>
+    <li><strong>Re-run this analysis in 6 months</strong> to test whether the Free-plan effect is a stable structural property or a 2025-specific period effect. Current data can't distinguish the two.</li>
+  </ol>
+</div>
+
+<h2>Caveats</h2>
+<div class="card">
+  <ul>
+    <li><strong>Six-month complaint window, not twelve.</strong> 34 of 36 complaints in this dataset fall in the period 2024-12-17 → 2025-06-17. Any finding from this analysis is about that 6-month window, regardless of how the snapshot was framed.</li>
+    <li><strong>Narrow event-data coverage.</strong> The <code>events</code> table covers 2025-03-07 → 2025-06-06. Engagement-based hypotheses cannot be cleanly tested. Added to <code>known_issues.md</code>.</li>
+    <li><strong>Small n.</strong> 36 complainers is at the edge of what supports segmented claims. Pre-registered 1.3× lift + p &lt; 0.05 bar with n ≥ 30 was the right threshold, and only the Free-vs-Paid comparison clears it.</li>
+    <li><strong>Industry analysis is underpowered.</strong> 7 industries × ~7 accounts each is below the level at which industry-level differences could be reliably detected.</li>
+    <li><strong>Methodological correction during validation.</strong> An earlier draft reported a strong "disengagement" signal based on a rank-sum SQL bug plus the event-coverage gap. The corrected analysis withdraws that claim. Full audit trail in <code>results/validation/validation.md</code>.</li>
+  </ul>
+</div>
+
+<h2>Appendix</h2>
+
+<details>
+  <summary>Methodology</summary>
+  <p><strong>Population:</strong> all 200 users in the frozen snapshot. "Complainer" = a user with ≥ 1 support ticket in category <code>bug</code> or <code>billing</code>, opened between 2024-06-17 and 2025-06-17.</p>
+  <p><strong>Statistical tests:</strong></p>
+  <ul>
+    <li>H1-plan, H1-role, H3-tenure: chi-square tests of independence with Wilson 95% confidence intervals on per-segment rates. 2-way (Free vs Paid), 3-way (Free/Pro/Enterprise), 4-way (tenure buckets) variants computed.</li>
+    <li>H2 engagement: Mann-Whitney U test with average-rank tie handling. Lookback windows of 14, 21, and 30 days tested. Stratified by plan to decouple from H1.</li>
+    <li>Effect size: risk ratio (RR) and odds ratio (OR) reported where applicable, with 95% CIs.</li>
+  </ul>
+  <p><strong>Validation:</strong> six sensitivity checks (V1-V6) plus two further investigations (V7 event coverage, V8 coverage-restricted MWU) that surfaced during red-teaming. Full detail in <code>results/validation/validation.md</code>.</p>
+</details>
+
+<details>
+  <summary>Hypotheses and evidence-strength scorecard (post-validation)</summary>
+  <table>
+    <thead><tr><th>Hypothesis</th><th>Criterion</th><th>Verdict</th><th>Strength</th></tr></thead>
+    <tbody>
+      <tr><td>H1-plan</td><td>≥1.3× lift, n≥30 per group, p&lt;0.05</td><td>Met (narrowed to 2024-12-17 → 2025-06-17)</td><td><span class="tag ok">Moderate</span></td></tr>
+      <tr><td>H1-role</td><td>same</td><td>Not met (1.16×, p=0.74)</td><td><span class="tag bad">Refuted</span></td></tr>
+      <tr><td>H2 (original)</td><td>Median ratio ≥1.3×, MWU p&lt;0.05 same direction</td><td>Directionally supported in n=14 subset; not testable at planned scale</td><td><span class="tag warn">Inconclusive</span></td></tr>
+      <tr><td>H2 (disengagement reframe)</td><td>—</td><td>Withdrawn after validation (rank-bug + coverage artifact)</td><td><span class="tag bad">Withdrawn</span></td></tr>
+      <tr><td>H3-tenure</td><td>≥1.3× lift in ≥1 bucket, n≥30, p&lt;0.05</td><td>Lift yes (&lt;90d 1.32×), p no (0.30)</td><td><span class="tag bad">Weak / Refuted</span></td></tr>
+      <tr><td>H0 (null)</td><td>No segment distinguishes</td><td>Rejected on plan only</td><td><span class="tag ok">Rejected</span></td></tr>
+    </tbody>
+  </table>
+</details>
+
+<details>
+  <summary>Query and artifact index</summary>
+  <p>All SQL lives in <code>queries/</code>. Every query's result is saved as a matching-filename CSV under the corresponding <code>results/&lt;phase&gt;/</code> subfolder. Charts are SVGs under <code>results/&lt;phase&gt;/</code>.</p>
+  <ul>
+    <li><code>queries/10-14_qa-*.sql</code> — Phase 2 data QA</li>
+    <li><code>queries/20-29_eda-*.sql</code> — Phase 3 EDA</li>
+    <li><code>queries/40-46_da-*.sql</code> — Phase 4 deep analysis</li>
+    <li><code>queries/50-56_val-*.sql</code> — Phase 6 validation (including corrected-rank MWU and coverage diagnostics)</li>
+  </ul>
+  <p>Phase narratives: <code>results/qa/qa-report.md</code>, <code>results/eda/eda-findings.md</code>, <code>results/deep-analysis/deep-analysis.md</code> (with correction banner), <code>results/synthesis/synthesis.md</code>, <code>results/validation/validation.md</code>.</p>
+</details>
+
+<details>
+  <summary>Known issues surfaced by this analysis</summary>
+  <ol>
+    <li><strong>events table — narrow coverage (~90 days, not 365).</strong> Appended to <code>.cursor/learning/known_issues.md</code>. Any future analysis using user-level event data should confirm <code>MIN(occurred_at)</code> / <code>MAX(occurred_at)</code> against the analysis window in Phase 2 QA.</li>
+    <li><strong>SQL Mann-Whitney rank-tie bug.</strong> Using <code>RANK()</code> as an input to an averaging subquery returns min-rank, not average-rank. Appended to <code>known_issues.md</code> with the correct formula.</li>
+  </ol>
+</details>
+
+<p class="foot">Generated 2026-04-20 by liati. Single-file static report; no network dependencies. See companion <code>summary.pdf</code> (one-page executive summary) and <code>notebook.ipynb</code> (standalone debug notebook) in this folder.</p>
+
+</div>
+</body>
+</html>

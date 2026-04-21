@@ -1,0 +1,5 @@
+stratum,grp,n,mean_30,median_30,q1_30,q3_30,rank_sum
+free,complainer,14,3.36,0.50,0.00,5.00,263
+free,non_complainer,36,2.28,2.00,1.00,3.00,827
+paid,complainer,22,1.55,0.00,0.00,2.75,988
+paid,non_complainer,128,1.90,1.00,1.00,3.00,8123

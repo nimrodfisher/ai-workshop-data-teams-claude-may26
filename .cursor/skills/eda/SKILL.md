@@ -81,9 +81,9 @@ Decide per outlier: drop, cap, investigate, or keep-and-note. Document the decis
 
 ## Output
 
-Save to `results/`:
-- Charts as `.png` — numbered and named: `03_churn-distribution.png`, `04_churn-by-plan.png`.
-- Summary tables as `.csv` — same prefix as the generating query.
+Save to `results/eda/` (create the subfolder if it doesn't exist):
+- Charts as `.svg` (or `.png`) — numbered and named: `03_churn-distribution.svg`, `04_churn-by-plan.svg`. **Every SVG must include `viewBox="0 0 <w> <h>"` and `preserveAspectRatio="xMidYMid meet"`** so it scales without clipping in the HTML report and PDF.
+- **One `.csv` per EDA query that returns data** — filename matches the query exactly (e.g., `04_eda-churn-by-plan.sql` → `04_eda-churn-by-plan.csv`). This is non-negotiable: the debug notebook reloads these CSVs instead of re-querying.
 - `eda-findings.md` — narrative notes: one paragraph per major finding, linked to the chart that shows it.
 
 Save all exploratory queries to `queries/`.

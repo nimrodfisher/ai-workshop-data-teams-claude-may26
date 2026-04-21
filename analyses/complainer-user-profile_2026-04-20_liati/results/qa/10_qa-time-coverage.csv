@@ -1,0 +1,4 @@
+table_name,min_date,max_date,total_rows,in_window,before_window,after_window
+support_tickets,2024-12-12,2025-06-06,79,31,48,0
+events,2025-03-07,2025-06-06,1960,1009,951,0
+users (created_at),2024-06-16,2025-06-17,200,36,164,0

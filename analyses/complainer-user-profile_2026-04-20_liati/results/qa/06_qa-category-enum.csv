@@ -1,0 +1,5 @@
+category,ticket_count,pct_of_total,category_bucket
+feature_request,22,27.85,non_complaint
+bug,22,27.85,UNDOCUMENTED_VALUE
+usage_question,18,22.78,UNDOCUMENTED_VALUE
+billing,17,21.52,complaint

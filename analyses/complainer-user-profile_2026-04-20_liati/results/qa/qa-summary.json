@@ -1,0 +1,77 @@
+{
+  "analysis": "complainer-user-profile",
+  "date": "2026-04-20",
+  "analyst": "liati",
+  "overall_quality_score": 72,
+  "interpretation": "Structural data quality is high (no nulls, no duplicates, no orphans), but three CRITICAL plan-fit issues block analysis as specified.",
+  "counts_by_severity": {
+    "CRITICAL": 3,
+    "HIGH": 1,
+    "MEDIUM": 0,
+    "LOW": 3
+  },
+  "blocking_issues": [
+    {
+      "id": "C1",
+      "title": "support_tickets.category enum mismatch",
+      "detail": "Plan's complaint set ('bug_report','technical','billing') maps only 'billing' in actual data. Undocumented values 'bug' and 'usage_question' present.",
+      "impact": "Only 16 of 50 candidate complainer users retained under strict plan definition (78% lost).",
+      "proposed_fix": "Remap complaint set to ('bug','usage_question','billing') → 50 complainer users. User confirmation required."
+    },
+    {
+      "id": "C2",
+      "title": "Time window outside data coverage",
+      "detail": "Plan window [2025-04-20, 2026-04-20) covers only 31/79 tickets. Actual data max: tickets=2025-06-06, events=2025-06-06, users=2025-06-17.",
+      "impact": "61% of tickets excluded under current window.",
+      "proposed_fix": "Shift window to [2024-06-17, 2025-06-17] (last 12 months of snapshot)."
+    },
+    {
+      "id": "C3",
+      "title": "invoices.paid_at has no nulls — no unpaid variance",
+      "detail": "All 300 invoices are paid. H4's 'unpaid invoices → billing complaints' lift cannot be tested.",
+      "impact": "H4 billing-arm untestable.",
+      "proposed_fix": "Drop H4 billing-arm; keep top-quartile-events arm for technical/bug complaints."
+    }
+  ],
+  "high_findings": [
+    {
+      "id": "H1",
+      "title": "Small n relative to plan thresholds",
+      "detail": "50 complainer users / 135 non-complainers; plan/role segment cells ~8–30 each. Chi-square expected-counts may fall below 5.",
+      "mitigation": "Use Fisher's exact where any expected cell < 5. Relax n>=100 to n>=30 per group. Lower lift threshold from 1.5x to 1.3x. Report 95% CIs."
+    }
+  ],
+  "low_findings": [
+    { "id": "L1", "title": "accounts.plan is lowercase, schema examples are Title-case. Non-blocking." },
+    { "id": "L2", "title": "users.role values ('admin','viewer','analyst') differ from schema example ('admin','member','viewer'). Non-blocking." },
+    { "id": "L3", "title": "support_tickets.status has only 'open'/'closed' (schema documents 6 states). Not needed by plan." }
+  ],
+  "population_sizes": {
+    "total_users": 200,
+    "users_with_any_ticket": 65,
+    "complainers_strict_plan_definition": 16,
+    "complainers_remapped_definition": 50,
+    "non_complainers_remapped": 150,
+    "non_complainers_in_population_with_user_account_join": 135
+  },
+  "artifact_files": [
+    "results/qa/qa-report.md",
+    "results/qa/qa-summary.json",
+    "results/qa/00_qa-rowcounts.csv",
+    "results/qa/01_qa-nulls-support-tickets.csv",
+    "results/qa/02_qa-nulls-users.csv",
+    "results/qa/03_qa-nulls-accounts.csv",
+    "results/qa/04_qa-nulls-events.csv",
+    "results/qa/05_qa-nulls-subs-invoices.csv",
+    "results/qa/06_qa-category-enum.csv",
+    "results/qa/07_qa-role-distribution.csv",
+    "results/qa/08_qa-plan-distribution.csv",
+    "results/qa/09_qa-join-coverage.csv",
+    "results/qa/10_qa-time-coverage.csv",
+    "results/qa/11_qa-population-sizes.csv",
+    "results/qa/12_qa-duplicates.csv",
+    "results/qa/13_qa-status-distribution.csv",
+    "results/qa/14_qa-complainers-by-category.csv"
+  ],
+  "checkpoint": "wait_for_user_resolution_of_C1_C2_C3"
+}

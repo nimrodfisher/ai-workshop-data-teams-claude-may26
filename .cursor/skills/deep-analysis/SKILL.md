@@ -111,7 +111,7 @@ A finding with honest uncertainty survives scrutiny. A point estimate with no CI
 
 ## Output
 
-Create `results/deep-analysis.md`:
+Create `results/deep-analysis/deep-analysis.md`:
 
 ```markdown
 # Deep Analysis
@@ -138,9 +138,12 @@ Create `results/deep-analysis.md`:
 - <sample size limits, method assumptions, borderline decisions>
 ```
 
-Save:
-- Method-specific charts to `results/` (e.g., `07_cohort-retention.png`, `08_effect-decomposition.png`).
-- All queries to `queries/`.
+Save to `results/deep-analysis/` (create the subfolder if it doesn't exist):
+- `deep-analysis.md` (the markdown above).
+- Method-specific charts as `.svg` (e.g., `07_cohort-retention.svg`, `08_effect-decomposition.svg`). **Every SVG must include `viewBox` and `preserveAspectRatio="xMidYMid meet"`.**
+- **One `.csv` per query that returns data** — cohort tables, decomposition tables, regression coefficients, test-statistic outputs. Filename matches the query exactly (e.g., `07_da-cohort-retention.sql` → `07_da-cohort-retention.csv`).
+
+Save all deep-analysis queries to `queries/`.
 
 ## What NOT to Do
 

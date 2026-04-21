@@ -85,7 +85,14 @@ Do not bury the revision. Validation revealing an issue is a success, not a fail
 
 ## Output
 
-Create `results/validation.md`:
+Save to `results/validation/` (create the subfolder if it doesn't exist):
+- `validation.md` (the markdown below).
+- **One `.csv` per sensitivity / replication / alternative-explanation query that returns data** — filename matches the query exactly (e.g., `08_val-sensitivity-14d.sql` → `08_val-sensitivity-14d.csv`).
+- Any validation charts as `.svg` with `viewBox` and `preserveAspectRatio="xMidYMid meet"`.
+
+Save all validation queries to `queries/`.
+
+### `validation.md`
 
 ```markdown
 # Validation

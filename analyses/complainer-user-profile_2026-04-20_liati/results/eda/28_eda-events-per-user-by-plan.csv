@@ -1,0 +1,4 @@
+plan,users,mean_events,median_events,p25,p75
+free,50,11.88,10,8,13
+pro,59,10.85,9,6.5,11.5
+enterprise,91,7.98,7,4.5,10

@@ -1,0 +1,2 @@
+total_events,null_user_id,null_org_id,null_occurred_at,null_event_type,pct_null_user_id,distinct_users_in_events,distinct_event_types
+1960,0,0,0,0,0.00,200,5

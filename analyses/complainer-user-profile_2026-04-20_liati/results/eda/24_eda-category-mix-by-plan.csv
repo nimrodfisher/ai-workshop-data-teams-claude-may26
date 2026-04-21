@@ -1,0 +1,7 @@
+plan,category,tickets,distinct_users
+enterprise,billing,8,7
+enterprise,bug,8,8
+free,billing,8,8
+free,bug,6,6
+pro,billing,1,1
+pro,bug,8,7

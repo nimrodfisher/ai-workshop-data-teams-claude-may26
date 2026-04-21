@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 340" preserveAspectRatio="xMidYMid meet" font-family="system-ui, -apple-system, Segoe UI, sans-serif">
+  <style>
+    .title { font-size: 18px; font-weight: 600; fill: #111; }
+    .sub   { font-size: 12px; fill: #555; }
+    .axis  { stroke: #888; stroke-width: 1; }
+    .tick  { font-size: 11px; fill: #444; }
+    .lbl   { font-size: 12px; fill: #222; font-weight: 500; }
+    .note  { font-size: 11px; fill: #444; font-style: italic; }
+  </style>
+
+  <text x="30" y="30" class="title">Event data covers 90 of 365 analysis-window days  half of complainers fall outside coverage</text>
+  <text x="30" y="50" class="sub">Analysis window: 2024-06-17 to 2025-06-17. Events: 2025-03-07 to 2025-06-06. 36 complainers (first-complaint dates plotted).</text>
+
+  <line x1="80" y1="230" x2="760" y2="230" class="axis" />
+
+  <g class="tick" text-anchor="middle">
+    <text x="80"  y="250">2024-06-17</text>
+    <text x="245" y="250">2024-09-17</text>
+    <text x="385" y="250">2024-12-17</text>
+    <text x="528" y="250">2025-03-17</text>
+    <text x="668" y="250">2025-06-17</text>
+  </g>
+
+  <rect x="80"  y="110" width="680" height="28" fill="#f3d7d0" stroke="#c96e58" />
+  <text x="85" y="105" class="lbl" fill="#8a3b28">Analysis window (365 days)</text>
+
+  <rect x="510" y="150" width="145" height="28" fill="#cfe4d3" stroke="#3c8a5a" />
+  <text x="515" y="145" class="lbl" fill="#25633f">Event data coverage (~90 days: 2025-03-07 � 2025-06-06)</text>
+
+  <g class="tick" text-anchor="middle">
+    <text x="510" y="200">2025-03-07</text>
+    <text x="655" y="200">2025-06-06</text>
+  </g>
+  <line x1="510" y1="178" x2="510" y2="192" stroke="#3c8a5a" />
+  <line x1="655" y1="178" x2="655" y2="192" stroke="#3c8a5a" />
+
+  <g fill="#2a4b7c" opacity="0.85">
+    <circle cx="395" cy="230" r="4" />
+    <circle cx="405" cy="230" r="4" />
+    <circle cx="415" cy="230" r="4" />
+    <circle cx="425" cy="230" r="4" />
+    <circle cx="435" cy="230" r="4" />
+    <circle cx="445" cy="230" r="4" />
+    <circle cx="455" cy="230" r="4" />
+    <circle cx="465" cy="230" r="4" />
+    <circle cx="475" cy="230" r="4" />
+    <circle cx="485" cy="230" r="4" />
+    <circle cx="495" cy="230" r="4" />
+    <circle cx="505" cy="230" r="4" />
+    <circle cx="515" cy="230" r="4" />
+    <circle cx="525" cy="230" r="4" />
+    <circle cx="535" cy="230" r="4" />
+    <circle cx="545" cy="230" r="4" />
+    <circle cx="555" cy="230" r="4" />
+    <circle cx="565" cy="230" r="4" />
+    <circle cx="575" cy="230" r="4" />
+    <circle cx="585" cy="230" r="4" />
+    <circle cx="595" cy="230" r="4" />
+    <circle cx="605" cy="230" r="4" />
+    <circle cx="615" cy="230" r="4" />
+    <circle cx="625" cy="230" r="4" />
+    <circle cx="635" cy="230" r="4" />
+    <circle cx="645" cy="230" r="4" />
+    <circle cx="655" cy="230" r="4" />
+    <circle cx="665" cy="230" r="4" />
+  </g>
+  <g fill="#c9495a" opacity="0.9">
+    <circle cx="390" cy="230" r="5" />
+    <circle cx="400" cy="230" r="5" />
+    <circle cx="410" cy="230" r="5" />
+    <circle cx="420" cy="230" r="5" />
+    <circle cx="430" cy="230" r="5" />
+    <circle cx="440" cy="230" r="5" />
+    <circle cx="450" cy="230" r="5" />
+    <circle cx="460" cy="230" r="5" />
+  </g>
+
+  <text x="80" y="275" class="lbl" fill="#c9495a">� 18 complainers (red): first complaint BEFORE event coverage � pre-complaint event window is structurally empty, not behavioral.</text>
+  <text x="80" y="292" class="lbl" fill="#2a4b7c">� 18 complainers (blue): first complaint inside event coverage � some have full 30d pre-window, others partial.</text>
+  <text x="80" y="314" class="note">Implication: "disengagement" finding in Phase 4 was driven by these structural zeros, not by behavior. Corrected analysis (n=14 with valid coverage) actually shows complainers MORE engaged (median 5 vs 2, z=+2.27).</text>
+</svg>

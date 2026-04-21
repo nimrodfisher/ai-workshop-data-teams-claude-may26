@@ -74,7 +74,7 @@ These become recommendations in the final deliverable.
 
 ## Output
 
-Create `results/synthesis.md`:
+Create `results/synthesis/synthesis.md` (create the `results/synthesis/` subfolder if it doesn't exist; synthesis produces no new queries, so no CSVs here):
 
 ```markdown
 # Synthesis

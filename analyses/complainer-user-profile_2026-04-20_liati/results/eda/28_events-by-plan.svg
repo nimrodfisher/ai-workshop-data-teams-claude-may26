@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" width="100%">
+  <style>
+    .title { font: 700 18px 'Segoe UI', Arial, sans-serif; fill: #1a1a1a; }
+    .subtitle { font: 400 12px 'Segoe UI', Arial, sans-serif; fill: #555; }
+    .ax { stroke: #888; stroke-width: 1; fill: none; }
+    .grid { stroke: #ddd; stroke-width: 1; stroke-dasharray: 2,3; }
+    .ylabel { font: 400 11px 'Segoe UI', Arial, sans-serif; fill: #444; text-anchor: end; }
+    .xlabel { font: 600 13px 'Segoe UI', Arial, sans-serif; fill: #222; text-anchor: middle; }
+    .val { font: 700 13px 'Segoe UI', Arial, sans-serif; fill: #111; text-anchor: middle; }
+    .note { font: 400 11px 'Segoe UI', Arial, sans-serif; fill: #666; text-anchor: middle; }
+    .box-free { fill: #e67e22; stroke: #a04804; stroke-width: 1; }
+    .box-pro { fill: #3498db; stroke: #1b5580; stroke-width: 1; }
+    .box-ent { fill: #95a5a6; stroke: #5c6d6e; stroke-width: 1; }
+    .median-line { stroke: #1a1a1a; stroke-width: 2; }
+  </style>
+  <rect width="800" height="500" fill="#ffffff"/>
+  <text x="400" y="28" class="title" text-anchor="middle">Events per user by plan (IQR box)</text>
+  <text x="400" y="48" class="subtitle" text-anchor="middle">Free has highest engagement AND highest complaint rate - confound with H2</text>
+  <line x1="90" y1="70" x2="90" y2="410" class="ax"/>
+  <line x1="90" y1="410" x2="710" y2="410" class="ax"/>
+  <line x1="90" y1="342" x2="710" y2="342" class="grid"/>
+  <line x1="90" y1="274" x2="710" y2="274" class="grid"/>
+  <line x1="90" y1="206" x2="710" y2="206" class="grid"/>
+  <line x1="90" y1="138" x2="710" y2="138" class="grid"/>
+  <text x="82" y="414" class="ylabel">0</text>
+  <text x="82" y="346" class="ylabel">4</text>
+  <text x="82" y="278" class="ylabel">8</text>
+  <text x="82" y="210" class="ylabel">12</text>
+  <text x="82" y="142" class="ylabel">16</text>
+  <text x="40" y="245" class="xlabel" transform="rotate(-90 40 245)">events per user</text>
+  <rect x="185" y="189" width="80" height="85" class="box-free"/>
+  <line x1="185" y1="240" x2="265" y2="240" class="median-line"/>
+  <text x="225" y="232" class="val">median 10</text>
+  <text x="225" y="283" class="note">p25=8, p75=13</text>
+  <rect x="360" y="213" width="80" height="95" class="box-pro"/>
+  <line x1="360" y1="257" x2="440" y2="257" class="median-line"/>
+  <text x="400" y="249" class="val">median 9</text>
+  <text x="400" y="317" class="note">p25=6.5, p75=11.5</text>
+  <rect x="535" y="240" width="80" height="93" class="box-ent"/>
+  <line x1="535" y1="291" x2="615" y2="291" class="median-line"/>
+  <text x="575" y="283" class="val">median 7</text>
+  <text x="575" y="342" class="note">p25=4.5, p75=10</text>
+  <text x="225" y="430" class="xlabel">free</text>
+  <text x="400" y="430" class="xlabel">pro</text>
+  <text x="575" y="430" class="xlabel">enterprise</text>
+  <text x="225" y="447" class="note">n=50, mean 11.9</text>
+  <text x="400" y="447" class="note">n=59, mean 10.9</text>
+  <text x="575" y="447" class="note">n=91, mean 8.0</text>
+  <text x="400" y="480" class="note">implication: pre-complaint engagement signal must be tested controlling for plan in Phase 4</text>
+</svg>

@@ -42,6 +42,16 @@ The answer goes first. Analysts bury it; decision-makers want it at the top.
 - **Own the uncertainty.** Don't hide it in small type — call it out. Trust compounds.
 - **Action > observation.** Close with recommendations, not a summary.
 
+## Chart Rendering Rules (applies to report.html AND summary.pdf)
+
+Charts must scale without clipping when the card width is narrower than the chart's native size. Enforce:
+
+- Every SVG chart MUST include `viewBox="0 0 <w> <h>"` **and** `preserveAspectRatio="xMidYMid meet"`. Without a viewBox, `width:100%` in CSS scales the frame but not the contents, and right-edge text (titles, legend entries, axis labels) gets clipped.
+- Minimum margins inside the SVG: `ml ≥ 70`, `mr ≥ 80`, `mt ≥ 72`, `mb ≥ 80`. Tight margins + long titles are the #1 cause of clipping.
+- Titles ≤ 52 characters on a single line. Longer titles split across two lines using `<tspan x="..." dy="14">...</tspan>`.
+- In the report's CSS, use `.card svg { width: 100%; height: auto; max-width: 100%; display: block; }`. Do NOT pin a fixed pixel `max-width` — it creates inconsistent scaling across viewports.
+- Before shipping, open `report.html` in a narrow viewport (~1024px) and confirm no chart text is clipped. The same clipping bug ships into the PDF if missed.
+
 ## The HTML Report
 
 Use a static HTML file with embedded interactivity — no backend.
@@ -118,8 +128,9 @@ Save to `deliverables/`:
 
 - `report.html`
 - `summary.pdf`
+- `notebook.ipynb` — standalone debug notebook that walks the full analysis flow (plan → QA → EDA → deep analysis → synthesis → validation → conclusions). Analysts open it to step through each phase, load the saved CSVs with pandas, and re-render charts from that data without a DB connection. See [`.cursor/skills/_shared/references/debug-notebook.md`](../_shared/references/debug-notebook.md) for the cell-by-cell spec and the `nbformat`-based generation snippet.
 
-Both should be standalone — sendable via email, viewable without this repo.
+All three should be standalone — sendable via email, viewable without this repo.
 
 ## After Delivery — Update Learning
 
@@ -143,7 +154,7 @@ This is not optional. The repo gets smarter only if you write this down.
 
 When done:
 1. Summarize: the headline finding and the key recommendations.
-2. Link: `deliverables/report.html`, `deliverables/summary.pdf`.
+2. Link: `deliverables/report.html`, `deliverables/summary.pdf`, `deliverables/notebook.ipynb`.
 3. Surface: any limitation the reader needs to know about.
 4. Confirm: the learning files have been updated.
 5. Deliver: "Analysis complete. Deliverables are in `deliverables/`. Anything to revise before close-out?"

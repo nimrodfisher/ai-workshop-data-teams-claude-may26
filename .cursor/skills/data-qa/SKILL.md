@@ -98,10 +98,11 @@ Compute an overall quality score:
 
 ## Output
 
-Save to `results/`:
+Save to `results/qa/` (create the subfolder if it doesn't exist):
 
 - `qa-report.md` — findings with severity, affected tables/columns, counts, example rows, recommended action.
 - `qa-summary.json` — structured version (score, counts by severity, blocking issues).
+- `<query-prefix>.csv` — raw returned rows for **every** QA query that returns data. Filename matches the query file exactly (e.g., `00_qa-completeness.sql` → `00_qa-completeness.csv`).
 
 Save any QA queries used to `queries/`, prefixed `00_qa-*` so they're clearly separate from analysis queries.
 
