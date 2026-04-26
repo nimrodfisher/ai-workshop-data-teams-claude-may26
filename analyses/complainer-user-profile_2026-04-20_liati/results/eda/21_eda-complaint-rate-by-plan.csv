@@ -1,4 +1,0 @@
-plan,users_in_plan,complainer_users,complaint_rate_pct,lift_vs_baseline
-free,50,14,28.00,1.56
-enterprise,91,14,15.38,0.85
-pro,59,8,13.56,0.75

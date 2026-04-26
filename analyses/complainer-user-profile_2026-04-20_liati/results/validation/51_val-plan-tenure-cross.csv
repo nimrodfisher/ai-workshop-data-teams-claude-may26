@@ -1,5 +1,0 @@
-plan_group,tenure_group,comp,non_c,n,rate
-free,newer_lt180d,7,18,25,0.2800
-free,older_180d_plus,7,18,25,0.2800
-paid,newer_lt180d,16,77,93,0.1720
-paid,older_180d_plus,6,51,57,0.1053

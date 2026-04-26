@@ -1,0 +1,10 @@
+flowchart TD
+    A[Start: pandas task in analysis workflow] --> B[State operation in one sentence]
+    B --> C[Route to matching reference file]
+    C --> D[Load only needed reference docs]
+    D --> E[Implement with project conventions]
+    E --> F[Log dataframe shape before and after]
+    F --> G[Assert invariants and data expectations]
+    G --> H[Save intermediates to results as Parquet]
+    H --> I[Review anti-patterns and performance risks]
+    I --> J[Output reliable, maintainable pandas code]

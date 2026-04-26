@@ -1,4 +1,0 @@
-role,users_in_role,complainer_users,complaint_rate_pct,lift_vs_baseline
-admin,72,15,20.83,1.16
-viewer,67,11,16.42,0.91
-analyst,61,10,16.39,0.91

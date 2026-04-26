@@ -1,0 +1,10 @@
+flowchart TD
+    A[Start: QA-passed data and hypotheses] --> B[Univariate analysis of key metrics]
+    B --> C[Relationship analysis: bivariate and multivariate]
+    C --> D[Segment analysis by plan, cohort, or channel]
+    D --> E[Time pattern analysis: trend, seasonality, change points]
+    E --> F[Anomaly context and outlier decisions]
+    F --> G[Document insights per chart]
+    G --> H[Save charts, queries, and CSV outputs]
+    H --> I[Write eda-findings.md]
+    I --> J[Checkpoint: proceed to next phase?]

@@ -1,5 +1,0 @@
-tenure_bucket,users_in_bucket,complainer_users,complaint_rate_pct,lift_vs_baseline
-lt_90d,59,14,23.73,1.32
-90_180d,59,9,15.25,0.85
-180_270d,36,8,22.22,1.23
-270d_plus,46,5,10.87,0.60

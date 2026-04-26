@@ -23,6 +23,8 @@ Always run QA on the *exact* tables and time window the hypotheses require. Don'
 
 Run checks in this order. Stop and flag at any CRITICAL finding.
 
+Use `scripts/qa_checks.sql` for the mechanical work: substitute the `{{placeholders}}`, run each block via Supabase, and save the instantiated queries to `queries/00_qa-<check>.sql` in the analysis workspace. Your job on top of the script is severity assignment, pattern interpretation, and mitigation guidance — the parts that need judgment.
+
 ### 1. Structural Integrity
 
 - Row and column counts match expectations from the semantic model.
@@ -89,6 +91,8 @@ Each finding gets a severity:
 - **MEDIUM** — proceed with a caveat in the final report.
 - **LOW** — note; does not affect conclusions.
 
+When uncertain about a severity call, see `references/severity-examples.md` for worked scenarios. The same percentage of nulls or duplicates can be CRITICAL or LOW depending on the analysis question — the examples illustrate that contextual judgment.
+
 Compute an overall quality score:
 
 - 90-100 → proceed normally.
@@ -104,14 +108,14 @@ Save to `results/qa/` (create the subfolder if it doesn't exist):
 - `qa-summary.json` — structured version (score, counts by severity, blocking issues).
 - `<query-prefix>.csv` — raw returned rows for **every** QA query that returns data. Filename matches the query file exactly (e.g., `00_qa-completeness.sql` → `00_qa-completeness.csv`).
 
-Save any QA queries used to `queries/`, prefixed `00_qa-*` so they're clearly separate from analysis queries.
+Save instantiated QA queries to `queries/`, prefixed `00_qa-*` so they're clearly separate from analysis queries.
 
 Append key findings to `.cursor/learning/known_issues.md` if they are **persistent** (not one-off glitches).
 
 ## Key Principles
 
 - **Check first, analyze later.** Every suspicious result chased in EDA costs 10× the time a QA check would have.
-- **Severity is contextual.** 15% nulls in a nullable text field is fine; 15% nulls in the date column blocks the analysis.
+- **Severity is contextual.** 15% nulls in a nullable text field is fine; 15% nulls in the date column blocks the analysis. See `references/severity-examples.md`.
 - **Don't clean here.** QA flags issues. Cleaning decisions are taken with the user.
 - **Log known issues.** The same data problem will show up in the next analysis. Make sure future-you knows.
 

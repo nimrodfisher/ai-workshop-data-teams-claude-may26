@@ -1,0 +1,17 @@
+flowchart TD
+    A[Start: Hypotheses and required tables/time window] --> B[Run checks from scripts/qa_checks.sql]
+    B --> C[Save instantiated SQL to queries/00_qa-*.sql]
+    C --> D[Evaluate findings by check group]
+    D --> E[Assign severities per finding]
+    E --> F[Use references/severity-examples.md for borderline calls]
+    F --> G{Any CRITICAL findings?}
+    G -->|Yes| H[Block analysis and define mitigation options]
+    G -->|No| I[Compute quality score and caveats]
+    H --> J[Write results/qa/qa-report.md and results/qa/qa-summary.json]
+    I --> J
+    J --> K[Save QA query outputs to results/qa/*.csv]
+    K --> L{Need pandas handling for QA outputs?}
+    L -->|Yes| M[Route via .cursor/skills/pandas-operations/SKILL.md and load only needed references/* file]
+    L -->|No| N[Proceed]
+    M --> N
+    N --> O[Checkpoint: proceed to EDA?]
