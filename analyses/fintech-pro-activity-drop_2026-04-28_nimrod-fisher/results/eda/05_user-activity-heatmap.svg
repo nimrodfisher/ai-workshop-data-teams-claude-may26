@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 340" preserveAspectRatio="xMidYMid meet" font-family="sans-serif" font-size="12">
+  <title>User Activity: Prior 30 vs Last 30 by Role</title>
+  <rect width="700" height="340" fill="#f9fafb" rx="6"/>
+  <text x="350" y="24" text-anchor="middle" font-size="14" font-weight="bold" fill="#111">User Activity: Prior 30 vs Last 30 by Role</text>
+  <text x="350" y="42" text-anchor="middle" font-size="11" fill="#666">FinTech Pro accounts � arrow = change � red = dropped, green = grew</text>
+
+  <!-- Column headers -->
+  <text x="300" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#374151">Prior 30</text>
+  <text x="420" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#374151">Last 30</text>
+  <text x="530" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#374151">Change</text>
+
+  <!-- Divider line after headers -->
+  <line x1="50" y1="68" x2="660" y2="68" stroke="#d1d5db" stroke-width="1"/>
+
+  <!-- Account header: PJohnson Corp -->
+  <rect x="50" y="72" width="610" height="20" fill="#ede9fe" rx="3"/>
+  <text x="60" y="86" font-size="12" font-weight="bold" fill="#4f46e5">PJohnson Corp</text>
+
+  <!-- Row 1: Olivia Garcia (analyst) -->
+  <rect x="50" y="94" width="610" height="28" fill="white"/>
+  <text x="60"  y="113" fill="#374151" font-size="12">Olivia Garcia</text>
+  <text x="170" y="113" fill="#6b7280" font-size="11" font-style="italic">analyst</text>
+  <text x="300" y="113" text-anchor="middle" fill="#374151" font-size="13" font-weight="bold">13</text>
+  <text x="420" y="113" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">7</text>
+  <text x="530" y="113" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">� 6 (46%)</text>
+
+  <!-- Row 2: Karen Young (admin) -->
+  <rect x="50" y="122" width="610" height="28" fill="#f9fafb"/>
+  <text x="60"  y="141" fill="#374151" font-size="12">Karen Young</text>
+  <text x="170" y="141" fill="#6b7280" font-size="11" font-style="italic">admin</text>
+  <text x="300" y="141" text-anchor="middle" fill="#374151" font-size="13" font-weight="bold">6</text>
+  <text x="420" y="141" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold">5</text>
+  <text x="530" y="141" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">� 1 (17%)</text>
+
+  <!-- Row 3: Eve King (analyst) -->
+  <rect x="50" y="150" width="610" height="28" fill="white"/>
+  <text x="60"  y="169" fill="#374151" font-size="12">Eve King</text>
+  <text x="170" y="169" fill="#6b7280" font-size="11" font-style="italic">analyst</text>
+  <text x="300" y="169" text-anchor="middle" fill="#374151" font-size="13" font-weight="bold">3</text>
+  <text x="420" y="169" text-anchor="middle" fill="#22c55e" font-size="13" font-weight="bold">6</text>
+  <text x="530" y="169" text-anchor="middle" fill="#22c55e" font-size="12" font-weight="bold">� +3 (+100%)</text>
+
+  <!-- Divider -->
+  <line x1="50" y1="180" x2="660" y2="180" stroke="#d1d5db" stroke-width="1"/>
+
+  <!-- Account header: ZGarcia Corp -->
+  <rect x="50" y="182" width="610" height="20" fill="#dbeafe" rx="3"/>
+  <text x="60" y="196" font-size="12" font-weight="bold" fill="#1d4ed8">ZGarcia Corp</text>
+
+  <!-- Row 4: Ned Quinn -->
+  <rect x="50" y="204" width="610" height="26" fill="white"/>
+  <text x="60"  y="221" fill="#374151" font-size="12">Ned Quinn</text>
+  <text x="170" y="221" fill="#6b7280" font-size="11" font-style="italic">analyst</text>
+  <text x="300" y="221" text-anchor="middle" fill="#374151" font-size="13" font-weight="bold">5</text>
+  <text x="420" y="221" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">3</text>
+  <text x="530" y="221" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">� 2 (40%)</text>
+
+  <!-- Row 5: Quinn Zimmerman -->
+  <rect x="50" y="230" width="610" height="26" fill="#f9fafb"/>
+  <text x="60"  y="247" fill="#374151" font-size="12">Quinn Zimmerman</text>
+  <text x="170" y="247" fill="#6b7280" font-size="11" font-style="italic">analyst</text>
+  <text x="300" y="247" text-anchor="middle" fill="#374151" font-size="13" font-weight="bold">5</text>
+  <text x="420" y="247" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">3</text>
+  <text x="530" y="247" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">� 2 (40%)</text>
+
+  <!-- Row 6: Walt Lopez -->
+  <rect x="50" y="256" width="610" height="26" fill="white"/>
+  <text x="60"  y="273" fill="#374151" font-size="12">Walt Lopez</text>
+  <text x="170" y="273" fill="#6b7280" font-size="11" font-style="italic">analyst</text>
+  <text x="300" y="273" text-anchor="middle" fill="#374151" font-size="13" font-weight="bold">3</text>
+  <text x="420" y="273" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">1</text>
+  <text x="530" y="273" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">� 2 (67%)</text>
+
+  <!-- Row 7: Walt Smith (admin) + Eve Edwards (admin) summarized -->
+  <rect x="50" y="282" width="610" height="26" fill="#f9fafb"/>
+  <text x="60"  y="299" fill="#374151" font-size="12">Walt Smith + Eve Edwards</text>
+  <text x="170" y="299" fill="#6b7280" font-size="11" font-style="italic">admin �2</text>
+  <text x="300" y="299" text-anchor="middle" fill="#374151" font-size="13" font-weight="bold">2</text>
+  <text x="420" y="299" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">0</text>
+  <text x="530" y="299" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">� 2 (100%)</text>
+
+  <!-- Row 8: Walt Harris (viewer) -->
+  <rect x="50" y="308" width="610" height="26" fill="white"/>
+  <text x="60"  y="325" fill="#374151" font-size="12">Walt Harris</text>
+  <text x="170" y="325" fill="#6b7280" font-size="11" font-style="italic">viewer</text>
+  <text x="300" y="325" text-anchor="middle" fill="#374151" font-size="13" font-weight="bold">0</text>
+  <text x="420" y="325" text-anchor="middle" fill="#22c55e" font-size="13" font-weight="bold">1</text>
+  <text x="530" y="325" text-anchor="middle" fill="#22c55e" font-size="12" font-weight="bold">� +1 (new)</text>
+</svg>

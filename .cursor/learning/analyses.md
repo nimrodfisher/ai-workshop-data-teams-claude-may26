@@ -25,6 +25,13 @@ Running index of every completed analysis in this repo. Checked at the start of 
 
 <!-- New entries added below this line, most recent first -->
 
+## 2026-04-28 — FinTech Pro Activity Drop
+- **Path:** `analyses/fintech-pro-activity-drop_2026-04-28_nimrod-fisher/`
+- **Question:** Why did paying FinTech Pro accounts in financial services show a ~30% drop in product activity in the most recent 30-day period vs. the prior 30 days?
+- **Key finding:** Two accounts, two root causes. ZGarcia Corp (64% of drop, −47%): pre-churn signature — API integration stopped after Apr 28, both admins went dark, zero support tickets. PJohnson Corp (36%, −18%): session frequency reduced but report_view and file_upload held; feature requests filed and resolved. Platform grew +10.8% in the same window (40.5pp divergence), confirming segment-specific signal. Immediate CS outreach to ZGarcia required.
+- **Confidence:** High for account-level descriptions; n=2 prevents segment generalization.
+- **Tags:** #fintech-pro #activity-drop #pre-churn #api-discontinuation #seat-churn #platform-benchmark #event-type-shift
+
 ## 2026-04-20 — Complainer-User Profile (user-level)
 - **Path:** `analyses/complainer-user-profile_2026-04-20_liati/`
 - **Question:** What observable, measurable characteristics distinguish users who file complaint-like support tickets (bug/billing) from users who do not, to inform a proactive-outreach watch list?

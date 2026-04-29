@@ -1,0 +1,6 @@
+account_name,role,prior_active_users,last_active_users,total_users_in_role
+PJohnson Corp,admin,1,1,1
+PJohnson Corp,analyst,2,2,2
+ZGarcia Corp,admin,2,0,2
+ZGarcia Corp,analyst,3,3,3
+ZGarcia Corp,viewer,0,1,1

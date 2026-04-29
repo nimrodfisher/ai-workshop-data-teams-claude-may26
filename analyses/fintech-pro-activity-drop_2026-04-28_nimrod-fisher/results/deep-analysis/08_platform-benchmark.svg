@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 300" preserveAspectRatio="xMidYMid meet" font-family="sans-serif" font-size="12">
+  <title>H4: FinTech Pro vs Platform  Period Change</title>
+  <rect width="700" height="300" fill="#f9fafb" rx="6"/>
+  <text x="350" y="24" text-anchor="middle" font-size="14" font-weight="bold" fill="#111">H4: FinTech Pro vs Platform  Event Count Change</text>
+  <text x="350" y="42" text-anchor="middle" font-size="11" fill="#666">Prior 30 (Apr 7May 6) vs Last 30 (May 7Jun 6)</text>
+
+  <!-- Zero line at y=160 -->
+  <!-- Plot area: x=120..580, y=70..240 -->
+  <!-- Scale: range from -30% to +15% = 45pp. Height=170px. 1pp = ~3.78px -->
+  <!-- zero line at y = 70 + (15/45)*170 = 70 + 56.7 = 127 -->
+  <line x1="100" y1="127" x2="600" y2="127" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="96" y="131" text-anchor="end" fill="#6b7280" font-size="11">0%</text>
+
+  <!-- Grid -->
+  <line x1="100" y1="70"  x2="600" y2="70"  stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="100" y1="240" x2="600" y2="240" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <!-- Y labels -->
+  <!-- +15% at y=70 -->
+  <text x="96" y="74"  text-anchor="end" fill="#6b7280" font-size="11">+15%</text>
+  <!-- -30% at y=240: y = 127 + (30/45)*170 = 127+113 = 240 -->
+  <text x="96" y="244" text-anchor="end" fill="#6b7280" font-size="11">30%</text>
+
+  <!-- FinTech Pro bar: -29.7% ’ y from 127 to 127+(29.7/45)*170 = 127+112 = 239, bar top at y=239, h=112 -->
+  <rect x="170" y="239" width="120" height="0" fill="none"/>
+  <!-- bar goes DOWN from zero line -->
+  <rect x="170" y="127" width="120" height="112" fill="#ef4444" opacity="0.85" rx="3"/>
+  <text x="230" y="248" text-anchor="middle" fill="white" font-size="14" font-weight="bold">29.7%</text>
+  <text x="230" y="265" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">FinTech Pro</text>
+  <text x="230" y="279" text-anchor="middle" fill="#6b7280" font-size="11">37 ’ 26 events</text>
+
+  <!-- All Others bar: +10.8% ’ bar goes UP from zero line -->
+  <!-- height = (10.8/45)*170 = 40.8 ’ ~41px, bar top at y=127-41=86 -->
+  <rect x="410" y="86" width="120" height="41" fill="#22c55e" opacity="0.85" rx="3"/>
+  <text x="470" y="112" text-anchor="middle" fill="white" font-size="14" font-weight="bold">+10.8%</text>
+  <text x="470" y="265" text-anchor="middle" fill="#22c55e" font-size="12" font-weight="bold">All Others</text>
+  <text x="470" y="279" text-anchor="middle" fill="#6b7280" font-size="11">574 ’ 636 events</text>
+
+  <!-- Divergence callout -->
+  <text x="350" y="170" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="bold">40.5pp divergence</text>
+  <line x1="295" y1="163" x2="230" y2="163" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="405" y1="163" x2="470" y2="163" stroke="#7c3aed" stroke-width="1.5"/>
+</svg>

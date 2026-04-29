@@ -1,0 +1,10 @@
+user_id,full_name,role,account_name,prior_30_events,last_30_events
+77f6c3a9-d3c9-4467-8dfc-72a7accc9f46,Olivia Garcia,analyst,PJohnson Corp,13,7
+06d9a729-06ad-42e2-b1e3-4b7ed126cc0e,Karen Young,admin,PJohnson Corp,6,5
+d3dc835f-b403-41b4-b681-52f9ae9b7256,Eve King,analyst,PJohnson Corp,3,6
+eec7fa66-a497-483b-8613-48d7a58344a9,Ned Quinn,analyst,ZGarcia Corp,5,3
+c9304ed2-31d1-442b-b667-290ae32813df,Quinn Zimmerman,analyst,ZGarcia Corp,5,3
+525ea1dc-55b4-4e33-b017-788d364755df,Walt Lopez,analyst,ZGarcia Corp,3,1
+36a68103-d2f0-45e3-b813-e765fceed874,Walt Smith,admin,ZGarcia Corp,1,0
+c9bfc7cd-fb96-479e-a0dc-86221e8a8e90,Eve Edwards,admin,ZGarcia Corp,1,0
+c84db573-c979-4d14-bf77-69c222e0437f,Walt Harris,viewer,ZGarcia Corp,0,1

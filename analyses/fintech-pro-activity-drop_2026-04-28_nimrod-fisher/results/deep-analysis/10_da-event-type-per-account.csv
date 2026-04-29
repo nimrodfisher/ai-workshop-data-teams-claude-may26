@@ -1,0 +1,11 @@
+account_name,event_type,prior_30,last_30
+PJohnson Corp,logout,8,3
+PJohnson Corp,file_upload,5,5
+PJohnson Corp,api_call,4,3
+PJohnson Corp,login,3,2
+PJohnson Corp,report_view,2,5
+ZGarcia Corp,report_view,6,4
+ZGarcia Corp,api_call,4,0
+ZGarcia Corp,login,2,1
+ZGarcia Corp,logout,2,1
+ZGarcia Corp,file_upload,1,2

@@ -1,0 +1,41 @@
+{
+  "phase": "data-qa",
+  "date": "2026-04-28",
+  "analyst": "Nimrod Fisher",
+  "overall_status": "PASS_WITH_CAVEATS",
+  "events_coverage": {
+    "min_date": "2025-03-07",
+    "max_date": "2025-06-06",
+    "total_rows": 1960,
+    "days_with_events": 92
+  },
+  "segment": {
+    "filter": "industry = 'FinTech' AND plan = 'pro'",
+    "account_count": 2,
+    "accounts": ["PJohnson Corp", "ZGarcia Corp"],
+    "null_industry": 0,
+    "null_plan": 0,
+    "null_user_events": 0
+  },
+  "plan_casing": {
+    "issue": "plans stored lowercase (pro/enterprise/free)",
+    "severity": "MEDIUM",
+    "status": "MITIGATED"
+  },
+  "small_n": {
+    "issue": "Only 2 FinTech Pro accounts — descriptive analysis only",
+    "severity": "MEDIUM",
+    "status": "NOTED"
+  },
+  "analysis_windows": {
+    "prior_30": {"start": "2025-04-07", "end_exclusive": "2025-05-07", "events": 37},
+    "last_30": {"start": "2025-05-07", "end_exclusive": "2025-06-07", "events": 26},
+    "pct_change": -29.7
+  },
+  "per_account": [
+    {"name": "PJohnson Corp", "prior_30": 22, "last_30": 18, "pct_change": -18.2, "prior_users": 3, "last_users": 3},
+    {"name": "ZGarcia Corp",  "prior_30": 15, "last_30":  8, "pct_change": -46.7, "prior_users": 5, "last_users": 4}
+  ],
+  "h0_check": "Both analysis windows fall within event coverage. Zero-event tail (Jun 7-17) does not contaminate either window. Drop is behavioral.",
+  "proceed_to_eda": true
+}

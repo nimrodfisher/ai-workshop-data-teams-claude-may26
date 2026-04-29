@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 340" preserveAspectRatio="xMidYMid meet" font-family="sans-serif" font-size="12">
+  <title>Event-Type Breakdown: Prior 30 vs Last 30</title>
+  <rect width="700" height="340" fill="#f9fafb" rx="6"/>
+  <text x="350" y="24" text-anchor="middle" font-size="14" font-weight="bold" fill="#111">Event-Type Breakdown: Prior 30 vs Last 30</text>
+  <text x="350" y="42" text-anchor="middle" font-size="11" fill="#666">FinTech Pro accounts · Red = decline, Green = growth</text>
+
+  <!-- Plot area: x=80..640, y=60..270, h=210 -->
+  <!-- 5 event types, each group 108px wide, bar 40px each, gap 28px between groups -->
+  <!-- Y axis: max = 10, scale = 21px/unit -->
+  <!-- Grid lines -->
+  <line x1="80" y1="270" x2="640" y2="270" stroke="#ccc" stroke-width="1"/>
+  <line x1="80" y1="60" x2="80" y2="270" stroke="#ccc" stroke-width="1"/>
+  <line x1="80" y1="228" x2="640" y2="228" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="80" y1="186" x2="640" y2="186" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="80" y1="144" x2="640" y2="144" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="80" y1="102" x2="640" y2="102" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="80" y1="60"  x2="640" y2="60"  stroke="#e5e7eb" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Y labels: 0,2,4,6,8,10 at 21px each: 270, 228, 186, 144, 102, 60 -->
+  <text x="72" y="274" text-anchor="end" fill="#555" font-size="11">0</text>
+  <text x="72" y="232" text-anchor="end" fill="#555" font-size="11">2</text>
+  <text x="72" y="190" text-anchor="end" fill="#555" font-size="11">4</text>
+  <text x="72" y="148" text-anchor="end" fill="#555" font-size="11">6</text>
+  <text x="72" y="106" text-anchor="end" fill="#555" font-size="11">8</text>
+  <text x="72" y="64"  text-anchor="end" fill="#555" font-size="11">10</text>
+  <text x="16" y="175" text-anchor="middle" fill="#555" font-size="11" transform="rotate(-90,16,175)">Event count</text>
+
+  <!-- Group positions (center of label): 5 groups across 80..640 = 560px, each 112px -->
+  <!-- Centers: 80+56=136, 248, 360, 472, 584 -->
+  <!-- Prior bar: center-24 to center-4 (20px wide), Last bar: center+4 to center+24 -->
+
+  <!-- logout: prior=10, last=4 -->
+  <!-- prior bar: y=270-10*21=60, h=210 -->
+  <rect x="116" y="60"  width="24" height="210" fill="#6366f1" opacity="0.85" rx="2"/>
+  <text x="128" y="56"  text-anchor="middle" fill="#6366f1" font-size="11" font-weight="bold">10</text>
+  <!-- last bar: y=270-4*21=186, h=84 -->
+  <rect x="144" y="186" width="24" height="84"  fill="#ef4444" opacity="0.85" rx="2"/>
+  <text x="156" y="182" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">4</text>
+  <text x="144" y="290" text-anchor="middle" fill="#555" font-size="11">logout</text>
+  <text x="144" y="304" text-anchor="middle" fill="#ef4444" font-size="10">60%</text>
+
+  <!-- api_call: prior=8, last=3 -->
+  <rect x="228" y="102" width="24" height="168" fill="#6366f1" opacity="0.85" rx="2"/>
+  <text x="240" y="98"  text-anchor="middle" fill="#6366f1" font-size="11" font-weight="bold">8</text>
+  <rect x="256" y="207" width="24" height="63"  fill="#ef4444" opacity="0.85" rx="2"/>
+  <text x="268" y="203" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">3</text>
+  <text x="256" y="290" text-anchor="middle" fill="#555" font-size="11">api_call</text>
+  <text x="256" y="304" text-anchor="middle" fill="#ef4444" font-size="10">63%</text>
+
+  <!-- report_view: prior=8, last=9 -->
+  <rect x="340" y="102" width="24" height="168" fill="#6366f1" opacity="0.85" rx="2"/>
+  <text x="352" y="98"  text-anchor="middle" fill="#6366f1" font-size="11" font-weight="bold">8</text>
+  <rect x="368" y="81"  width="24" height="189" fill="#22c55e" opacity="0.85" rx="2"/>
+  <text x="380" y="77"  text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">9</text>
+  <text x="368" y="290" text-anchor="middle" fill="#555" font-size="11">report_view</text>
+  <text x="368" y="304" text-anchor="middle" fill="#22c55e" font-size="10">+13%</text>
+
+  <!-- file_upload: prior=6, last=7 -->
+  <rect x="452" y="144" width="24" height="126" fill="#6366f1" opacity="0.85" rx="2"/>
+  <text x="464" y="140" text-anchor="middle" fill="#6366f1" font-size="11" font-weight="bold">6</text>
+  <rect x="480" y="123" width="24" height="147" fill="#22c55e" opacity="0.85" rx="2"/>
+  <text x="492" y="119" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">7</text>
+  <text x="480" y="290" text-anchor="middle" fill="#555" font-size="11">file_upload</text>
+  <text x="480" y="304" text-anchor="middle" fill="#22c55e" font-size="10">+17%</text>
+
+  <!-- login: prior=5, last=3 -->
+  <rect x="564" y="165" width="24" height="105" fill="#6366f1" opacity="0.85" rx="2"/>
+  <text x="576" y="161" text-anchor="middle" fill="#6366f1" font-size="11" font-weight="bold">5</text>
+  <rect x="592" y="207" width="24" height="63"  fill="#ef4444" opacity="0.85" rx="2"/>
+  <text x="604" y="203" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">3</text>
+  <text x="592" y="290" text-anchor="middle" fill="#555" font-size="11">login</text>
+  <text x="592" y="304" text-anchor="middle" fill="#ef4444" font-size="10">40%</text>
+
+  <!-- Legend -->
+  <rect x="80"  y="318" width="14" height="10" fill="#6366f1" opacity="0.85" rx="2"/>
+  <text x="98"  y="328" fill="#555" font-size="11">Prior 30 days</text>
+  <rect x="200" y="318" width="14" height="10" fill="#ef4444" opacity="0.85" rx="2"/>
+  <text x="218" y="328" fill="#555" font-size="11">Last 30 days (declined)</text>
+  <rect x="390" y="318" width="14" height="10" fill="#22c55e" opacity="0.85" rx="2"/>
+  <text x="408" y="328" fill="#555" font-size="11">Last 30 days (grew)</text>
+</svg>

@@ -1,0 +1,6 @@
+event_type,prior_30,last_30,pct_change
+logout,10,4,-60.0
+api_call,8,3,-62.5
+report_view,8,9,12.5
+file_upload,6,7,16.7
+login,5,3,-40.0
