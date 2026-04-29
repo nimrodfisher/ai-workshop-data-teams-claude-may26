@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="700" height="360" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" preserveAspectRatio="xMidYMid meet" font-family="sans-serif" font-size="12">
+<svg width="700" height="360" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 360" preserveAspectRatio="xMidYMid meet">
+  <style>text,tspan{font-family:sans-serif;font-size:12px}</style>
   <title>H3: Event-Type Split per Account</title>
   <rect width="700" height="360" fill="#f9fafb" rx="6"/>
   <text x="350" y="24" text-anchor="middle" font-size="14" font-weight="bold" fill="#111">H3: Event-Type Split per Account</text>
@@ -11,7 +11,7 @@
 
   <!-- PJohnson header -->
   <rect x="30" y="55" width="310" height="20" fill="#ede9fe" rx="3"/>
-  <text x="185" y="69" text-anchor="middle" font-size="12" font-weight="bold" fill="#4f46e5">PJohnson Corp (22 &#x2192; 18, 18%)</text>
+  <text x="185" y="69" text-anchor="middle" font-size="12" font-weight="bold" fill="#4f46e5">PJohnson Corp (22 &#x2192; 18, -18%)</text>
 
   <!-- Column headers -->
   <text x="200" y="90" text-anchor="middle" font-size="11" font-weight="bold" fill="#374151">Prior</text>
@@ -24,7 +24,7 @@
   <text x="40"  y="112" fill="#374151" font-size="12">logout</text>
   <text x="200" y="112" text-anchor="middle" fill="#374151" font-weight="bold" font-size="12">8</text>
   <text x="270" y="112" text-anchor="middle" fill="#ef4444" font-weight="bold" font-size="12">3</text>
-  <text x="320" y="112" text-anchor="middle" fill="#ef4444" font-size="11">63%</text>
+  <text x="320" y="112" text-anchor="middle" fill="#ef4444" font-size="11">-63%</text>
 
   <rect x="30" y="120" width="310" height="24" fill="#f9fafb"/>
   <text x="40"  y="136" fill="#374151" font-size="12">file_upload</text>
@@ -36,13 +36,13 @@
   <text x="40"  y="160" fill="#374151" font-size="12">api_call</text>
   <text x="200" y="160" text-anchor="middle" fill="#374151" font-weight="bold" font-size="12">4</text>
   <text x="270" y="160" text-anchor="middle" fill="#f59e0b" font-weight="bold" font-size="12">3</text>
-  <text x="320" y="160" text-anchor="middle" fill="#f59e0b" font-size="11">25%</text>
+  <text x="320" y="160" text-anchor="middle" fill="#f59e0b" font-size="11">-25%</text>
 
   <rect x="30" y="168" width="310" height="24" fill="#f9fafb"/>
   <text x="40"  y="184" fill="#374151" font-size="12">login</text>
   <text x="200" y="184" text-anchor="middle" fill="#374151" font-weight="bold" font-size="12">3</text>
   <text x="270" y="184" text-anchor="middle" fill="#f59e0b" font-weight="bold" font-size="12">2</text>
-  <text x="320" y="184" text-anchor="middle" fill="#f59e0b" font-size="11">33%</text>
+  <text x="320" y="184" text-anchor="middle" fill="#f59e0b" font-size="11">-33%</text>
 
   <rect x="30" y="192" width="310" height="24" fill="white"/>
   <text x="40"  y="208" fill="#374151" font-size="12">report_view</text>
@@ -53,11 +53,11 @@
   <!-- Insight box PJohnson -->
   <rect x="30" y="220" width="310" height="36" fill="#fef3c7" rx="3"/>
   <text x="185" y="234" text-anchor="middle" fill="#92400e" font-size="11" font-weight="bold">Pattern: logout/login sessions dropped;</text>
-  <text x="185" y="248" text-anchor="middle" fill="#92400e" font-size="11">report_view surged (+150%)  fewer but deeper sessions</text>
+  <text x="185" y="248" text-anchor="middle" fill="#92400e" font-size="11">report_view surged (+150%) &#x2014; fewer but deeper sessions</text>
 
   <!-- ZGarcia header -->
   <rect x="360" y="55" width="310" height="20" fill="#dbeafe" rx="3"/>
-  <text x="515" y="69" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d4ed8">ZGarcia Corp (15 &#x2192; 8, 47%)</text>
+  <text x="515" y="69" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d4ed8">ZGarcia Corp (15 &#x2192; 8, -47%)</text>
 
   <text x="530" y="90" text-anchor="middle" font-size="11" font-weight="bold" fill="#374151">Prior</text>
   <text x="600" y="90" text-anchor="middle" font-size="11" font-weight="bold" fill="#374151">Last</text>
@@ -68,26 +68,26 @@
   <text x="370" y="112" fill="#374151" font-size="12">report_view</text>
   <text x="530" y="112" text-anchor="middle" fill="#374151" font-weight="bold" font-size="12">6</text>
   <text x="600" y="112" text-anchor="middle" fill="#f59e0b" font-weight="bold" font-size="12">4</text>
-  <text x="650" y="112" text-anchor="middle" fill="#f59e0b" font-size="11">33%</text>
+  <text x="650" y="112" text-anchor="middle" fill="#f59e0b" font-size="11">-33%</text>
 
   <!-- api_call: 4 -> 0 HIGHLIGHT -->
   <rect x="360" y="120" width="310" height="24" fill="#fee2e2"/>
   <text x="370" y="136" fill="#374151" font-size="12">api_call</text>
   <text x="530" y="136" text-anchor="middle" fill="#374151" font-weight="bold" font-size="12">4</text>
   <text x="600" y="136" text-anchor="middle" fill="#ef4444" font-weight="bold" font-size="13">0</text>
-  <text x="650" y="136" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">100%</text>
+  <text x="650" y="136" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">-100%</text>
 
   <rect x="360" y="144" width="310" height="24" fill="white"/>
   <text x="370" y="160" fill="#374151" font-size="12">login</text>
   <text x="530" y="160" text-anchor="middle" fill="#374151" font-weight="bold" font-size="12">2</text>
   <text x="600" y="160" text-anchor="middle" fill="#ef4444" font-weight="bold" font-size="12">1</text>
-  <text x="650" y="160" text-anchor="middle" fill="#ef4444" font-size="11">50%</text>
+  <text x="650" y="160" text-anchor="middle" fill="#ef4444" font-size="11">-50%</text>
 
   <rect x="360" y="168" width="310" height="24" fill="#f9fafb"/>
   <text x="370" y="184" fill="#374151" font-size="12">logout</text>
   <text x="530" y="184" text-anchor="middle" fill="#374151" font-weight="bold" font-size="12">2</text>
   <text x="600" y="184" text-anchor="middle" fill="#ef4444" font-weight="bold" font-size="12">1</text>
-  <text x="650" y="184" text-anchor="middle" fill="#ef4444" font-size="11">50%</text>
+  <text x="650" y="184" text-anchor="middle" fill="#ef4444" font-size="11">-50%</text>
 
   <rect x="360" y="192" width="310" height="24" fill="white"/>
   <text x="370" y="208" fill="#374151" font-size="12">file_upload</text>
