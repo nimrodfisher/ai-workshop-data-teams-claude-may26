@@ -52,9 +52,9 @@ Run these in order for every analysis. Each has a `SKILL.md` under `skills/`:
 6. **validation** — Stress-test conclusions; check robustness and alternatives.
 7. **data-storytelling** — Build the HTML report and PDF summary.
 
-**Optional:** **data-visualizer** (`.cursor/skills/data-visualizer/`) — Deeper patterns for interactive dashboards, chart libraries (Recharts, D3, Chart.js), accessibility, and export. Use when you want to level up visuals beyond the standard deliverables; it does not replace the numbered pipeline above.
+**Optional:** **data-visualizer** (`.claude/skills/data-visualizer/`) — Deeper patterns for interactive dashboards, chart libraries (Recharts, D3, Chart.js), accessibility, and export. Use when you want to level up visuals beyond the standard deliverables; it does not replace the numbered pipeline above.
 
-Between each phase, STOP at the checkpoint. See `skills/_shared/references/checkpoint-protocol.md`.
+Between each phase, STOP at the checkpoint. See `.claude/skills/_shared/references/checkpoint-protocol.md`.
 
 ## Before You Start Any Analysis
 
@@ -64,7 +64,7 @@ Always load the semantic model from GitHub before writing a single query.
 
 **Load schema:**
 ```
-Tool: user-github-get_file_contents
+Tool: mcp__github__get_file_contents
 Parameters:
   owner: "nimrodfisher"
   repo: "workshop-queries-repo"
@@ -73,7 +73,7 @@ Parameters:
 
 **Load metrics definitions:**
 ```
-Tool: user-github-get_file_contents
+Tool: mcp__github__get_file_contents
 Parameters:
   owner: "nimrodfisher"
   repo: "workshop-queries-repo"
@@ -91,7 +91,7 @@ If either file fails to load, STOP and tell the user. Do not guess schema.
 
 ### 2. Read the learning folder
 
-Before starting, read `.cursor/learning/`:
+Before starting, read `.claude/learning/`:
 - `analyses.md` — past analyses; check if the question has been answered before
 - `corrections.md` — behavioral feedback from prior sessions; update this markdown file according to users' feedback and apply it if needed
 - `known_issues.md` — known data issues; factor into QA and caveats
@@ -124,7 +124,7 @@ results/
 
 Naming rule: query `NN_<phase>-<topic>.sql` produces `NN_<phase>-<topic>.csv` (and, if charted, `NN_<topic>.svg`) in the matching `results/<phase>/` folder.
 
-The debug `notebook.ipynb` walks the full flow end-to-end (plan → QA → EDA → deep analysis → synthesis → validation → conclusions), loads the saved CSVs with pandas, and re-renders charts from that data so an analyst can open and run it standalone. Spec and generation snippet: `.cursor/skills/_shared/references/debug-notebook.md`.
+The debug `notebook.ipynb` walks the full flow end-to-end (plan → QA → EDA → deep analysis → synthesis → validation → conclusions), loads the saved CSVs with pandas, and re-renders charts from that data so an analyst can open and run it standalone. Spec and generation snippet: `.claude/skills/_shared/references/debug-notebook.md`.
 
 ## Every Plan Needs a Visual Diagram
 
@@ -141,11 +141,11 @@ Use **Mermaid** (renders natively in GitHub and most markdown viewers). The diag
 ## After the Analysis
 
 Update the learning folder:
-- Append a summary entry + path to `.cursor/learning/analyses.md`
+- Append a summary entry + path to `.claude/learning/analyses.md`
 - If the user corrected your behavior → append to `corrections.md`
 - If the user flagged a data issue → append to `known_issues.md`
 
-See `skills/_shared/references/learning-system.md` for entry formats.
+See `.claude/skills/_shared/references/learning-system.md` for entry formats.
 
 ## Hard Rules
 

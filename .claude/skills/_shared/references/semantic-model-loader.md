@@ -13,7 +13,7 @@ The semantic model is the single source of truth for table schemas, metric defin
 **1. Schema** — table definitions, column meanings, relationships.
 
 ```
-Tool: user-github-get_file_contents
+Tool: mcp__github__get_file_contents
 Parameters:
   owner: "nimrodfisher"
   repo: "workshop-queries-repo"
@@ -23,7 +23,7 @@ Parameters:
 **2. Metrics** — business metric formulas and definitions.
 
 ```
-Tool: user-github-get_file_contents
+Tool: mcp__github__get_file_contents
 Parameters:
   owner: "nimrodfisher"
   repo: "workshop-queries-repo"

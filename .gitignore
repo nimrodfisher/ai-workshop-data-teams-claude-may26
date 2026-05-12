@@ -22,6 +22,7 @@ Thumbs.db
 *.pem
 *.key
 secrets/
+.claude/settings.local.json
 
 # Large / ephemeral
 *.parquet
