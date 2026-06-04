@@ -25,6 +25,14 @@ Running index of every completed analysis in this repo. Checked at the start of 
 
 <!-- New entries added below this line, most recent first -->
 
+## 2026-06-03 — PRO Plan Churn Drivers
+- **Path:** `analyses/pro-plan-churn-drivers_2026-06-03_nimrod-fisher/`
+- **Question:** What are the main churn drivers of PRO plan accounts at Pulseboard?
+- **Key finding:** Two confirmed drivers — price tier ($199/mo: 31.3% cancel rate vs $29/mo: 0%) and short tenure (median 75d canceled vs 505d active; 57% of cancels in first 90 days). Engagement does NOT predict churn — canceled accounts were 30% more active than retained. Only 1 of 7 canceled subscriptions = true platform exit; remaining 4 accounts still active (subscription rationalization, not churn). The at-risk profile is precise: $199/mo accounts in first 90 days.
+- **Confidence:** High for tenure and price tier patterns (complete population); Low for industry and support drivers (n too small per segment).
+- **Tags:** #pro-plan #churn-drivers #tenure #price-tier #subscription-rationalization #value-perception #onboarding #engagement-paradox
+- **Related:** Builds on `fintech-pro-activity-drop_2026-04-28_nimrod-fisher` (account-level) and `complainer-user-profile_2026-04-20_liati` (support ticket non-signal confirmed here too).
+
 ## 2026-04-28 — FinTech Pro Activity Drop
 - **Path:** `analyses/fintech-pro-activity-drop_2026-04-28_nimrod-fisher/`
 - **Question:** Why did paying FinTech Pro accounts in financial services show a ~30% drop in product activity in the most recent 30-day period vs. the prior 30 days?

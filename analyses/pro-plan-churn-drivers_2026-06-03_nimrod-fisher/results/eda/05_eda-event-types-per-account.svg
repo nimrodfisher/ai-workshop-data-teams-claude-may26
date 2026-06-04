@@ -1,0 +1,106 @@
+<svg viewBox="0 0 660 420" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="660" height="420">
+  <rect width="660" height="420" fill="#FAFAFA"/>
+  <text x="330" y="38" font-family="Arial,sans-serif" font-size="14" font-weight="bold" fill="#222" text-anchor="middle">Event Types: Avg per Account</text>
+  <text x="330" y="58" font-family="Arial,sans-serif" font-size="11" fill="#666" text-anchor="middle">Has-canceled (n=3 accts) vs retained (n=9 accts) · Mar-Jun 2025</text>
+
+  <!-- Y axis -->
+  <line x1="90" y1="80" x2="90" y2="320" stroke="#bbb" stroke-width="1"/>
+  <!-- X axis -->
+  <line x1="90" y1="320" x2="580" y2="320" stroke="#bbb" stroke-width="1"/>
+
+  <!-- Y ticks: 0-14, factor=240/14=17.14px -->
+  <!-- y = 320 - value*17.14 -->
+  <line x1="84" y1="320" x2="90" y2="320" stroke="#999" stroke-width="1"/>
+  <text x="80" y="324" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">0</text>
+
+  <line x1="84" y1="286" x2="90" y2="286" stroke="#999" stroke-width="1"/>
+  <line x1="90" y1="286" x2="580" y2="286" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="80" y="290" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">2</text>
+
+  <line x1="84" y1="251" x2="90" y2="251" stroke="#999" stroke-width="1"/>
+  <line x1="90" y1="251" x2="580" y2="251" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="80" y="255" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">4</text>
+
+  <line x1="84" y1="217" x2="90" y2="217" stroke="#999" stroke-width="1"/>
+  <line x1="90" y1="217" x2="580" y2="217" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="80" y="221" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">6</text>
+
+  <line x1="84" y1="183" x2="90" y2="183" stroke="#999" stroke-width="1"/>
+  <line x1="90" y1="183" x2="580" y2="183" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="80" y="187" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">8</text>
+
+  <line x1="84" y1="149" x2="90" y2="149" stroke="#999" stroke-width="1"/>
+  <line x1="90" y1="149" x2="580" y2="149" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="80" y="153" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">10</text>
+
+  <line x1="84" y1="114" x2="90" y2="114" stroke="#999" stroke-width="1"/>
+  <line x1="90" y1="114" x2="580" y2="114" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="80" y="118" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">12</text>
+
+  <text x="30" y="200" font-family="Arial,sans-serif" font-size="11" fill="#444" text-anchor="middle" transform="rotate(-90,30,200)">Avg Events / Account</text>
+
+  <!-- 5 event types, 2 bars each -->
+  <!-- Per-account avgs: -->
+  <!-- Churned (3 accts): file_upload=11.7, report_view=11.3, logout=11.0, login=9.0, api_call=8.0 -->
+  <!-- Retained (9 accts): file_upload=9.8, report_view=8.6, logout=7.6, api_call=7.0, login=6.4 -->
+  <!-- Y = 320 - value*17.14 -->
+  <!-- barW=40, innerGap=6, groupGap=28 -->
+  <!-- Group starts (left bar x): 102, 218, 334, 450, 474 -->
+
+  <!-- Wait, let me recalculate: 5 groups * (2*40+6) + 4*28 = 5*86+112 = 430+112=542 in plot width 490 -->
+  <!-- That's too wide. Let me use barW=34, innerGap=5, groupGap=22 -->
+  <!-- Total: 5*(2*34+5)+4*22 = 5*73+88=365+88=453 in 490. offset=(490-453)/2=18 -->
+  <!-- Group lefts: 90+18=108, 108+95=203, 203+95=298, 298+95=393, 393+95=488 -->
+  <!-- Last right: 488+2*34+5=561 but plot right=580. 561<580. OK -->
+
+  <!-- Factor = 240/14 = 17.143 -->
+  <!-- file_upload: Churned 11.7 → h=200, y=120; Retained 9.8 → h=168, y=152 -->
+  <!-- report_view: Churned 11.3 → h=194, y=126; Retained 8.6 → h=147, y=173 -->
+  <!-- logout: Churned 11.0 → h=189, y=131; Retained 7.6 → h=130, y=190 -->
+  <!-- login: Churned 9.0 → h=154, y=166; Retained 6.4 → h=110, y=210 -->
+  <!-- api_call: Churned 8.0 → h=137, y=183; Retained 7.0 → h=120, y=200 -->
+
+  <!-- file_upload group -->
+  <rect x="108" y="120" width="34" height="200" fill="#E05A5A" rx="2"/>
+  <text x="125" y="118" font-family="Arial,sans-serif" font-size="9" fill="#C0392B" text-anchor="middle">11.7</text>
+  <rect x="147" y="152" width="34" height="168" fill="#4A9B8F" rx="2"/>
+  <text x="164" y="150" font-family="Arial,sans-serif" font-size="9" fill="#1A7A6E" text-anchor="middle">9.8</text>
+  <text x="144" y="345" font-family="Arial,sans-serif" font-size="9" fill="#555" text-anchor="middle">file_upload</text>
+
+  <!-- report_view group -->
+  <rect x="203" y="126" width="34" height="194" fill="#E05A5A" rx="2"/>
+  <text x="220" y="124" font-family="Arial,sans-serif" font-size="9" fill="#C0392B" text-anchor="middle">11.3</text>
+  <rect x="242" y="173" width="34" height="147" fill="#4A9B8F" rx="2"/>
+  <text x="259" y="171" font-family="Arial,sans-serif" font-size="9" fill="#1A7A6E" text-anchor="middle">8.6</text>
+  <text x="239" y="345" font-family="Arial,sans-serif" font-size="9" fill="#555" text-anchor="middle">report_view</text>
+
+  <!-- logout group -->
+  <rect x="298" y="131" width="34" height="189" fill="#E05A5A" rx="2"/>
+  <text x="315" y="129" font-family="Arial,sans-serif" font-size="9" fill="#C0392B" text-anchor="middle">11.0</text>
+  <rect x="337" y="190" width="34" height="130" fill="#4A9B8F" rx="2"/>
+  <text x="354" y="188" font-family="Arial,sans-serif" font-size="9" fill="#1A7A6E" text-anchor="middle">7.6</text>
+  <text x="334" y="345" font-family="Arial,sans-serif" font-size="9" fill="#555" text-anchor="middle">logout</text>
+
+  <!-- login group -->
+  <rect x="393" y="166" width="34" height="154" fill="#E05A5A" rx="2"/>
+  <text x="410" y="164" font-family="Arial,sans-serif" font-size="9" fill="#C0392B" text-anchor="middle">9.0</text>
+  <rect x="432" y="210" width="34" height="110" fill="#4A9B8F" rx="2"/>
+  <text x="449" y="208" font-family="Arial,sans-serif" font-size="9" fill="#1A7A6E" text-anchor="middle">6.4</text>
+  <text x="429" y="345" font-family="Arial,sans-serif" font-size="9" fill="#555" text-anchor="middle">login</text>
+
+  <!-- api_call group -->
+  <rect x="488" y="183" width="34" height="137" fill="#E05A5A" rx="2"/>
+  <text x="505" y="181" font-family="Arial,sans-serif" font-size="9" fill="#C0392B" text-anchor="middle">8.0</text>
+  <rect x="527" y="200" width="34" height="120" fill="#4A9B8F" rx="2"/>
+  <text x="544" y="198" font-family="Arial,sans-serif" font-size="9" fill="#1A7A6E" text-anchor="middle">7.0</text>
+  <text x="524" y="345" font-family="Arial,sans-serif" font-size="9" fill="#555" text-anchor="middle">api_call</text>
+
+  <!-- Note: churned accounts consistently higher across all types -->
+  <text x="330" y="370" font-family="Arial,sans-serif" font-size="10" fill="#C0392B" text-anchor="middle" font-style="italic">Accounts with canceled subs are MORE active than retained — H1 not supported</text>
+
+  <!-- Legend -->
+  <rect x="190" y="388" width="11" height="11" fill="#E05A5A" rx="2"/>
+  <text x="205" y="398" font-family="Arial,sans-serif" font-size="10" fill="#444">Has canceled sub (n=3)</text>
+  <rect x="370" y="388" width="11" height="11" fill="#4A9B8F" rx="2"/>
+  <text x="385" y="398" font-family="Arial,sans-serif" font-size="10" fill="#444">Active only (n=9)</text>
+</svg>

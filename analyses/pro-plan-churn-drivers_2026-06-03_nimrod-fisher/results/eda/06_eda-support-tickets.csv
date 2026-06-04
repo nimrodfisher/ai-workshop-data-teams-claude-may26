@@ -1,0 +1,7 @@
+churn_group,category,ticket_count,accounts_with_ticket_type
+churned,,(no tickets),1
+retained,feature_request,9,6
+retained,bug,7,6
+retained,usage_question,5,4
+retained,billing,1,1
+retained,(no tickets),2,2

@@ -1,0 +1,6 @@
+tenure_bucket,subscription_count,canceled,avg_price
+0-1 month,3,3,199
+1-3 months,1,1,199
+3-6 months,2,2,139
+6+ months,1,1,79
+still active,25,0,114

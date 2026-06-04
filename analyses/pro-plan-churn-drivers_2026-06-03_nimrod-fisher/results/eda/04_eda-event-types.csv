@@ -1,0 +1,11 @@
+churn_group,event_type,event_count,accounts_with_event
+churned,file_upload,35,3
+churned,report_view,34,3
+churned,logout,33,3
+churned,login,27,3
+churned,api_call,24,3
+retained,file_upload,88,9
+retained,report_view,77,9
+retained,logout,68,9
+retained,api_call,63,9
+retained,login,58,9

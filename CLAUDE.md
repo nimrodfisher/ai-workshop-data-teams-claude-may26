@@ -78,12 +78,14 @@ All SVG charts must include:
 - Titles ≤ 52 characters; use `<tspan>` to split if longer
 - No illegal XML control characters; no XML declaration (`<?xml ...?>`) inside inline SVG
 
-### Analysis Plan (`plan.md`)
+### Analysis Plan (`plan.md` + plan.html)
 
 Every `plan.md` must include:
 - A Mermaid flowchart showing question → hypotheses → phases → deliverables
 - Hypotheses with testable success criteria
 - A checkpoint log updated after each phase
+
+Every `plan.html` must show the plan by sections in a clear flow, using the front end design skill. 
 
 ### Known Data Issues to Always Apply
 

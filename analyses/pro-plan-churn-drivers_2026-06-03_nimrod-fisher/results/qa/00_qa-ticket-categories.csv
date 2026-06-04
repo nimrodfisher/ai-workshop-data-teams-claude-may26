@@ -1,0 +1,7 @@
+category,status,ticket_count
+feature_request,open,6
+usage_question,closed,5
+bug,closed,4
+bug,open,4
+feature_request,closed,4
+billing,open,1

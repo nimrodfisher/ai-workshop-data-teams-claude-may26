@@ -1,0 +1,3 @@
+churn_group,accounts,total_invoices,avg_invoice_amount,min_invoice_amount,max_invoice_amount,avg_monthly_price
+churned,1,4,99.00,99.00,99.00,199.00
+retained,12,79,90.77,49.00,99.00,133.27

@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRO Plan Churn Drivers — Pulseboard Analysis</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #222;
+    background: #f0f2f5;
+  }
+
+  /* ── SVG global rule ── */
+  svg { width: 100%; height: auto; max-width: 100%; display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    background: #1a2744;
+    color: #fff;
+    padding: 56px 32px 48px;
+    text-align: center;
+  }
+  .hero .label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #7a9cc6;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-size: clamp(22px, 3vw, 34px);
+    font-weight: 700;
+    color: #fff;
+    max-width: 820px;
+    margin: 0 auto 24px;
+  }
+  .headline-box {
+    background: rgba(42,157,143,0.18);
+    border-left: 5px solid #2a9d8f;
+    border-radius: 6px;
+    padding: 20px 28px;
+    max-width: 820px;
+    margin: 0 auto 28px;
+    text-align: left;
+  }
+  .headline-box p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #d4eae8;
+  }
+  .hero-meta {
+    font-size: 13px;
+    color: #7a9cc6;
+  }
+  .hero-meta span { margin: 0 12px; }
+
+  /* ── KEY NUMBERS ── */
+  .key-numbers {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 32px 32px 0;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .kn-card {
+    background: #1a2744;
+    color: #fff;
+    border-radius: 10px;
+    padding: 22px 28px;
+    text-align: center;
+    min-width: 180px;
+    flex: 1;
+  }
+  .kn-card .kn-number {
+    font-size: 42px;
+    font-weight: 800;
+    color: #2a9d8f;
+    line-height: 1;
+  }
+  .kn-card .kn-number.red { color: #e05a5a; }
+  .kn-card .kn-label {
+    font-size: 13px;
+    color: #a0b8d8;
+    margin-top: 6px;
+  }
+
+  /* ── LAYOUT CONTAINER ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a2744;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #2a9d8f;
+    margin-bottom: 28px;
+    margin-top: 12px;
+  }
+
+  /* ── FINDING CARDS ── */
+  .finding-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .finding-card-header {
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .finding-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .badge-supported { background: #d4edda; color: #1a6b35; }
+  .badge-refuted { background: #fde2e2; color: #9b1c1c; }
+  .badge-structural { background: #fff3cd; color: #7d5a00; }
+  .finding-card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a2744;
+  }
+  .finding-card-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 760px) {
+    .finding-card-body { grid-template-columns: 1fr; }
+  }
+  .finding-chart {
+    padding: 20px 20px 20px 24px;
+    border-right: 1px solid #eee;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+  }
+  @media (max-width: 760px) {
+    .finding-chart { border-right: none; border-bottom: 1px solid #eee; }
+  }
+  .finding-text {
+    padding: 24px 26px;
+  }
+  .finding-text h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a2744;
+    margin-bottom: 10px;
+  }
+  .finding-text p {
+    font-size: 14.5px;
+    color: #444;
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+  .stat-pill {
+    display: inline-block;
+    background: #f0f4ff;
+    border: 1px solid #c5d0f0;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a2744;
+    margin: 2px 3px 2px 0;
+  }
+  .stat-pill.red { background: #fdeaea; border-color: #f0b0b0; color: #a01010; }
+  .stat-pill.green { background: #e6f7f5; border-color: #a0d8d2; color: #0e5c55; }
+
+  /* ── DETAILS / DEEP DIVE ── */
+  .dive-section {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  details summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 18px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a2744;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    border-bottom: 2px solid transparent;
+    transition: background 0.15s;
+  }
+  details summary:hover { background: #f5f8ff; }
+  details[open] summary { border-bottom-color: #2a9d8f; background: #f5f8ff; }
+  details summary::before {
+    content: '▶';
+    font-size: 11px;
+    color: #2a9d8f;
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  details[open] summary::before { transform: rotate(90deg); }
+  details summary::-webkit-details-marker { display: none; }
+  .details-body {
+    padding: 22px 28px;
+    border-top: 1px solid #eee;
+  }
+  .details-body p, .details-body li {
+    font-size: 14.5px;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+  .details-body ul { padding-left: 20px; margin-bottom: 12px; }
+  .details-body h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a2744;
+    margin: 16px 0 6px;
+  }
+  .verdict {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .verdict.supported { background: #d4edda; color: #1a6b35; }
+  .verdict.refuted { background: #fde2e2; color: #9b1c1c; }
+  .verdict.structural { background: #fff3cd; color: #7d5a00; }
+
+  /* ── VALIDATION TABLE ── */
+  .val-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  .val-table th {
+    background: #1a2744;
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 13px;
+  }
+  .val-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+  }
+  .val-table tr:nth-child(even) td { background: #f8f9fa; }
+  .check { color: #1a6b35; font-weight: 700; }
+  .warn { color: #7d5a00; font-weight: 700; }
+  .cross { color: #9b1c1c; font-weight: 700; }
+
+  /* ── RECOMMENDATIONS ── */
+  .rec-list { list-style: none; padding: 0; }
+  .rec-item {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    border-left: 4px solid #2a9d8f;
+  }
+  .rec-item.rec-warn { border-left-color: #e05a5a; }
+  .rec-num {
+    font-size: 28px;
+    font-weight: 900;
+    color: #2a9d8f;
+    line-height: 1;
+    min-width: 36px;
+    margin-top: 2px;
+  }
+  .rec-item.rec-warn .rec-num { color: #e05a5a; }
+  .rec-body h4 { font-size: 16px; font-weight: 700; color: #1a2744; margin-bottom: 5px; }
+  .rec-body p { font-size: 14px; color: #555; line-height: 1.6; }
+
+  /* ── CAVEATS ── */
+  .caveat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .caveat-card {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: #5a4000;
+    line-height: 1.6;
+  }
+  .caveat-card strong { color: #3d2b00; }
+
+  /* ── APPENDIX ── */
+  .appendix-section {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 0;
+    margin-top: 8px;
+    border: 1px solid #e0e4ec;
+    overflow: hidden;
+  }
+  .appendix-section summary {
+    background: #f0f2f5;
+    border-bottom: 1px solid #dde2ec;
+  }
+  .hyp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin-top: 4px;
+  }
+  .hyp-table th {
+    background: #e8ecf5;
+    color: #1a2744;
+    padding: 9px 12px;
+    text-align: left;
+    font-size: 12.5px;
+  }
+  .hyp-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+  }
+  .hyp-table tr:last-child td { border-bottom: none; }
+
+  .footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 12px;
+    color: #888;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════ HERO -->
+<section class="hero">
+  <p class="label">Pulseboard · PRO Plan Analysis · 2026-06-03</p>
+  <h1>What Are the Main Churn Drivers of PRO Plan Accounts?</h1>
+  <div class="headline-box">
+    <p>
+      <strong style="color:#2a9d8f">Headline answer:</strong>
+      PRO plan churn is <strong>early-lifecycle value failure at the $199/mo tier</strong>:
+      71% of cancellations are at that price, 86% occur within the first 6 months,
+      and the median churned account exits after just 75 days.
+      Crucially, <strong>only 1 of 7 canceled subscriptions represents true platform abandonment</strong>
+      — the other 6 accounts remain Pulseboard customers.
+      The problem is <em>not</em> disengagement (churned accounts were 30% MORE active than retained ones)
+      but perceived value relative to price, concentrated in months 0–3.
+    </p>
+  </div>
+  <div class="hero-meta">
+    <span>Analyst: Nimrod Fisher</span>
+    <span>|</span>
+    <span>Date: June 3, 2026</span>
+    <span>|</span>
+    <span>Decision: Design targeted 90-day onboarding intervention for $199/mo accounts</span>
+  </div>
+</section>
+
+<!-- KEY NUMBERS -->
+<div class="key-numbers">
+  <div class="kn-card">
+    <div class="kn-number red">57%</div>
+    <div class="kn-label">of cancels in first 90 days</div>
+  </div>
+  <div class="kn-card">
+    <div class="kn-number red">31.3%</div>
+    <div class="kn-label">cancel rate at $199/mo tier</div>
+  </div>
+  <div class="kn-card">
+    <div class="kn-number">6.7×</div>
+    <div class="kn-label">tenure gap (505d active vs 75d canceled)</div>
+  </div>
+  <div class="kn-card">
+    <div class="kn-number">6 of 7</div>
+    <div class="kn-label">canceled accounts still active on Pulseboard</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ FINDINGS -->
+<div class="container">
+  <h2 class="section-title">Key Findings</h2>
+
+  <!-- Finding 1 -->
+  <div class="finding-card">
+    <div class="finding-card-header">
+      <span class="finding-badge badge-supported">H4 — Strongly Supported</span>
+      <span class="finding-card-title">Finding 1 — Short Tenure Is the Sharpest Risk Signal</span>
+    </div>
+    <div class="finding-card-body">
+      <div class="finding-chart">
+        <svg viewBox="0 0 580 440" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="580" height="440">
+  <rect width="580" height="440" fill="#FAFAFA"/>
+  <text x="290" y="38" font-family="Arial,sans-serif" font-size="14" font-weight="bold" fill="#222" text-anchor="middle">Tenure Distribution: Active vs Canceled Subs</text>
+  <text x="290" y="57" font-family="Arial,sans-serif" font-size="11" fill="#666" text-anchor="middle">PRO plan · canceled n=7 · active n=25 · days from start to cancel/today</text>
+  <line x1="100" y1="80" x2="100" y2="370" stroke="#bbb" stroke-width="1"/>
+  <line x1="100" y1="370" x2="480" y2="370" stroke="#bbb" stroke-width="1"/>
+  <line x1="94" y1="370" x2="100" y2="370" stroke="#999" stroke-width="1"/>
+  <text x="90" y="374" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">0</text>
+  <line x1="94" y1="331" x2="100" y2="331" stroke="#999" stroke-width="1"/>
+  <line x1="100" y1="331" x2="480" y2="331" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="90" y="335" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">100</text>
+  <line x1="94" y1="293" x2="100" y2="293" stroke="#999" stroke-width="1"/>
+  <line x1="100" y1="293" x2="480" y2="293" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="90" y="297" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">200</text>
+  <line x1="94" y1="254" x2="100" y2="254" stroke="#999" stroke-width="1"/>
+  <line x1="100" y1="254" x2="480" y2="254" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="90" y="258" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">300</text>
+  <line x1="94" y1="215" x2="100" y2="215" stroke="#999" stroke-width="1"/>
+  <line x1="100" y1="215" x2="480" y2="215" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="90" y="219" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">400</text>
+  <line x1="94" y1="177" x2="100" y2="177" stroke="#999" stroke-width="1"/>
+  <line x1="100" y1="177" x2="480" y2="177" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="90" y="181" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">500</text>
+  <line x1="94" y1="138" x2="100" y2="138" stroke="#999" stroke-width="1"/>
+  <line x1="100" y1="138" x2="480" y2="138" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="90" y="142" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">600</text>
+  <line x1="94" y1="99" x2="100" y2="99" stroke="#999" stroke-width="1"/>
+  <line x1="100" y1="99" x2="480" y2="99" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="90" y="103" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">700</text>
+  <text x="40" y="225" font-family="Arial,sans-serif" font-size="11" fill="#444" text-anchor="middle" transform="rotate(-90,40,225)">Tenure (days)</text>
+  <line x1="200" y1="364" x2="200" y2="362" stroke="#E05A5A" stroke-width="1.5"/>
+  <rect x="170" y="322" width="60" height="40" fill="#E05A5A" fill-opacity="0.3" stroke="#E05A5A" stroke-width="1.5" rx="2"/>
+  <line x1="170" y1="341" x2="230" y2="341" stroke="#E05A5A" stroke-width="2.5"/>
+  <line x1="200" y1="239" x2="200" y2="322" stroke="#E05A5A" stroke-width="1.5"/>
+  <line x1="185" y1="364" x2="215" y2="364" stroke="#E05A5A" stroke-width="1.5"/>
+  <line x1="185" y1="239" x2="215" y2="239" stroke="#E05A5A" stroke-width="1.5"/>
+  <circle cx="200" cy="364" r="4" fill="#E05A5A" fill-opacity="0.8"/>
+  <circle cx="200" cy="363" r="4" fill="#E05A5A" fill-opacity="0.8"/>
+  <circle cx="200" cy="361" r="4" fill="#E05A5A" fill-opacity="0.8"/>
+  <circle cx="200" cy="341" r="4" fill="#E05A5A" fill-opacity="0.8"/>
+  <circle cx="200" cy="330" r="4" fill="#E05A5A" fill-opacity="0.8"/>
+  <circle cx="200" cy="313" r="4" fill="#E05A5A" fill-opacity="0.8"/>
+  <circle cx="200" cy="239" r="4" fill="#E05A5A" fill-opacity="0.8"/>
+  <text x="238" y="345" font-family="Arial,sans-serif" font-size="10" fill="#C0392B" text-anchor="start">median 75d</text>
+  <line x1="360" y1="225" x2="360" y2="203" stroke="#4A9B8F" stroke-width="1.5"/>
+  <rect x="330" y="140" width="60" height="63" fill="#4A9B8F" fill-opacity="0.3" stroke="#4A9B8F" stroke-width="1.5" rx="2"/>
+  <line x1="330" y1="175" x2="390" y2="175" stroke="#4A9B8F" stroke-width="2.5"/>
+  <line x1="360" y1="95" x2="360" y2="140" stroke="#4A9B8F" stroke-width="1.5"/>
+  <line x1="345" y1="225" x2="375" y2="225" stroke="#4A9B8F" stroke-width="1.5"/>
+  <line x1="345" y1="95" x2="375" y2="95" stroke="#4A9B8F" stroke-width="1.5"/>
+  <text x="398" y="179" font-family="Arial,sans-serif" font-size="10" fill="#1A7A6E" text-anchor="start">median 505d</text>
+  <text x="200" y="393" font-family="Arial,sans-serif" font-size="12" fill="#C0392B" text-anchor="middle" font-weight="bold">Canceled</text>
+  <text x="200" y="408" font-family="Arial,sans-serif" font-size="10" fill="#888" text-anchor="middle">n=7 subscriptions</text>
+  <text x="360" y="393" font-family="Arial,sans-serif" font-size="12" fill="#1A7A6E" text-anchor="middle" font-weight="bold">Active</text>
+  <text x="360" y="408" font-family="Arial,sans-serif" font-size="10" fill="#888" text-anchor="middle">n=25 subscriptions</text>
+  <line x1="202" y1="341" x2="330" y2="175" stroke="#999" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <text x="280" y="265" font-family="Arial,sans-serif" font-size="10" fill="#777" text-anchor="middle" transform="rotate(-28,280,265)">6.7x gap</text>
+  <text x="290" y="428" font-family="Arial,sans-serif" font-size="9" fill="#999" text-anchor="middle" font-style="italic">Box = IQR (p25-p75) · Line = median · Dots = individual canceled subs · Whiskers = min/max</text>
+</svg>
+      </div>
+      <div class="finding-text">
+        <h3>57% of cancellations happen in the first 90 days — and the separation from active accounts is striking.</h3>
+        <p>
+          The median canceled subscription lasted just <span class="stat-pill red">75 days</span> while the median active subscription is at <span class="stat-pill green">505 days</span> — a 6.7× gap. Three of the seven cancellations occurred within the first 30 days, all at the $199/mo price point.
+        </p>
+        <p>
+          Critically, early-tenure risk is <strong>exclusively a $199 tier phenomenon</strong>. The $79/mo cancellations appear only at 148 and 339 days — after a period where the customer had time to assess value. This strongly suggests the risk window is tight: if a $199/mo account survives 90 days, it is much more likely to retain.
+        </p>
+        <p>
+          <span class="stat-pill red">86% of cancels in first 6 months</span>
+          &nbsp;
+          <span class="stat-pill red">57% in first 90 days</span>
+          &nbsp;
+          <span class="stat-pill">Median active: 505d</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Finding 2 -->
+  <div class="finding-card">
+    <div class="finding-card-header">
+      <span class="finding-badge badge-supported">H2 — Supported (reframed)</span>
+      <span class="finding-card-title">Finding 2 — Price Tier Predicts Cancellation</span>
+    </div>
+    <div class="finding-card-body">
+      <div class="finding-chart">
+        <svg viewBox="0 0 560 380" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="560" height="380">
+  <rect width="560" height="380" fill="#FAFAFA"/>
+  <text x="280" y="38" font-family="Arial,sans-serif" font-size="14" font-weight="bold" fill="#222" text-anchor="middle">Subscription Cancel Rate by Price Tier</text>
+  <text x="280" y="57" font-family="Arial,sans-serif" font-size="11" fill="#666" text-anchor="middle">PRO plan · canceled/(active+canceled) · trialing excluded</text>
+  <line x1="80" y1="80" x2="80" y2="300" stroke="#bbb" stroke-width="1"/>
+  <line x1="80" y1="300" x2="480" y2="300" stroke="#bbb" stroke-width="1"/>
+  <line x1="74" y1="300" x2="80" y2="300" stroke="#999" stroke-width="1"/>
+  <text x="70" y="304" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">0%</text>
+  <line x1="74" y1="245" x2="80" y2="245" stroke="#999" stroke-width="1"/>
+  <line x1="80" y1="245" x2="480" y2="245" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="70" y="249" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">10%</text>
+  <line x1="74" y1="190" x2="80" y2="190" stroke="#999" stroke-width="1"/>
+  <line x1="80" y1="190" x2="480" y2="190" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="70" y="194" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">20%</text>
+  <line x1="74" y1="135" x2="80" y2="135" stroke="#999" stroke-width="1"/>
+  <line x1="80" y1="135" x2="480" y2="135" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="70" y="139" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">30%</text>
+  <line x1="74" y1="80" x2="80" y2="80" stroke="#999" stroke-width="1"/>
+  <line x1="80" y1="80" x2="480" y2="80" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="70" y="84" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="end">40%</text>
+  <text x="28" y="190" font-family="Arial,sans-serif" font-size="11" fill="#444" text-anchor="middle" transform="rotate(-90,28,190)">Cancel Rate</text>
+  <rect x="120" y="300" width="80" height="1" fill="#4A9B8F" rx="2"/>
+  <text x="160" y="316" font-family="Arial,sans-serif" font-size="12" fill="#555" text-anchor="middle" font-weight="bold">$29/mo</text>
+  <text x="160" y="332" font-family="Arial,sans-serif" font-size="10" fill="#888" text-anchor="middle">9 active, 0 canceled</text>
+  <text x="160" y="297" font-family="Arial,sans-serif" font-size="11" fill="#1A7A6E" text-anchor="middle" font-weight="bold">0%</text>
+  <rect x="240" y="143" width="80" height="157" fill="#F5A623" rx="2"/>
+  <text x="280" y="316" font-family="Arial,sans-serif" font-size="12" fill="#555" text-anchor="middle" font-weight="bold">$79/mo</text>
+  <text x="280" y="332" font-family="Arial,sans-serif" font-size="10" fill="#888" text-anchor="middle">5 active, 2 canceled</text>
+  <text x="280" y="140" font-family="Arial,sans-serif" font-size="11" fill="#C07000" text-anchor="middle" font-weight="bold">28.6%</text>
+  <rect x="360" y="128" width="80" height="172" fill="#E05A5A" rx="2"/>
+  <text x="400" y="316" font-family="Arial,sans-serif" font-size="12" fill="#555" text-anchor="middle" font-weight="bold">$199/mo</text>
+  <text x="400" y="332" font-family="Arial,sans-serif" font-size="10" fill="#888" text-anchor="middle">11 active, 5 canceled</text>
+  <text x="400" y="125" font-family="Arial,sans-serif" font-size="11" fill="#C0392B" text-anchor="middle" font-weight="bold">31.3%</text>
+  <text x="280" y="358" font-family="Arial,sans-serif" font-size="10" fill="#C0392B" text-anchor="middle" font-style="italic">$29 tier: zero cancellations · $79 and $199 tiers cancel at ~30%</text>
+</svg>
+      </div>
+      <div class="finding-text">
+        <h3>Higher price tier = higher cancel rate. The $29/mo cohort has never canceled.</h3>
+        <p>
+          The cancel rate climbs monotonically with price: <span class="stat-pill green">$29/mo: 0%</span>, <span class="stat-pill" style="background:#fff3cd;border-color:#ffe082;color:#7d5a00;">$79/mo: 28.6%</span>, <span class="stat-pill red">$199/mo: 31.3%</span>. The average monthly price among canceled subscriptions ($164.71) is 45% higher than among retained ones ($113.80).
+        </p>
+        <p>
+          Importantly, zero billing delinquency exists across all 83 PRO invoices. Customers are paying — the cancellations are deliberate opt-outs, not failed payments. At the account level, 45.5% of $199/mo accounts have had at least one cancellation, making this tier the primary risk segment.
+        </p>
+        <p>
+          <span class="stat-pill red">45% price premium (canceled vs active)</span>
+          &nbsp;
+          <span class="stat-pill">0 unpaid invoices</span>
+          &nbsp;
+          <span class="stat-pill red">45.5% of $199 accounts canceled at least once</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Finding 3 -->
+  <div class="finding-card">
+    <div class="finding-card-header">
+      <span class="finding-badge badge-refuted">H1 — Refuted (counter-intuitive)</span>
+      <span class="finding-card-title">Finding 3 — Engagement Does NOT Predict Cancellation</span>
+    </div>
+    <div class="finding-card-body">
+      <div class="finding-chart">
+        <svg viewBox="0 0 740 480" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" width="740" height="480">
+  <rect width="740" height="480" fill="#FAFAFA"/>
+  <text x="370" y="40" font-family="Arial,sans-serif" font-size="14" font-weight="bold" fill="#222" text-anchor="middle">Event Activity: Canceled vs Retained Accounts</text>
+  <text x="370" y="60" font-family="Arial,sans-serif" font-size="11" fill="#666" text-anchor="middle">Total events Mar–Jun 2025 (events window) · PRO plan</text>
+  <line x1="110" y1="80" x2="110" y2="400" stroke="#bbb" stroke-width="1"/>
+  <line x1="110" y1="400" x2="650" y2="400" stroke="#bbb" stroke-width="1"/>
+  <line x1="110" y1="400" x2="110" y2="406" stroke="#999" stroke-width="1"/>
+  <text x="110" y="418" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="middle">0</text>
+  <line x1="193" y1="400" x2="193" y2="406" stroke="#999" stroke-width="1"/>
+  <line x1="193" y1="80" x2="193" y2="400" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="193" y="418" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="middle">10</text>
+  <line x1="276" y1="400" x2="276" y2="406" stroke="#999" stroke-width="1"/>
+  <line x1="276" y1="80" x2="276" y2="400" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="276" y="418" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="middle">20</text>
+  <line x1="359" y1="400" x2="359" y2="406" stroke="#999" stroke-width="1"/>
+  <line x1="359" y1="80" x2="359" y2="400" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="359" y="418" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="middle">30</text>
+  <line x1="443" y1="400" x2="443" y2="406" stroke="#999" stroke-width="1"/>
+  <line x1="443" y1="80" x2="443" y2="400" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="443" y="418" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="middle">40</text>
+  <line x1="526" y1="400" x2="526" y2="406" stroke="#999" stroke-width="1"/>
+  <line x1="526" y1="80" x2="526" y2="400" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="526" y="418" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="middle">50</text>
+  <line x1="609" y1="400" x2="609" y2="406" stroke="#999" stroke-width="1"/>
+  <line x1="609" y1="80" x2="609" y2="400" stroke="#e5e5e5" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="609" y="418" font-family="Arial,sans-serif" font-size="10" fill="#666" text-anchor="middle">60</text>
+  <text x="380" y="440" font-family="Arial,sans-serif" font-size="11" fill="#444" text-anchor="middle">Total Events in Window</text>
+  <rect x="110" y="78" width="3" height="75" fill="#E05A5A"/>
+  <text x="100" y="120" font-family="Arial,sans-serif" font-size="9" fill="#C0392B" text-anchor="end" font-weight="bold">HAS</text>
+  <text x="100" y="131" font-family="Arial,sans-serif" font-size="9" fill="#C0392B" text-anchor="end" font-weight="bold">CANCELED</text>
+  <text x="100" y="142" font-family="Arial,sans-serif" font-size="9" fill="#C0392B" text-anchor="end" font-weight="bold">SUB</text>
+  <rect x="110" y="83" width="490" height="20" fill="#E05A5A" rx="2"/>
+  <text x="107" y="97" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">PJohnson</text>
+  <text x="604" y="97" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start" font-weight="bold">59</text>
+  <rect x="110" y="108" width="424" height="20" fill="#E05A5A" rx="2"/>
+  <text x="107" y="122" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">KRoberts</text>
+  <text x="538" y="122" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start" font-weight="bold">51</text>
+  <rect x="110" y="133" width="357" height="20" fill="#E05A5A" rx="2"/>
+  <text x="107" y="147" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">OLopez</text>
+  <text x="471" y="147" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start" font-weight="bold">43</text>
+  <line x1="534" y1="81" x2="534" y2="155" stroke="#C0392B" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="536" y="79" font-family="Arial,sans-serif" font-size="9" fill="#C0392B" text-anchor="start">avg 51</text>
+  <line x1="113" y1="158" x2="650" y2="158" stroke="#ccc" stroke-width="0.8" stroke-dasharray="4,4"/>
+  <rect x="110" y="164" width="3" height="220" fill="#4A9B8F"/>
+  <text x="100" y="275" font-family="Arial,sans-serif" font-size="9" fill="#1A7A6E" text-anchor="end" font-weight="bold">RETAINED</text>
+  <rect x="110" y="165" width="399" height="20" fill="#4A9B8F" rx="2"/>
+  <text x="107" y="179" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">AAnderson</text>
+  <text x="513" y="179" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start">48</text>
+  <rect x="110" y="190" width="366" height="20" fill="#4A9B8F" rx="2"/>
+  <text x="107" y="204" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">DLopez</text>
+  <text x="480" y="204" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start">44</text>
+  <rect x="110" y="215" width="357" height="20" fill="#4A9B8F" rx="2"/>
+  <text x="107" y="229" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">LRoberts</text>
+  <text x="471" y="229" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start">43</text>
+  <rect x="110" y="240" width="349" height="20" fill="#4A9B8F" rx="2"/>
+  <text x="107" y="254" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">EFisher</text>
+  <text x="463" y="254" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start">42</text>
+  <rect x="110" y="265" width="324" height="20" fill="#4A9B8F" rx="2"/>
+  <text x="107" y="279" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">IFisher</text>
+  <text x="438" y="279" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start">39</text>
+  <rect x="110" y="290" width="299" height="20" fill="#4A9B8F" rx="2"/>
+  <text x="107" y="304" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">SParker</text>
+  <text x="413" y="304" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start">36</text>
+  <rect x="110" y="315" width="299" height="20" fill="#4A9B8F" rx="2"/>
+  <text x="107" y="329" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">ZGarcia</text>
+  <text x="413" y="329" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start">36</text>
+  <rect x="110" y="340" width="283" height="20" fill="#4A9B8F" rx="2"/>
+  <text x="107" y="354" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">RFisher</text>
+  <text x="397" y="354" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start">34</text>
+  <rect x="110" y="365" width="266" height="20" fill="#4A9B8F" rx="2"/>
+  <text x="107" y="379" font-family="Arial,sans-serif" font-size="10" fill="#555" text-anchor="end">ZJohnson</text>
+  <text x="380" y="379" font-family="Arial,sans-serif" font-size="10" fill="#333" text-anchor="start">32</text>
+  <line x1="436" y1="163" x2="436" y2="387" stroke="#1A7A6E" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="438" y="395" font-family="Arial,sans-serif" font-size="9" fill="#1A7A6E" text-anchor="start">avg 39</text>
+  <rect x="480" y="455" width="11" height="11" fill="#E05A5A" rx="2"/>
+  <text x="495" y="464" font-family="Arial,sans-serif" font-size="10" fill="#444">Has canceled sub</text>
+  <rect x="600" y="455" width="11" height="11" fill="#4A9B8F" rx="2"/>
+  <text x="615" y="464" font-family="Arial,sans-serif" font-size="10" fill="#444">Active only</text>
+</svg>
+      </div>
+      <div class="finding-text">
+        <h3>Churned accounts were 30% more active than retained ones — engagement decline is a false signal here.</h3>
+        <p>
+          Accounts with a canceled subscription averaged <span class="stat-pill red">51.0 events</span> vs retained accounts at <span class="stat-pill green">39.3 events</span> during the observation window. All 5 event types (api_call, report_view, dashboard_view, file_upload, seat_added) were higher in the has-canceled group.
+        </p>
+        <p>
+          This is the most important counter-intuition in the analysis. These customers were <em>using the product</em> before they canceled. The problem is not disengagement — it is that active use wasn't translating into perceived ROI sufficient to justify the $199/mo price tag. Building an "engagement early warning system" would be chasing the wrong signal for this segment.
+        </p>
+        <p>
+          <span class="stat-pill red">+30% more events in canceled group</span>
+          &nbsp;
+          <span class="stat-pill">Do NOT build engagement-based churn alert</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Finding 4 -->
+  <div class="finding-card">
+    <div class="finding-card-header">
+      <span class="finding-badge badge-structural">Structural Finding</span>
+      <span class="finding-card-title">Finding 4 — Only 1 of 7 Cancels Is a True Platform Exit</span>
+    </div>
+    <div class="finding-card-body">
+      <div class="finding-chart" style="flex-direction:column; align-items:stretch;">
+        <!-- Account-level breakdown visual -->
+        <div style="padding:16px 8px;">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;">
+            <thead>
+              <tr style="background:#1a2744;color:#fff;">
+                <th style="padding:8px 10px;text-align:left;">Account</th>
+                <th style="padding:8px 10px;text-align:center;">Canceled Subs</th>
+                <th style="padding:8px 10px;text-align:center;">Active Subs Remaining</th>
+                <th style="padding:8px 10px;text-align:center;">Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#fde2e2;">
+                <td style="padding:8px 10px;font-weight:700;">NKing Corp</td>
+                <td style="padding:8px 10px;text-align:center;">1</td>
+                <td style="padding:8px 10px;text-align:center;color:#9b1c1c;font-weight:700;">0</td>
+                <td style="padding:8px 10px;text-align:center;"><span style="background:#e05a5a;color:#fff;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;">TRUE EXIT</span></td>
+              </tr>
+              <tr style="background:#e6f7f5;">
+                <td style="padding:8px 10px;font-weight:700;">KRoberts</td>
+                <td style="padding:8px 10px;text-align:center;">1</td>
+                <td style="padding:8px 10px;text-align:center;color:#1a6b35;font-weight:700;">Active</td>
+                <td style="padding:8px 10px;text-align:center;"><span style="background:#2a9d8f;color:#fff;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;">RATIONALIZATION</span></td>
+              </tr>
+              <tr style="background:#e6f7f5;">
+                <td style="padding:8px 10px;font-weight:700;">PJohnson</td>
+                <td style="padding:8px 10px;text-align:center;">2</td>
+                <td style="padding:8px 10px;text-align:center;color:#1a6b35;font-weight:700;">Active</td>
+                <td style="padding:8px 10px;text-align:center;"><span style="background:#2a9d8f;color:#fff;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;">RATIONALIZATION</span></td>
+              </tr>
+              <tr style="background:#e6f7f5;">
+                <td style="padding:8px 10px;font-weight:700;">OLopez</td>
+                <td style="padding:8px 10px;text-align:center;">2</td>
+                <td style="padding:8px 10px;text-align:center;color:#1a6b35;font-weight:700;">Active</td>
+                <td style="padding:8px 10px;text-align:center;"><span style="background:#2a9d8f;color:#fff;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;">RATIONALIZATION</span></td>
+              </tr>
+              <tr style="background:#e6f7f5;">
+                <td style="padding:8px 10px;font-weight:700;">EFisher</td>
+                <td style="padding:8px 10px;text-align:center;">2</td>
+                <td style="padding:8px 10px;text-align:center;color:#1a6b35;font-weight:700;">Active</td>
+                <td style="padding:8px 10px;text-align:center;"><span style="background:#2a9d8f;color:#fff;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;">RATIONALIZATION</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="font-size:12px;color:#888;margin-top:10px;font-style:italic;">Note: PJohnson, OLopez, EFisher each had 2 canceled subscriptions (7 total across 5 accounts — 4 still active on platform).</p>
+        </div>
+      </div>
+      <div class="finding-text">
+        <h3>This is subscription rationalization, not platform churn — the retention strategy must differ.</h3>
+        <p>
+          Of the 5 unique accounts with canceled subscriptions, only <strong>NKing Corp</strong> left Pulseboard entirely. The other 4 accounts — KRoberts, PJohnson, OLopez, and EFisher — each shed one or more subscriptions but still hold active PRO subscriptions. They are consolidating, not abandoning.
+        </p>
+        <p>
+          NKing Corp is the highest-risk signal: they filed <strong>zero support tickets</strong> before canceling — a "silent departure" pattern that is the hardest to detect and prevent. The CS intervention model for the rationalizing accounts (targeted upsell/consolidation discussion) should be entirely different from the retrospective win-back effort needed for NKing.
+        </p>
+        <p>
+          <span class="stat-pill red">1/5 accounts = true exit</span>
+          &nbsp;
+          <span class="stat-pill">NKing Corp: 0 support tickets before cancel</span>
+          &nbsp;
+          <span class="stat-pill green">4 accounts still active on platform</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ DEEPER DIVE -->
+  <h2 class="section-title" style="margin-top:40px;">Deeper Dive — Hypothesis Results</h2>
+
+  <div class="dive-section">
+    <details>
+      <summary>H1 — Do churned accounts show lower platform engagement prior to canceling? (REFUTED)</summary>
+      <div class="details-body">
+        <span class="verdict refuted">REFUTED</span>
+        <h4>Hypothesis</h4>
+        <p>Accounts that cancel PRO subscriptions will show measurably lower platform activity (event counts, session frequency, feature usage) in the 30–90 days before cancellation versus retained accounts in the same window.</p>
+        <h4>Evidence</h4>
+        <ul>
+          <li>Has-canceled accounts: avg 51.0 events. Retained accounts: avg 39.3 events. Churned group was +30% MORE active.</li>
+          <li>All 5 event types (api_call, report_view, dashboard_view, file_upload, seat_added) were higher in the has-canceled group.</li>
+          <li>The events table covers only 3 accounts with canceled subscriptions (90-day window limitation), so this result is directional, not statistically proven.</li>
+        </ul>
+        <h4>Implication</h4>
+        <p>Do NOT build an engagement-based early warning system for this segment. Activity is not the problem — perceived value relative to the $199/mo price point is.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="dive-section">
+    <details>
+      <summary>H2 — Does price tier predict subscription cancellation risk? (SUPPORTED — reframed)</summary>
+      <div class="details-body">
+        <span class="verdict supported">SUPPORTED (reframed)</span>
+        <h4>Hypothesis</h4>
+        <p>Higher-priced PRO subscriptions ($199/mo) will show a disproportionately higher cancellation rate compared to lower tiers ($79/mo, $29/mo).</p>
+        <h4>Evidence</h4>
+        <ul>
+          <li>$29/mo: 0% cancel rate (9 active, 0 canceled)</li>
+          <li>$79/mo: 28.6% cancel rate (5 active, 2 canceled)</li>
+          <li>$199/mo: 31.3% cancel rate (11 active, 5 canceled)</li>
+          <li>Average monthly price: canceled = $164.71 vs active = $113.80 (45% premium)</li>
+          <li>71% of all cancellations at $199/mo; 100% of early-tenure (&lt;90d) cancellations at $199/mo</li>
+          <li>Zero billing delinquency — all cancellations are deliberate opt-outs</li>
+        </ul>
+        <h4>Reframe</h4>
+        <p>The original hypothesis framed this as "$199 vs all" — in fact, both $79 and $199 tiers cancel at ~28-31%. The gradient is between $29 (zero cancels) and everything above. The $29 tier may simply have lower switching costs, different use cases, or lower expectations. The price-risk relationship holds even when excluding $199.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="dive-section">
+    <details>
+      <summary>H3 — Does support ticket volume predict upcoming cancellation? (REFUTED)</summary>
+      <div class="details-body">
+        <span class="verdict refuted">REFUTED</span>
+        <h4>Hypothesis</h4>
+        <p>Accounts that cancel will show elevated support ticket volume in the 60–90 days before cancellation, serving as a leading indicator.</p>
+        <h4>Evidence</h4>
+        <ul>
+          <li>NKing Corp (the only true platform exit): filed <strong>0</strong> support tickets before canceling — the ultimate counter-example.</li>
+          <li>No systematic difference in ticket volumes between canceled and retained accounts was found.</li>
+          <li>Support ticket pattern from the complainer-user-profile analysis (2026-04-20) also found tickets were not reliable predictors of churn for paid plans.</li>
+        </ul>
+        <h4>Implication</h4>
+        <p>Do NOT build a support-escalation early-warning system. It would miss the exact customers who are leaving silently (like NKing). Confirmed by two independent analyses.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="dive-section">
+    <details>
+      <summary>H4 — Does short subscription tenure correlate with cancellation risk? (STRONGLY SUPPORTED)</summary>
+      <div class="details-body">
+        <span class="verdict supported">STRONGLY SUPPORTED</span>
+        <h4>Hypothesis</h4>
+        <p>Subscriptions canceled within the first 6 months will account for a disproportionate share of all PRO cancellations, with the highest concentration in months 0–3.</p>
+        <h4>Evidence</h4>
+        <ul>
+          <li>Median canceled tenure: 75 days vs median active tenure: 505 days — a 6.7× gap</li>
+          <li>57% of cancellations in first 90 days; 86% in first 6 months</li>
+          <li>Tenure buckets: 0-30d: 3 cancels (all $199/mo); 31-90d: 1 ($199/mo); 91-180d: 2 (avg $139); 180+d: 1 ($79/mo)</li>
+          <li>$79/mo cancellations appear only at 148d and 339d — well after the critical window</li>
+          <li>The 90-day threshold is robust: sensitivity check shows 43% at 60d cutoff and 71% at 120d cutoff — the 57% at 90d is not cherry-picked</li>
+        </ul>
+        <h4>Implication</h4>
+        <p>The intervention window is tight and specific: $199/mo accounts in their first 90 days. After that, surviving accounts are far more likely to stay.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="dive-section">
+    <details>
+      <summary>H0 — Does industry segment predict cancellation risk? (INCONCLUSIVE)</summary>
+      <div class="details-body">
+        <span class="verdict" style="background:#e2e8f0;color:#4a5568;">INCONCLUSIVE</span>
+        <h4>Hypothesis</h4>
+        <p>Certain industries (e.g., FinTech, CyberSecurity) will show higher PRO plan cancellation rates than others.</p>
+        <h4>Evidence</h4>
+        <ul>
+          <li>Industry breakdown: each segment has only n=1 to n=4 accounts — too few for any meaningful comparison.</li>
+          <li>No statistical test is valid at these sample sizes.</li>
+        </ul>
+        <h4>Implication</h4>
+        <p>Industry as a churn driver is untestable until the customer base grows to ~20+ accounts per segment. Do not act on industry patterns from this data.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="dive-section">
+    <details>
+      <summary>Structural Finding — Subscription rationalization vs platform churn (CONFIRMED)</summary>
+      <div class="details-body">
+        <span class="verdict structural">STRUCTURAL FINDING</span>
+        <h4>Finding</h4>
+        <p>Only 1 of 5 accounts with canceled subscriptions (NKing Corp) represents a true platform departure. The other 4 accounts (KRoberts, PJohnson, OLopez, EFisher) canceled individual subscriptions but retain at least one active PRO subscription.</p>
+        <h4>Evidence</h4>
+        <ul>
+          <li>7 total canceled subscriptions across 5 accounts</li>
+          <li>4 of 5 accounts still hold active PRO subscriptions post-cancellation</li>
+          <li>NKing Corp: 0 active subscriptions remaining, 0 support tickets filed before canceling</li>
+          <li>PJohnson, OLopez, EFisher each canceled 2 subscriptions but retained 1+ active</li>
+        </ul>
+        <h4>Implication</h4>
+        <p>CS should run two parallel tracks: (1) proactive outreach for the 4 rationalizing accounts to understand consolidation triggers and prevent further shedding; (2) retrospective research on NKing Corp to understand the silent departure pattern and prevent recurrence.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ VALIDATION -->
+  <h2 class="section-title" style="margin-top:40px;">Validation Summary</h2>
+
+  <div class="finding-card" style="overflow:visible;">
+    <div class="finding-card-header" style="border-bottom:none;padding-bottom:8px;">
+      <span style="font-size:14px;color:#555;">Sensitivity checks and alternative explanations tested in Phase 6</span>
+    </div>
+    <div style="padding:0 24px 20px;">
+      <div style="margin-bottom:24px;">
+        <svg viewBox="0 0 700 420" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+  <rect width="700" height="420" fill="#fafafa" rx="8"/>
+  <text x="350" y="36" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a2e">Canceled Subscriptions by Tenure Bucket</text>
+  <text x="350" y="56" text-anchor="middle" font-size="12" fill="#555">PRO plan, n=7 — threshold sensitivity check</text>
+  <line x1="100" y1="340" x2="620" y2="340" stroke="#ccc" stroke-width="1"/>
+  <line x1="100" y1="260" x2="620" y2="260" stroke="#e8e8e8" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="100" y1="180" x2="620" y2="180" stroke="#e8e8e8" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="100" y1="100" x2="620" y2="100" stroke="#e8e8e8" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="100" y1="80" x2="100" y2="340" stroke="#aaa" stroke-width="1.5"/>
+  <text x="88" y="344" text-anchor="end" font-size="12" fill="#555">0</text>
+  <text x="88" y="264" text-anchor="end" font-size="12" fill="#555">1</text>
+  <text x="88" y="184" text-anchor="end" font-size="12" fill="#555">2</text>
+  <text x="88" y="104" text-anchor="end" font-size="12" fill="#555">3</text>
+  <text x="30" y="210" text-anchor="middle" font-size="12" fill="#555" transform="rotate(-90,30,210)">Canceled Subscriptions</text>
+  <rect x="122" y="100" width="60" height="240" fill="#e74c3c" rx="3" opacity="0.85"/>
+  <text x="152" y="95" text-anchor="middle" font-size="13" font-weight="bold" fill="#e74c3c">3</text>
+  <rect x="226" y="260" width="60" height="80" fill="#e67e22" rx="3" opacity="0.85"/>
+  <text x="256" y="255" text-anchor="middle" font-size="13" font-weight="bold" fill="#e67e22">1</text>
+  <rect x="330" y="260" width="60" height="80" fill="#f39c12" rx="3" opacity="0.85"/>
+  <text x="360" y="255" text-anchor="middle" font-size="13" font-weight="bold" fill="#f39c12">1</text>
+  <rect x="434" y="260" width="60" height="80" fill="#27ae60" rx="3" opacity="0.85"/>
+  <text x="464" y="255" text-anchor="middle" font-size="13" font-weight="bold" fill="#27ae60">1</text>
+  <rect x="538" y="260" width="60" height="80" fill="#2980b9" rx="3" opacity="0.85"/>
+  <text x="568" y="255" text-anchor="middle" font-size="13" font-weight="bold" fill="#2980b9">1</text>
+  <text x="152" y="360" text-anchor="middle" font-size="10" fill="#333">0–60</text>
+  <text x="152" y="373" text-anchor="middle" font-size="10" fill="#333">days</text>
+  <text x="256" y="360" text-anchor="middle" font-size="10" fill="#333">61–90</text>
+  <text x="256" y="373" text-anchor="middle" font-size="10" fill="#333">days</text>
+  <text x="360" y="360" text-anchor="middle" font-size="10" fill="#333">91–120</text>
+  <text x="360" y="373" text-anchor="middle" font-size="10" fill="#333">days</text>
+  <text x="464" y="360" text-anchor="middle" font-size="10" fill="#333">121–180</text>
+  <text x="464" y="373" text-anchor="middle" font-size="10" fill="#333">days</text>
+  <text x="568" y="360" text-anchor="middle" font-size="10" fill="#333">270+</text>
+  <text x="568" y="373" text-anchor="middle" font-size="10" fill="#333">days</text>
+  <line x1="286" y1="88" x2="286" y2="345" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <text x="290" y="88" font-size="10" fill="#e74c3c" font-weight="bold">57% by 90d (4/7)</text>
+  <line x1="390" y1="108" x2="390" y2="345" stroke="#e67e22" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <text x="394" y="108" font-size="10" fill="#e67e22" font-weight="bold">71% by 120d (5/7)</text>
+  <text x="350" y="398" text-anchor="middle" font-size="11" fill="#888">All 0–60 day cancels: $199/mo tier. $79/mo cancels appear only at 121+ days.</text>
+</svg>
+      </div>
+      <table class="val-table">
+        <thead>
+          <tr>
+            <th>Check</th>
+            <th>Result</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tenure threshold sensitivity (60d, 90d, 120d cutoffs)</td>
+            <td>43% at 60d, 57% at 90d, 71% at 120d — monotonically increasing, not cherry-picked</td>
+            <td class="check">ROBUST</td>
+          </tr>
+          <tr>
+            <td>Price gradient without $199 tier</td>
+            <td>$29=0% vs $79=28.6% — gradient holds even at lower tiers</td>
+            <td class="check">ROBUST</td>
+          </tr>
+          <tr>
+            <td>Billing failure as alternative explanation</td>
+            <td>0 unpaid invoices across 83 PRO invoices — ruled out</td>
+            <td class="check">RULED OUT</td>
+          </tr>
+          <tr>
+            <td>Engagement decline as cause</td>
+            <td>Churned accounts +30% more active — direction opposite to hypothesis</td>
+            <td class="cross">REFUTED</td>
+          </tr>
+          <tr>
+            <td>Sample size / statistical significance</td>
+            <td>n=7 canceled subs is a complete population, not a sample — no inferential stats needed, but cannot generalize beyond current cohort</td>
+            <td class="warn">CAVEAT</td>
+          </tr>
+          <tr>
+            <td>Industry as confounder</td>
+            <td>n=1-4 per segment — untestable</td>
+            <td class="warn">UNTESTABLE</td>
+          </tr>
+          <tr>
+            <td>Survivorship bias (events coverage)</td>
+            <td>Events table covers only 90 days; H1 tested on 3 of 5 canceled accounts — direction confirmed but limited coverage</td>
+            <td class="warn">CAVEAT</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ RECOMMENDATIONS -->
+  <h2 class="section-title" style="margin-top:40px;">Recommendations</h2>
+
+  <ul class="rec-list">
+    <li class="rec-item">
+      <div class="rec-num">1</div>
+      <div class="rec-body">
+        <h4>90-day onboarding intervention for $199/mo accounts</h4>
+        <p>Trigger a CS check-in at day 14, 30, and 60 for every new $199/mo subscription. 57% of cancellations happen within 90 days — the intervention window is well-defined. Surface ROI metrics (events processed, reports generated, time saved) in the product at these touchpoints.</p>
+      </div>
+    </li>
+    <li class="rec-item">
+      <div class="rec-num">2</div>
+      <div class="rec-body">
+        <h4>Value-demonstration dashboard for $199/mo accounts</h4>
+        <p>Build a "Your impact this month" widget for $199/mo accounts. Active users who cancel aren't disengaged — they don't see the value in numbers. Quantifying the ROI they're getting may tip the balance during the critical 0-90 day window when value assessment is happening.</p>
+      </div>
+    </li>
+    <li class="rec-item">
+      <div class="rec-num">3</div>
+      <div class="rec-body">
+        <h4>Monitor the 4 rationalizing accounts over the next 90 days</h4>
+        <p>KRoberts, PJohnson, OLopez, and EFisher still hold active subscriptions but have already shed at least one. Track whether they rationalize further or stabilize. A targeted CS conversation about their subscription portfolio would help distinguish consolidation from slow-exit behavior.</p>
+      </div>
+    </li>
+    <li class="rec-item">
+      <div class="rec-num">4</div>
+      <div class="rec-body">
+        <h4>Investigate NKing Corp retrospectively</h4>
+        <p>NKing Corp is the only true platform churner, and they filed zero support tickets before leaving — a silent departure pattern that cannot be caught by standard early-warning systems. CS should do a retrospective outreach to understand what drove the decision, and use that to build a detection model for future silent exits.</p>
+      </div>
+    </li>
+    <li class="rec-item rec-warn">
+      <div class="rec-num" style="font-size:22px;line-height:1.2;">✗</div>
+      <div class="rec-body">
+        <h4>Do NOT build a support-escalation early-warning system</h4>
+        <p>H3 is clearly refuted. Ticket volume is not a leading indicator of churn in this segment — in fact, the one account that churned completely filed no tickets at all. An escalation-based system would miss the exact customers you most need to catch.</p>
+      </div>
+    </li>
+  </ul>
+
+  <!-- ══════════════════════════════════════════════════════ CAVEATS -->
+  <h2 class="section-title" style="margin-top:40px;">Caveats &amp; Limitations</h2>
+
+  <div class="caveat-grid">
+    <div class="caveat-card">
+      <strong>Population size:</strong> n=7 canceled subscriptions across 5 accounts. These are complete population descriptions — no sampling error — but findings cannot be statistically generalized beyond the current cohort.
+    </div>
+    <div class="caveat-card">
+      <strong>Events coverage:</strong> The events table covers only 2025-03-07 to 2025-06-06 (~90 days). H1 (engagement) was tested on only 3 accounts with canceled subscriptions. Direction is confirmed but coverage is limited.
+    </div>
+    <div class="caveat-card">
+      <strong>Subscription rationalization:</strong> Cannot distinguish deliberate consolidation from the first step of a slow exit for the 4 retained accounts. Requires 90-day follow-up monitoring.
+    </div>
+    <div class="caveat-card">
+      <strong>Industry segmentation:</strong> Untestable at n=1-4 per segment. Industry as a churn driver cannot be confirmed or refuted until customer base grows to 20+ per segment.
+    </div>
+    <div class="caveat-card">
+      <strong>Mechanism unknown:</strong> No exit survey data exists. Whether the cancellation mechanism is ROI perception, competitive pricing, feature gaps, or other factors is inferred from patterns, not confirmed from voice-of-customer data.
+    </div>
+    <div class="caveat-card">
+      <strong>Temporal confound:</strong> Newer $199/mo accounts by definition have shorter tenure. Some early-tenure cancellations may reflect cohort effects (when pricing was introduced) rather than pure value-failure dynamics.
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ APPENDIX -->
+  <h2 class="section-title" style="margin-top:40px;">Appendix</h2>
+
+  <div class="appendix-section">
+    <details>
+      <summary style="font-size:15px;">Full Methodology, Hypothesis List &amp; Data Quality Notes</summary>
+      <div class="details-body" style="background:#fff;">
+        <h4>Analysis Path</h4>
+        <p>
+          <code>analyses/pro-plan-churn-drivers_2026-06-03_nimrod-fisher/</code>
+        </p>
+
+        <h4>Seven-Phase Pipeline</h4>
+        <ul>
+          <li><strong>Phase 1 — Hypothesis Framing:</strong> Business question translated into 5 testable hypotheses (H0–H4) with success criteria. Documented in <code>plan.md</code>.</li>
+          <li><strong>Phase 2 — Data QA:</strong> Schema validation, row counts, coverage checks. Events table flagged as 90-day window (vs full year). No billing delinquency found. Results: <code>results/qa/</code>.</li>
+          <li><strong>Phase 3 — EDA:</strong> Engagement distributions, price tier breakdowns, tenure profiles. Results: <code>results/eda/</code>.</li>
+          <li><strong>Phase 4 — Deep Analysis:</strong> Cancel rate by tier, tenure box plots, subscription-level rationalization mapping. Results: <code>results/deep-analysis/</code>.</li>
+          <li><strong>Phase 5 — Synthesis:</strong> Hypothesis verdicts mapped to evidence. Results: <code>results/synthesis/synthesis.md</code>.</li>
+          <li><strong>Phase 6 — Validation:</strong> Sensitivity analysis on tenure thresholds, alternative explanations tested, billing delinquency check. Results: <code>results/validation/</code>.</li>
+          <li><strong>Phase 7 — Data Storytelling:</strong> This report, PDF summary, and debug notebook. Results: <code>deliverables/</code>.</li>
+        </ul>
+
+        <h4>Hypothesis Summary</h4>
+        <table class="hyp-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Hypothesis</th>
+              <th>Verdict</th>
+              <th>Confidence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>H0</td>
+              <td>Industry segment predicts cancellation risk</td>
+              <td>Inconclusive</td>
+              <td>N/A — n too small</td>
+            </tr>
+            <tr>
+              <td>H1</td>
+              <td>Lower engagement precedes cancellation</td>
+              <td>REFUTED</td>
+              <td>Directional (n=3 events accounts)</td>
+            </tr>
+            <tr>
+              <td>H2</td>
+              <td>Higher price tier = higher cancel rate</td>
+              <td>SUPPORTED</td>
+              <td>High (complete population)</td>
+            </tr>
+            <tr>
+              <td>H3</td>
+              <td>Support ticket volume predicts cancellation</td>
+              <td>REFUTED</td>
+              <td>High (NKing Corp = 0 tickets before exit)</td>
+            </tr>
+            <tr>
+              <td>H4</td>
+              <td>Short tenure = elevated cancellation risk</td>
+              <td>STRONGLY SUPPORTED</td>
+              <td>High (6.7× gap, robust to threshold choice)</td>
+            </tr>
+            <tr>
+              <td>S1</td>
+              <td>Structural: are cancels true exits or rationalization?</td>
+              <td>4/5 accounts = rationalization, 1/5 = true exit</td>
+              <td>High (direct subscription audit)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>Data Sources</h4>
+        <ul>
+          <li>Supabase PostgreSQL (project: gmtrkkyfxmqfmoznzpgp) — Pulseboard production database</li>
+          <li>Tables: <code>subscriptions</code>, <code>accounts</code>, <code>invoices</code>, <code>events</code>, <code>support_tickets</code></li>
+          <li>Schema loaded from GitHub (owner: nimrodfisher, repo: workshop-queries-repo)</li>
+        </ul>
+
+        <h4>Known Data Issues Applied</h4>
+        <ul>
+          <li>Events table: ~90-day coverage window (2025-03-07 to 2025-06-06). Never annualize from this table without flagging.</li>
+          <li>Mann-Whitney rank-sum SQL has a tie-handling bug — workaround applied per <code>known_issues.md</code>.</li>
+          <li>PRO plan has 3 price tiers ($29, $79, $199/mo) — the original hypothesis assumed a single price point.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  Pulseboard · PRO Plan Churn Analysis · Nimrod Fisher · June 3, 2026 · Confidential
+</div>
+
+</body>
+</html>

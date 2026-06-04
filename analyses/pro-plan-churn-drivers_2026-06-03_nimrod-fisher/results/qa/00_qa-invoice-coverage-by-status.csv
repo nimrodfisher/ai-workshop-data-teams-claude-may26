@@ -1,0 +1,4 @@
+status,subscriptions,subscriptions_with_invoices,total_invoices,invoice_coverage_pct
+active,25,23,63,92.0
+canceled,7,6,15,85.7
+trialing,2,2,5,100.0

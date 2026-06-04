@@ -1,0 +1,3 @@
+status,n,avg_days,p25_days,median_days,p75_days,min_days,max_days
+active,25,518,432,505,595,374,710
+canceled,7,103,21,75,125,15,339

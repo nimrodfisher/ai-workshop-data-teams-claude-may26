@@ -1,0 +1,13 @@
+churn_group,org_id,name,total_events,active_users,active_weeks,first_event,last_event
+churned,21284d20-6dde-4e61-a5d9-37ce0944ffa2,PJohnson Corp,59,3,14,2025-03-08,2025-06-05
+churned,40797a83-5373-4d67-8521-8236a7659924,KRoberts Corp,51,5,13,2025-03-10,2025-06-03
+churned,32020997-f610-45b1-9ba6-26c9bc6bee21,OLopez Corp,43,1,13,2025-03-07,2025-05-31
+retained,39acadee-92e4-4cb1-9828-580062aaf599,AAnderson Corp,48,1,13,2025-03-08,2025-05-30
+retained,fdcb8f78-951a-485f-a27b-883ab32e6432,DLopez Corp,44,5,14,2025-03-07,2025-06-04
+retained,d47e8578-6285-45d1-97bb-e1f8dd2c81f8,LRoberts Corp,43,3,14,2025-03-07,2025-06-05
+retained,9761a61a-5c5c-44f6-9825-eb6b1b04257f,EFisher Corp,42,6,14,2025-03-07,2025-06-05
+retained,d8a220a8-8021-4e46-9938-42cf5b262ef0,IFisher Corp,39,3,13,2025-03-12,2025-06-03
+retained,72ba3af2-8e19-400d-aac5-58d54a7de3d5,SParker Corp,36,3,13,2025-03-07,2025-06-03
+retained,fe0f8ca8-c289-468a-89d3-f9f379d7f18e,ZGarcia Corp,36,6,12,2025-03-10,2025-05-27
+retained,238fa713-92a7-4a41-b872-70de47fad241,RFisher Corp,34,8,12,2025-03-07,2025-05-28
+retained,f21400d8-6bb7-448d-886c-a4cb0e25c602,ZJohnson Corp,32,4,13,2025-03-08,2025-06-04

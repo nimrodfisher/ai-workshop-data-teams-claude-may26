@@ -1,0 +1,4 @@
+status,account_count,subscription_count,earliest_start,latest_start,earliest_cancel,latest_cancel,avg_monthly_price
+active,12,25,2024-06-23,2025-05-25,,, 113.80
+canceled,5,7,2024-06-15,2025-02-18,2024-07-09,2025-05-26,164.71
+trialing,2,2,2024-11-11,2025-05-21,,,139.00

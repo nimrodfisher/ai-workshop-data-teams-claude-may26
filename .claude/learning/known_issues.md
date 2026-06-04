@@ -47,6 +47,13 @@ Persistent data issues users have reported. Checked before every analysis so Dat
 - **Workaround:** Use `avg_rank = ((SELECT COUNT(*) FROM t WHERE t.x < me.x) + 1 + (SELECT COUNT(*) FROM t WHERE t.x <= me.x)) / 2.0` in a correlated subquery per row. Verified correct when total rank sum equals `n*(n+1)/2`.
 - **Status:** Open — applies to any future MWU / Wilcoxon / rank-sum test done in SQL without a stats library.
 
+## accounts.plan — Lowercase values, not title-case
+- **Reported:** 2026-06-03 by nimrod-fisher (surfaced in QA phase of pro-plan-churn-drivers analysis)
+- **Issue:** The `accounts.plan` column stores values as lowercase: `pro`, `free`, `enterprise`. Schema documentation and business context uses title-case (`Pro`, `Free`, `Enterprise`). Queries using `plan = 'Pro'` return zero rows.
+- **Impact:** Any analysis filtering on `accounts.plan` must use lowercase values or `LOWER(plan) = 'pro'`.
+- **Workaround:** Use `WHERE plan = 'pro'` (lowercase). Affects all analyses that segment by plan tier.
+- **Status:** Open
+
 ## Mitigated
 
 <!-- Issues with documented workarounds — still relevant to caveat in reports -->
