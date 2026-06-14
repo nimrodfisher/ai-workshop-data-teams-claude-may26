@@ -27,13 +27,18 @@ Each phase ends with a **checkpoint**: summarize findings → link artifacts →
 ### Key Directories
 
 ```
-.cursor/rules/AGENTS.mdc          # Agent behavioral contract — read this first
-.cursor/skills/                   # One subdirectory per phase/skill
-.cursor/learning/
+.claude/rules/                    # Agent behavioral contract — read these first
+    ground-truth.md               # What is authoritative vs. inferred
+    no-guessing.md                # Never invent schema, metrics, or numbers
+    sql-conventions.md            # SQL style and safety conventions
+.claude/skills/                   # One subdirectory per phase/skill (+ _shared)
+.claude/learning/
     analyses.md                   # Index of completed analyses (prevents duplication)
     corrections.md                # Persistent behavioral feedback from user
     known_issues.md               # Persistent data quality issues
-.cursor/business_knowledge/       # Pulseboard company context and product tiers
+.claude/business_knowledge/       # Pulseboard company context and product tiers
+    business_desc.md              # Company overview
+    products.md                   # Product tiers
 analyses/
     _template/                    # Scaffold for new analyses
     <slug>_<YYYY-MM-DD>_<analyst>/
@@ -47,12 +52,34 @@ analyses/
 
 Schema and metrics are **never invented**. Load them at the start of every analysis using `mcp__github__get_file_contents` (owner: `nimrodfisher`, repo: `workshop-queries-repo`, paths: `schema.yml` and `metrics.yml`). Fail fast if loading fails — do not proceed with guessed schema.
 
-### Learning Loop
+## Your Skills
 
-Before starting any analysis, read all three learning files:
-- `corrections.md` — apply every behavioral rule to the current analysis
-- `known_issues.md` — factor known data issues into QA phase
-- `analyses.md` — check whether this question has already been answered
+Skills are standards you follow automatically. Apply them whenever the trigger condition matches — you do not need to be asked.
+
+| Skill | Trigger condition |
+|---|---|
+| `hypothesis-framer` | A new business question arrives — frame it before pulling any data |
+| `data-qa` | After hypotheses are framed, before EDA — and any time results look suspicious |
+| `eda` | After Data QA passes — explore distributions, segmentation, time series |
+| `deep-analysis` | After EDA — quantify effects, decompose drivers, run statistical tests |
+| `synthesis` | After Deep Analysis — map findings back to each hypothesis and render verdicts |
+| `validation` | After Synthesis — sensitivity checks, confounders, alternative explanations |
+| `data-storytelling` | After Validation — build the interactive HTML report + PDF summary |
+| `data-visualizer` / `frontend-design` | Whenever building any HTML deliverable (`plan.html`, `report.html`) or chart |
+| `pandas-operations` | Whenever writing pandas code in EDA, Deep Analysis, or QA |
+
+## Learning Loop
+
+The `.claude/learning/` folder is the project's institutional memory. It carries forward what was learned in **previous analyses** and the **analyst's corrections** so mistakes are not repeated.
+
+**Before starting any analysis**, read all three learning files:
+- `corrections.md` — persistent behavioral feedback the analyst has given. Apply every rule here to the current analysis; these override default behavior.
+- `known_issues.md` — data quality issues discovered in past work. Factor each one into the QA phase before trusting the data.
+- `analyses.md` — index of completed analyses. Check whether this question (or a close variant) has already been answered before doing duplicate work; reuse prior queries and findings where relevant.
+
+**During the analysis**, when the analyst corrects your behavior or you discover a new data issue, propose adding it to the relevant learning file so the lesson persists.
+
+**After completing an analysis**, update `analyses.md` with the new entry (slug, date, question, key findings, link to the folder) so future analyses can find and build on it.
 
 ## Required Conventions
 
@@ -82,8 +109,7 @@ Every `plan.html` must show the plan by sections in a clear flow, using the fron
 
 ### Known Data Issues to Always Apply
 
-- `events` table coverage is ~90 days (2025-03-07 to 2025-06-06), not a full year — never annualize from this table without flagging the limitation
-- Mann-Whitney rank-sum has a tie-handling bug in SQL — use the documented workaround in `known_issues.md`
+- Always check ./claude/learnings to prevent re-running analyses, learning from previous mistakes and adopt relevant context.
 
 ## Running an Analysis
 
@@ -100,4 +126,4 @@ Every `plan.html` must show the plan by sections in a clear flow, using the fron
 - **Company:** Pulseboard — mid-market B2B analytics platform, Series A
 - **Industries served:** eCommerce, MarTech, SaaS, HealthTech, FinTech, CyberSecurity, EdTech
 - **Data access:** Supabase MCP (no local database client needed)
-- **Completed example analysis:** `analyses/fintech-pro-activity-drop_2026-04-28_nimrod-fisher/`
+- Conventions and refusal protocol: see `.claude/rules/`.

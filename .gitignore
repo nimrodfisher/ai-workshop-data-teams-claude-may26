@@ -23,6 +23,7 @@ Thumbs.db
 *.key
 secrets/
 .claude/settings.local.json
+.claude/audit/
 
 # Large / ephemeral
 *.parquet

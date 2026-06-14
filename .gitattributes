@@ -1,0 +1,2 @@
+# Shell scripts must stay LF — CRLF breaks bash hook execution (\r errors).
+*.sh text eol=lf
