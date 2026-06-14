@@ -1,6 +1,7 @@
 ---
 name: data-qa
 description: Validate data completeness, consistency, and coverage before analysis begins. Flags issues with severity ratings so the analyst knows what blocks analysis vs. what to note as a caveat. Use after hypothesis-framer, before EDA, at the start of every new analysis or whenever results look suspicious.
+model: haiku
 ---
 
 # Data QA

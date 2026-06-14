@@ -70,13 +70,6 @@ Every phase must produce files in the correct subfolder:
 
 Every SQL query output must be saved as a `.csv` with the same name as the `.sql` file.
 
-### SVG Charts
-
-All SVG charts must include:
-- `viewBox="0 0 <w> <h>"` and `preserveAspectRatio="xMidYMid meet"`
-- Margins: left ≥ 70, right ≥ 80, top ≥ 72, bottom ≥ 80
-- Titles ≤ 52 characters; use `<tspan>` to split if longer
-- No illegal XML control characters; no XML declaration (`<?xml ...?>`) inside inline SVG
 
 ### Analysis Plan (`plan.md` + plan.html)
 
