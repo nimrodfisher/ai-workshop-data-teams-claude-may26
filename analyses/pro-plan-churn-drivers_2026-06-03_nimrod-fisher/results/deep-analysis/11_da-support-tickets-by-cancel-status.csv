@@ -1,3 +1,0 @@
-group_label,accounts,total_tickets,avg_tickets_per_account,accounts_with_zero_tickets,max_tickets
-has_canceled_sub,5,10,2.0,1,4
-no_canceled_sub,8,12,1.5,2,2

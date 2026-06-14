@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Analyst Workshop — Setup Guide</title>
+<style>
+  :root {
+    --bg: #0f1222;
+    --bg-soft: #161a30;
+    --surface: #ffffff;
+    --surface-2: #f6f8fc;
+    --ink: #1a1f36;
+    --ink-soft: #4a5170;
+    --muted: #7b8298;
+    --line: #e4e8f2;
+    --primary: #4f46e5;
+    --primary-soft: #eef0ff;
+    --accent: #0ea5a4;
+    --accent-soft: #e2f7f6;
+    --warn: #b45309;
+    --warn-soft: #fef3e2;
+    --danger: #d32f2f;
+    --code-bg: #1b1f38;
+    --code-ink: #e7e9f5;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(16,20,45,.06), 0 8px 24px rgba(16,20,45,.08);
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: "SFMono-Regular", ui-monospace, "Cascadia Code", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    color: var(--ink);
+    background: var(--surface-2);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Top bar ---------- */
+  header.topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,.85);
+    backdrop-filter: saturate(160%) blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    max-width: 1180px; margin: 0 auto; padding: 12px 24px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; }
+  .brand .dot { width: 26px; height: 26px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; }
+  .brand small { display:block; font-weight: 500; color: var(--muted); font-size: 12px; letter-spacing: 0; }
+  .progress-wrap { margin-left: auto; display: flex; align-items: center; gap: 10px; min-width: 220px; }
+  .progress-track { flex: 1; height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+  .progress-bar { height: 100%; width: 0%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width .4s ease; }
+  .progress-label { font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ---------- Layout ---------- */
+  .layout { max-width: 1180px; margin: 0 auto; padding: 32px 24px 80px; display: grid;
+    grid-template-columns: 232px 1fr; gap: 40px; }
+  nav.toc { position: sticky; top: 84px; align-self: start; height: max-content; }
+  nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+  nav.toc a { display: flex; gap: 10px; align-items: baseline; text-decoration: none; color: var(--ink-soft);
+    font-size: 13.5px; padding: 7px 10px; border-radius: 9px; transition: .15s; }
+  nav.toc a .num { color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 600; min-width: 16px; }
+  nav.toc a:hover { background: var(--primary-soft); color: var(--primary); }
+  nav.toc a.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+  nav.toc .toc-sep { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+    padding: 14px 10px 6px; font-weight: 700; }
+
+  main { min-width: 0; }
+
+  /* ---------- Hero ---------- */
+  .hero { background: linear-gradient(135deg, #1b1f3b 0%, #2a2150 55%, #143a3a 100%);
+    color: #fff; border-radius: 20px; padding: 40px 40px 34px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+  .hero::after { content:""; position:absolute; right:-60px; top:-60px; width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(14,165,164,.35), transparent 70%); }
+  .hero .eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: 12px; color: #b9c0ff; font-weight: 700; }
+  .hero h1 { font-size: 32px; line-height: 1.15; margin: 10px 0 12px; letter-spacing: -.02em; }
+  .hero p { color: #d3d8f5; max-width: 64ch; margin: 0; font-size: 15.5px; }
+  .hero .meta { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .pill { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); color: #eef0ff;
+    padding: 6px 12px; border-radius: 99px; font-size: 12.5px; font-weight: 500; }
+
+  /* ---------- Flow diagram ---------- */
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 22px 0 4px; }
+  .flow .node { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 14px;
+    text-align: center; position: relative; box-shadow: var(--shadow); }
+  .flow .node .ico { font-size: 22px; }
+  .flow .node b { display: block; font-size: 13.5px; margin-top: 6px; }
+  .flow .node span { font-size: 12px; color: var(--muted); }
+  .flow .node:not(:last-child)::after { content: "→"; position: absolute; right: -11px; top: 50%;
+    transform: translateY(-50%); color: var(--primary); font-weight: 700; z-index: 2; }
+
+  /* ---------- Sections ---------- */
+  section.step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 28px 30px; margin-top: 22px; box-shadow: var(--shadow); scroll-margin-top: 84px; }
+  .step-head { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
+  .step-badge { width: 40px; height: 40px; flex: none; border-radius: 11px; background: var(--primary-soft);
+    color: var(--primary); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; }
+  .step-head h2 { font-size: 21px; margin: 0; letter-spacing: -.01em; }
+  .step-head .sub { color: var(--muted); font-size: 13px; }
+  section.step > p { color: var(--ink-soft); }
+  h3 { font-size: 15.5px; margin: 22px 0 8px; letter-spacing: -.01em; }
+  ul.clean { padding-left: 18px; }
+  ul.clean li { margin: 4px 0; color: var(--ink-soft); }
+
+  /* ---------- Callouts ---------- */
+  .callout { border-radius: 12px; padding: 14px 16px; margin: 16px 0; font-size: 14px; display: flex; gap: 12px; }
+  .callout .c-ico { font-size: 18px; line-height: 1.4; }
+  .callout.tip { background: var(--accent-soft); border: 1px solid #bfe9e8; color: #0b5453; }
+  .callout.note { background: var(--primary-soft); border: 1px solid #d9dcff; color: #322f8a; }
+  .callout.warn { background: var(--warn-soft); border: 1px solid #f6dcae; color: #8a4f08; }
+  .callout b { color: inherit; }
+  .callout code { background: rgba(0,0,0,.06); }
+
+  /* ---------- Code blocks ---------- */
+  .code { position: relative; margin: 12px 0; }
+  .code-label { display:inline-flex; align-items:center; gap:6px; font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 6px; }
+  .code-label .tag { background: var(--surface-2); border: 1px solid var(--line); padding: 2px 8px; border-radius: 6px;
+    font-family: var(--mono); text-transform: none; letter-spacing: 0; color: var(--ink-soft); }
+  pre { margin: 0; background: var(--code-bg); color: var(--code-ink); border-radius: 12px;
+    padding: 16px 18px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.55;
+    border: 1px solid #2b3056; }
+  pre code { font-family: inherit; }
+  .copy-btn { position: absolute; top: 30px; right: 10px; background: rgba(255,255,255,.08); color: #cfd3ee;
+    border: 1px solid rgba(255,255,255,.16); border-radius: 8px; padding: 4px 10px; font-size: 11.5px;
+    cursor: pointer; transition: .15s; font-family: var(--font); }
+  .copy-btn:hover { background: rgba(255,255,255,.18); color: #fff; }
+  .copy-btn.copied { background: var(--accent); border-color: var(--accent); color: #fff; }
+  /* token-ish coloring */
+  .c-key { color: #9bd1ff; } .c-str { color: #b6f0c2; } .c-com { color: #7e85ad; font-style: italic; }
+  .c-kw { color: #f6a8d8; } .c-num { color: #ffcf8a; }
+
+  /* ---------- Two-col cards ---------- */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mini { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .mini h4 { margin: 0 0 6px; font-size: 14px; }
+  .mini p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+
+  table.fields { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+  table.fields th, table.fields td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.fields th { color: var(--muted); font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; }
+  table.fields td code { font-size: 12.5px; }
+  code { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2); border: 1px solid var(--line);
+    padding: 1px 6px; border-radius: 6px; color: #3a2fb0; }
+
+  /* ---------- Checklist ---------- */
+  .checklist { list-style: none; margin: 8px 0 0; padding: 0; }
+  .checklist li { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid var(--line);
+    border-radius: 11px; margin-bottom: 8px; background: var(--surface-2); transition: .15s; cursor: pointer; }
+  .checklist li:hover { border-color: #c9cffb; }
+  .checklist li.done { background: #f0fbf5; border-color: #b9e7cd; }
+  .checklist input { appearance: none; width: 22px; height: 22px; flex: none; border: 2px solid #c4c9e0; border-radius: 7px;
+    margin-top: 1px; cursor: pointer; position: relative; transition: .15s; }
+  .checklist input:checked { background: var(--accent); border-color: var(--accent); }
+  .checklist input:checked::after { content: "✓"; color: #fff; font-size: 14px; font-weight: 800;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+  .checklist .ck-body strong { display: block; font-size: 14.5px; }
+  .checklist .ck-body span { font-size: 13px; color: var(--ink-soft); }
+  .checklist li.done .ck-body strong { color: #0b7a44; }
+  .ck-reset { margin-top: 8px; background: none; border: 1px solid var(--line); color: var(--muted);
+    border-radius: 9px; padding: 7px 14px; font-size: 13px; cursor: pointer; font-family: var(--font); }
+  .ck-reset:hover { color: var(--ink); border-color: var(--muted); }
+
+  .done-banner { margin-top: 16px; padding: 18px 20px; border-radius: 12px; display: none;
+    background: linear-gradient(135deg, var(--accent-soft), var(--primary-soft)); border: 1px solid #bfe9e8; }
+  .done-banner.show { display: block; }
+  .done-banner b { font-size: 15px; }
+
+  footer { max-width: 1180px; margin: 0 auto; padding: 30px 24px 60px; color: var(--muted); font-size: 13px; }
+  hr.soft { border: none; border-top: 1px solid var(--line); margin: 24px 0; }
+
+  @media (max-width: 920px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.toc { display: none; }
+    .flow { grid-template-columns: 1fr 1fr; }
+    .flow .node:nth-child(2)::after { display:none; }
+    .grid2 { grid-template-columns: 1fr; }
+    .hero { padding: 28px 24px; }
+    .hero h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="dot">◷</span>
+      <div>AI Analyst Workshop
+        <small>Setup &amp; practice guide</small>
+      </div>
+    </div>
+    <div class="progress-wrap" title="Your setup progress">
+      <div class="progress-track"><div class="progress-bar" id="pbar"></div></div>
+      <div class="progress-label" id="plabel">0 / 7</div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ============ TOC ============ -->
+  <nav class="toc" id="toc">
+    <ol>
+      <li><a href="#overview"><span class="num">·</span> What you're building</a></li>
+      <div class="toc-sep">Setup</div>
+      <li><a href="#step1"><span class="num">1</span> Pull the repo</a></li>
+      <li><a href="#step2"><span class="num">2</span> Connect your data</a></li>
+      <li><a href="#step3"><span class="num">3</span> Build schema.yml</a></li>
+      <li><a href="#step4"><span class="num">4</span> Build metrics.yml</a></li>
+      <li><a href="#step5"><span class="num">5</span> Business context</a></li>
+      <li><a href="#step6"><span class="num">6</span> Point to local files</a></li>
+      <li><a href="#step7"><span class="num">7</span> Run an analysis</a></li>
+      <div class="toc-sep">Finish</div>
+      <li><a href="#checklist"><span class="num">✓</span> Setup checklist</a></li>
+    </ol>
+  </nav>
+
+  <!-- ============ MAIN ============ -->
+  <main>
+
+    <!-- HERO -->
+    <div class="hero" id="overview">
+      <div class="eyebrow">Practice on your own data</div>
+      <h1>Run the AI Analyst workflow on your data</h1>
+      <p>This repo turns Claude Code into a disciplined analyst that takes a business question through a
+        7-phase, checkpoint-gated pipeline and produces an HTML report. To practice on your own data, you
+        swap in <b>your</b> schema, metrics, and business context — built in the same structure as the
+        workshop's — then run the exact same workflow. This guide gets you there in seven steps.</p>
+      <div class="meta">
+        <span class="pill">⏱ ~30–45 min setup</span>
+        <span class="pill">🗄 Any SQL database</span>
+        <span class="pill">🤖 Claude drafts the files for you</span>
+        <span class="pill">🔁 Same workflow we use live</span>
+      </div>
+    </div>
+
+    <div class="flow" aria-hidden="true">
+      <div class="node"><div class="ico">🗄️</div><b>Your data</b><span>Connect via MCP</span></div>
+      <div class="node"><div class="ico">📄</div><b>Your context</b><span>schema · metrics · business</span></div>
+      <div class="node"><div class="ico">⚙️</div><b>7-phase workflow</b><span>QA → … → report</span></div>
+      <div class="node"><div class="ico">📊</div><b>HTML report</b><span>Findings + verdicts</span></div>
+    </div>
+
+    <div class="callout note">
+      <span class="c-ico">💡</span>
+      <div><b>The one idea to hold onto:</b> the workflow never invents schema or metric logic — it reads them
+        from two files (<code>schema.yml</code> + <code>metrics.yml</code>) and your plain-language business context.
+        Get those three right for your data and the whole pipeline just works.</div>
+    </div>
+
+    <!-- STEP 1 -->
+    <section class="step" id="step1">
+      <div class="step-head">
+        <div class="step-badge">1</div>
+        <div><h2>Pull the repo</h2><div class="sub">Get the workflow onto your machine</div></div>
+      </div>
+      <p>Clone the workshop repo and open it in Claude Code. Everything you need — skills, rules, the analysis
+        template, the 7-phase pipeline — already lives inside it.</p>
+      <div class="code">
+        <div class="code-label"><span class="tag">terminal</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="c-com"># 1. Clone the workshop repo</span>
+git clone https://github.com/nimrodfisher/ai-workshop-data-teams-claude-may26
+cd ai-workshop-data-teams-claude-may26
+
+<span class="c-com"># 2. Open it in Claude Code</span>
+claude</code></pre>
+      </div>
+      <div class="callout tip">
+        <span class="c-ico">✅</span>
+        <div><b>Check:</b> ask Claude <i>"read CLAUDE.md and list the 7 analysis phases."</i>
+          If it lists hypothesis-framer → data-qa → eda → deep-analysis → synthesis → validation →
+          data-storytelling, the repo is wired up correctly.</div>
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="step" id="step2">
+      <div class="step-head">
+        <div class="step-badge">2</div>
+        <div><h2>Connect your data</h2><div class="sub">Point Claude Code at your database via MCP</div></div>
+      </div>
+      <p>The workflow reads data through an <b>MCP server</b> — a connector that lets Claude Code query your
+        database directly. Use the MCP that matches your warehouse. You only do this once.</p>
+
+      <div class="grid2">
+        <div class="mini"><h4>Postgres / Supabase</h4><p>Use the Supabase MCP or a generic Postgres MCP. Supply your
+          connection string / project credentials.</p></div>
+        <div class="mini"><h4>BigQuery, Snowflake, etc.</h4><p>Use the MCP for your warehouse. The workflow is
+          SQL-agnostic — it adapts to your dialect from <code>schema.yml</code>.</p></div>
+      </div>
+
+      <h3>Add the MCP server</h3>
+      <div class="code">
+        <div class="code-label"><span class="tag">terminal · example (Postgres)</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="c-com"># Example — add a Postgres MCP server to Claude Code</span>
+claude mcp add postgres -- npx -y @modelcontextprotocol/server-postgres \
+  "postgresql://USER:PASSWORD@HOST:5432/your_database"
+
+<span class="c-com"># Then restart Claude Code so it picks up the new server</span></code></pre>
+      </div>
+      <div class="callout note">
+        <span class="c-ico">🔌</span>
+        <div>Swap in the connector for your stack (Supabase, BigQuery, Snowflake…). The package name and
+          credentials differ; the pattern — <code>claude mcp add &lt;name&gt; -- &lt;server command&gt;</code> — is the same.</div>
+      </div>
+
+      <h3>Verify with one test query</h3>
+      <p>Ask Claude to run a tiny query so you know the connection is live before going further:</p>
+      <div class="code">
+        <div class="code-label"><span class="tag">prompt to Claude</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>Using my connected database MCP, list all table names,
+then run: SELECT count(*) FROM &lt;one of my tables&gt;;
+Show me the result.</code></pre>
+      </div>
+      <div class="callout tip"><span class="c-ico">✅</span>
+        <div><b>Check:</b> you get back a real table list and a row count. If it errors, fix the connection now —
+          the rest of the workflow depends on it.</div>
+      </div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="step" id="step3">
+      <div class="step-head">
+        <div class="step-badge">3</div>
+        <div><h2>Build <code>schema.yml</code></h2><div class="sub">Describe your tables so the workflow never guesses</div></div>
+      </div>
+      <p><code>schema.yml</code> is the <b>map of your database</b>: every table, every column, what each one means,
+        and how tables relate. The workflow treats it as ground truth — if a column isn't here, it doesn't exist
+        as far as the analysis is concerned. Save your file at
+        <code>.claude/semantic-model/schema.yml</code>.</p>
+
+      <h3>The structure (top-level keys, in order)</h3>
+      <table class="fields">
+        <tr><th>Key</th><th>What it holds</th></tr>
+        <tr><td><code>version</code></td><td>Schema format version — keep <code>2</code>.</td></tr>
+        <tr><td><code>models[]</code></td><td>One entry per table: <code>name</code>, <code>description</code>,
+          <code>synonyms[]</code>, and <code>columns[]</code> (each column has <code>name</code>,
+          <code>description</code>, <code>data_type</code>, <code>synonyms[]</code>, optional
+          <code>constraints[]</code>).</td></tr>
+        <tr><td><code>relationships[]</code></td><td>How tables join: <code>from_model</code>/<code>from_column</code>
+          → <code>to_model</code>/<code>to_column</code> + a description.</td></tr>
+        <tr><td><code>notes</code></td><td>Free text: schema overview and any data-quality caveats.</td></tr>
+        <tr><td><code>common_business_questions[]</code></td><td>FAQ-style questions with a ready
+          <code>query_pattern</code>. Optional but high-value.</td></tr>
+        <tr><td><code>common_metrics[]</code> / <code>sql_style_guide</code></td><td>Quick metric shortcuts and your
+          SQL formatting rules. Optional.</td></tr>
+      </table>
+
+      <h3>Worked example — one real table</h3>
+      <p>This is the <code>accounts</code> table from the workshop schema. Copy its <i>shape</i> exactly for your
+        own tables — note how every column carries a plain-English <code>description</code> and
+        <code>synonyms</code> (the words your team actually uses), so the agent maps questions to columns reliably.</p>
+      <div class="code">
+        <div class="code-label"><span class="tag">.claude/semantic-model/schema.yml</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="c-key">version:</span> <span class="c-num">2</span>
+
+<span class="c-key">models:</span>
+  <span class="c-key">- name:</span> accounts
+    <span class="c-key">description:</span> <span class="c-str">|</span>
+      <span class="c-str">Core accounts/organizations table. The top-level entity;</span>
+      <span class="c-str">users, subscriptions and events all hang off an account.</span>
+    <span class="c-key">synonyms:</span> [organizations, companies, customers, tenants]
+    <span class="c-key">columns:</span>
+      <span class="c-key">- name:</span> id
+        <span class="c-key">description:</span> <span class="c-str">Unique identifier for the account (UUID)</span>
+        <span class="c-key">data_type:</span> uuid
+        <span class="c-key">synonyms:</span> [account_id, org_id, company_id]
+        <span class="c-key">constraints:</span>
+          <span class="c-key">- type:</span> primary_key
+          <span class="c-key">- type:</span> not_null
+      <span class="c-key">- name:</span> industry
+        <span class="c-key">description:</span> <span class="c-str">Industry classification (e.g., SaaS, FinTech)</span>
+        <span class="c-key">data_type:</span> text
+        <span class="c-key">synonyms:</span> [vertical, sector, business_type]
+      <span class="c-key">- name:</span> plan
+        <span class="c-key">description:</span> <span class="c-str">Subscription tier (e.g., Free, Pro, Enterprise)</span>
+        <span class="c-key">data_type:</span> text
+        <span class="c-key">synonyms:</span> [tier, pricing_tier]
+      <span class="c-key">- name:</span> created_at
+        <span class="c-key">description:</span> <span class="c-str">When the account was created</span>
+        <span class="c-key">data_type:</span> timestamp with time zone
+        <span class="c-key">synonyms:</span> [signup_date, onboarded_at]
+
+<span class="c-key">relationships:</span>
+  <span class="c-key">- from_model:</span> users
+    <span class="c-key">from_column:</span> org_id
+    <span class="c-key">to_model:</span> accounts
+    <span class="c-key">to_column:</span> id
+    <span class="c-key">description:</span> <span class="c-str">Each user belongs to exactly one account</span>
+
+<span class="c-key">notes:</span> <span class="c-str">|</span>
+  <span class="c-str">Accounts are the top-level unit. Deletion cascades to users and events.</span>
+  <span class="c-str">Data-quality: most columns are nullable; standardize plan values.</span></code></pre>
+      </div>
+
+      <h3>Let Claude draft it — then you review</h3>
+      <p>Don't hand-write the whole thing. Point Claude at your connected database and have it generate a first
+        draft from the live schema, then you correct descriptions and add the synonyms your team really uses.</p>
+      <div class="code">
+        <div class="code-label"><span class="tag">prompt to Claude</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>Inspect my connected database via MCP. For every table, read its
+columns and data types. Generate a schema.yml that follows the EXACT
+structure in .claude/semantic-model/ (version, models[] with
+name/description/synonyms/columns, relationships[], notes).
+
+For each table and column, write a plain-English description and a
+few realistic synonyms. Infer relationships from foreign keys. Save
+it to .claude/semantic-model/schema.yml, then show me anything you
+were unsure about so I can correct it.</code></pre>
+      </div>
+      <div class="callout warn"><span class="c-ico">⚠️</span>
+        <div><b>You own the descriptions.</b> Claude can read column <i>names</i> and <i>types</i>, but the
+          <i>meaning</i> and synonyms come from your business. Review every description — this is the single
+          biggest lever on answer quality.</div>
+      </div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="step" id="step4">
+      <div class="step-head">
+        <div class="step-badge">4</div>
+        <div><h2>Build <code>metrics.yml</code></h2><div class="sub">Define your metrics once, so they're computed consistently</div></div>
+      </div>
+      <p><code>metrics.yml</code> is the <b>dictionary of your business metrics</b> — MRR, churn, active users,
+        whatever matters to you. When someone asks for "churn", the workflow uses <i>your</i> definition here
+        instead of inventing one. Save it at <code>.claude/semantic-model/metrics.yml</code>.</p>
+
+      <h3>The structure</h3>
+      <table class="fields">
+        <tr><th>Key</th><th>What it holds</th></tr>
+        <tr><td><code>version</code></td><td>Keep <code>2</code>.</td></tr>
+        <tr><td><code>metrics[]</code></td><td>One entry per metric.</td></tr>
+        <tr><td><code>name</code> / <code>label</code></td><td>Machine name + human label.</td></tr>
+        <tr><td><code>description</code></td><td>One sentence: what the metric means in business terms.</td></tr>
+        <tr><td><code>type</code></td><td><code>simple</code> (one measure) or <code>ratio</code> (numerator ÷ denominator).</td></tr>
+        <tr><td><code>type_params</code></td><td>For <code>simple</code>: a <code>measure</code>. For <code>ratio</code>:
+          <code>numerator</code> + <code>denominator</code>.</td></tr>
+        <tr><td><code>synonyms[]</code></td><td>Every phrasing your team uses for this metric.</td></tr>
+        <tr><td><code>meta.agent_guidance</code></td><td><b>The important one:</b> plain-English instructions for how
+          to compute it, plus <code>source_table</code>, <code>filter</code>, <code>calculation</code> pointers.</td></tr>
+      </table>
+
+      <h3>Worked examples — one simple, one ratio</h3>
+      <div class="code">
+        <div class="code-label"><span class="tag">.claude/semantic-model/metrics.yml</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="c-key">version:</span> <span class="c-num">2</span>
+
+<span class="c-key">metrics:</span>
+  <span class="c-com"># --- SIMPLE metric: one measure -------------------------</span>
+  <span class="c-key">- name:</span> mrr
+    <span class="c-key">label:</span> <span class="c-str">"MRR"</span>
+    <span class="c-key">description:</span> <span class="c-str">"Monthly Recurring Revenue: sum of monthly_price for active subscriptions."</span>
+    <span class="c-key">type:</span> simple
+    <span class="c-key">type_params:</span>
+      <span class="c-key">measure:</span> mrr_sum
+    <span class="c-key">synonyms:</span> [<span class="c-str">"monthly revenue"</span>, <span class="c-str">"recurring revenue"</span>, <span class="c-str">"total billing"</span>]
+    <span class="c-key">meta:</span>
+      <span class="c-key">agent_guidance:</span> <span class="c-str">"Sum 'monthly_price' from 'subscriptions' where status = 'active'."</span>
+      <span class="c-key">source_table:</span> <span class="c-str">"subscriptions"</span>
+      <span class="c-key">source_column:</span> <span class="c-str">"monthly_price"</span>
+      <span class="c-key">filter:</span> <span class="c-str">"status = 'active'"</span>
+
+  <span class="c-com"># --- RATIO metric: numerator / denominator --------------</span>
+  <span class="c-key">- name:</span> arpa
+    <span class="c-key">label:</span> <span class="c-str">"ARPA"</span>
+    <span class="c-key">description:</span> <span class="c-str">"Average Revenue Per Account: average MRR per active account."</span>
+    <span class="c-key">type:</span> ratio
+    <span class="c-key">type_params:</span>
+      <span class="c-key">numerator:</span> mrr_sum
+      <span class="c-key">denominator:</span> active_subscription_count
+    <span class="c-key">synonyms:</span> [<span class="c-str">"revenue per customer"</span>, <span class="c-str">"average deal size"</span>]
+    <span class="c-key">meta:</span>
+      <span class="c-key">agent_guidance:</span> <span class="c-str">"Divide total MRR by the count of active subscriptions."</span>
+      <span class="c-key">source_table:</span> <span class="c-str">"subscriptions"</span>
+      <span class="c-key">numerator_logic:</span> <span class="c-str">"SUM(monthly_price) WHERE status = 'active'"</span>
+      <span class="c-key">denominator_logic:</span> <span class="c-str">"COUNT(id) WHERE status = 'active'"</span></code></pre>
+      </div>
+
+      <h3>Let Claude draft it from plain language</h3>
+      <p>Describe your metrics in everyday words; Claude turns them into the structured format, grounded in the
+        <code>schema.yml</code> you just built.</p>
+      <div class="code">
+        <div class="code-label"><span class="tag">prompt to Claude</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>Read my .claude/semantic-model/schema.yml. I'll describe my key
+metrics in plain language and you write them into metrics.yml using
+the EXACT structure in the workshop file (name, label, description,
+type simple|ratio, type_params, synonyms, meta.agent_guidance with
+source_table/filter/calculation).
+
+My metrics:
+- "Active customers" = count of accounts with an active subscription.
+- "Churn rate" = canceled subscriptions / active subscriptions.
+- "Weekly active users" = distinct users with an event in the last 7 days.
+[...add yours...]
+
+Save to .claude/semantic-model/metrics.yml and flag anything that
+isn't computable from my schema.</code></pre>
+      </div>
+      <div class="callout warn"><span class="c-ico">⚠️</span>
+        <div>If a metric can't be computed from your schema, the workflow will <b>say so and stop</b> rather than
+          guess — that's by design (see <code>.claude/rules/no-guessing.md</code>). Fix the schema or the metric
+          definition, don't paper over it.</div>
+      </div>
+    </section>
+
+    <!-- STEP 5 -->
+    <section class="step" id="step5">
+      <div class="step-head">
+        <div class="step-badge">5</div>
+        <div><h2>Write your business context</h2><div class="sub">Teach the agent how to interpret your numbers</div></div>
+      </div>
+      <p>Numbers need context. The workshop keeps two short markdown files in
+        <code>.claude/business_knowledge/</code> — a company overview and a product catalog — that tell the agent
+        what "good" looks like and how to read each customer segment. Replace them with yours, written in plain
+        language.</p>
+
+      <div class="grid2">
+        <div class="mini"><h4>business_desc.md</h4><p>Who you are, who your customers are, the roles inside an
+          account, how you package the product, and what a <i>healthy</i> account looks like.</p></div>
+        <div class="mini"><h4>products.md</h4><p>Your SKUs/plans and how activity patterns differ across them — so
+          "low usage" is judged correctly per product.</p></div>
+      </div>
+
+      <h3>Let Claude draft it from a brain-dump</h3>
+      <div class="code">
+        <div class="code-label"><span class="tag">prompt to Claude</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>Here's a plain-language description of my company, customers, plans,
+and what a healthy vs. at-risk account looks like:
+
+[paste 1–2 paragraphs in your own words]
+
+Rewrite this into two files matching the style and depth of the
+workshop's .claude/business_knowledge/business_desc.md and
+products.md. Keep it concrete and decision-oriented (what signals
+matter, what "good" looks like per segment). Save both files into
+.claude/business_knowledge/.</code></pre>
+      </div>
+      <div class="callout tip"><span class="c-ico">🎯</span>
+        <div>The best context says what to <b>flag</b>: e.g. "a quiet account with healthy API traffic is fine; a
+          quiet account with <i>falling</i> API traffic is not." Those judgment cues are what make the agent's
+          findings feel like an analyst wrote them.</div>
+      </div>
+    </section>
+
+    <!-- STEP 6 -->
+    <section class="step" id="step6">
+      <div class="step-head">
+        <div class="step-badge">6</div>
+        <div><h2>Point the workflow at your local files</h2><div class="sub">Swap Nimrod's GitHub source for your local context</div></div>
+      </div>
+      <p>Out of the box, the workflow loads <code>schema.yml</code> and <code>metrics.yml</code> from a GitHub repo
+        via MCP. You'll redirect it to read the <b>local</b> files you just created. Two small edits.</p>
+
+      <h3>Edit 1 — the semantic-model loader</h3>
+      <p>Open <code>.claude/skills/_shared/references/semantic-model-loader.md</code>. Replace the "What to Load"
+        GitHub instructions with local-file reads:</p>
+      <div class="code">
+        <div class="code-label"><span class="tag">semantic-model-loader.md · before → after</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="c-com"># BEFORE — loads from GitHub via MCP</span>
+Tool: mcp__github__get_file_contents
+  owner: "nimrodfisher"
+  repo:  "workshop-queries-repo"
+  path:  "schema.yml"
+
+<span class="c-com"># AFTER — read the local files in this repo</span>
+Read .claude/semantic-model/schema.yml
+Read .claude/semantic-model/metrics.yml
+<span class="c-com"># If either file is missing, STOP and tell me — do not guess schema.</span></code></pre>
+      </div>
+
+      <h3>Edit 2 — the ground-truth pointer</h3>
+      <p>In <code>CLAUDE.md</code> (and <code>.claude/rules/ground-truth.md</code>), the text says the semantic model
+        is loaded from the connected GitHub repo. Update those pointers to say it's loaded from
+        <code>.claude/semantic-model/</code> locally, so the agent looks in the right place.</p>
+      <div class="callout note"><span class="c-ico">📝</span>
+        <div>You're only changing <b>where the files are read from</b> — not the rule itself. The principle is
+          unchanged: schema and metrics are ground truth, never invented.</div>
+      </div>
+      <div class="callout tip"><span class="c-ico">✅</span>
+        <div><b>Check:</b> start a fresh chat and ask <i>"load the semantic model and tell me which file and path
+          you read it from."</i> It should name your local <code>.claude/semantic-model/schema.yml</code> — not GitHub.</div>
+      </div>
+    </section>
+
+    <!-- STEP 7 -->
+    <section class="step" id="step7">
+      <div class="step-head">
+        <div class="step-badge">7</div>
+        <div><h2>Run an analysis</h2><div class="sub">Pose a question and follow the 7 gated phases</div></div>
+      </div>
+      <p>You're set. Ask a real business question and let the pipeline run. It stops at a <b>checkpoint</b> after
+        every phase to summarize findings and wait for your confirmation — so you always see what's happening and
+        nothing runs away from you.</p>
+      <div class="code">
+        <div class="code-label"><span class="tag">prompt to Claude</span></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>I want to run an analysis on my data. My question is:
+"&lt;your business question&gt;"
+
+Follow the full 7-phase workflow in CLAUDE.md. Load my local semantic
+model first, scaffold an analysis folder, and stop at each checkpoint
+for my confirmation before moving on.</code></pre>
+      </div>
+
+      <h3>What happens, phase by phase</h3>
+      <table class="fields">
+        <tr><th>#</th><th>Phase</th><th>Produces</th></tr>
+        <tr><td>1</td><td>hypothesis-framer</td><td>Testable hypotheses + success criteria</td></tr>
+        <tr><td>2</td><td>data-qa</td><td>Data-quality check before any analysis</td></tr>
+        <tr><td>3</td><td>eda</td><td>Distributions, segmentation, time series</td></tr>
+        <tr><td>4</td><td>deep-analysis</td><td>Effect sizes, driver decomposition</td></tr>
+        <tr><td>5</td><td>synthesis</td><td>Findings mapped back to each hypothesis</td></tr>
+        <tr><td>6</td><td>validation</td><td>Sensitivity checks, alternative explanations</td></tr>
+        <tr><td>7</td><td>data-storytelling</td><td>Interactive HTML report + PDF summary</td></tr>
+      </table>
+      <div class="callout note"><span class="c-ico">🧭</span>
+        <div><b>How to track where you are:</b> each run scaffolds a folder under <code>analyses/</code> with a
+          <code>plan.md</code> whose checkpoint log updates after every phase. Open it any time to see what's done
+          and what's next.</div>
+      </div>
+    </section>
+
+    <!-- CHECKLIST -->
+    <section class="step" id="checklist">
+      <div class="step-head">
+        <div class="step-badge">✓</div>
+        <div><h2>Setup checklist</h2><div class="sub">Tick these off — you're ready when all seven are green</div></div>
+      </div>
+      <p>Your progress saves automatically in this browser. Use it to confirm you're ready before the live session.</p>
+      <ul class="checklist" id="cklist">
+        <li data-k="c1"><input type="checkbox" /><div class="ck-body"><strong>Repo pulled &amp; opens in Claude Code</strong><span>Claude can list the 7 phases from CLAUDE.md</span></div></li>
+        <li data-k="c2"><input type="checkbox" /><div class="ck-body"><strong>Data connected + test query works</strong><span>MCP added; a SELECT returns real rows</span></div></li>
+        <li data-k="c3"><input type="checkbox" /><div class="ck-body"><strong>schema.yml written &amp; reviewed</strong><span>Saved at .claude/semantic-model/schema.yml; descriptions checked</span></div></li>
+        <li data-k="c4"><input type="checkbox" /><div class="ck-body"><strong>metrics.yml written &amp; reviewed</strong><span>Saved at .claude/semantic-model/metrics.yml; each metric computable</span></div></li>
+        <li data-k="c5"><input type="checkbox" /><div class="ck-body"><strong>Business context written</strong><span>business_desc.md + products.md in .claude/business_knowledge/</span></div></li>
+        <li data-k="c6"><input type="checkbox" /><div class="ck-body"><strong>Loader points to local files</strong><span>Agent reads .claude/semantic-model/, not GitHub</span></div></li>
+        <li data-k="c7"><input type="checkbox" /><div class="ck-body"><strong>First analysis run end-to-end</strong><span>A question went through all 7 phases to a report</span></div></li>
+      </ul>
+      <button class="ck-reset" onclick="resetChecklist()">Reset checklist</button>
+      <div class="done-banner" id="doneBanner">
+        <b>🎉 You're workshop-ready.</b> Your data, context, and workflow are all wired up — bring a real business
+        question to the session and we'll run it together.
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  AI Analyst Workshop · Setup &amp; practice guide · Built to mirror the workshop's
+  <code>schema.yml</code> / <code>metrics.yml</code> structure. Questions? Bring them to the session.
+</footer>
+
+<script>
+  // ----- Copy buttons -----
+  function copyCode(btn) {
+    const pre = btn.parentElement.querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const old = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = old; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  // ----- Checklist persistence -----
+  const STORE_KEY = 'workshop-setup-checklist-v1';
+  const boxes = Array.from(document.querySelectorAll('#cklist li'));
+
+  function loadState() {
+    let state = {};
+    try { state = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch (e) {}
+    boxes.forEach(li => {
+      const input = li.querySelector('input');
+      input.checked = !!state[li.dataset.k];
+      li.classList.toggle('done', input.checked);
+    });
+    updateProgress();
+  }
+  function saveState() {
+    const state = {};
+    boxes.forEach(li => state[li.dataset.k] = li.querySelector('input').checked);
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  }
+  function updateProgress() {
+    const total = boxes.length;
+    const done = boxes.filter(li => li.querySelector('input').checked).length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('pbar').style.width = pct + '%';
+    document.getElementById('plabel').textContent = done + ' / ' + total;
+    document.getElementById('doneBanner').classList.toggle('show', done === total);
+  }
+  boxes.forEach(li => {
+    const input = li.querySelector('input');
+    li.addEventListener('click', e => {
+      if (e.target !== input) input.checked = !input.checked;
+      li.classList.toggle('done', input.checked);
+      saveState(); updateProgress();
+    });
+  });
+  function resetChecklist() {
+    boxes.forEach(li => { li.querySelector('input').checked = false; li.classList.remove('done'); });
+    saveState(); updateProgress();
+  }
+  loadState();
+
+  // ----- Active TOC highlight -----
+  const links = Array.from(document.querySelectorAll('nav.toc a'));
+  const map = {};
+  links.forEach(a => { const id = a.getAttribute('href').slice(1); map[id] = a; });
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        links.forEach(a => a.classList.remove('active'));
+        if (map[en.target.id]) map[en.target.id].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  document.querySelectorAll('section.step, #overview').forEach(s => obs.observe(s));
+</script>
+
+</body>
+</html>

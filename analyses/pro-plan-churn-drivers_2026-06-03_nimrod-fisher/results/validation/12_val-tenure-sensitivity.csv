@@ -1,6 +1,0 @@
-tenure_bucket,canceled_subs,avg_monthly_price,min_days,max_days
-0-60 days,3,199.00,15,24
-61-90 days,1,199.00,75,75
-91-120 days,1,199.00,101,101
-121-180 days,1,79.00,148,148
-270+ days,1,79.00,339,339
