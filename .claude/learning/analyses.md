@@ -25,6 +25,14 @@ Running index of every completed analysis in this repo. Checked at the start of 
 
 <!-- New entries added below this line, most recent first -->
 
+## 2026-06-16 — PRO Plan Churn Drivers (2025 lens, rebuild)
+- **Path:** `analyses/pro-plan-churn-drivers_2026-06-14_nimrod-fisher/`
+- **Question:** What drives churn (subscription cancellation) among Pro-plan accounts, viewed against the 2025 active Pro base?
+- **Key finding:** 2025 Pro "churn" is **subscription downsizing, not customer loss** — 0 of 15 Pro accounts truly exited (the only logo exit was 2024); 4 of 5 cancelling accounts kept an active sub. Cancellation drivers: **price tier** ($29 entry 0/9 = 0%; premium $79+$199 = 30.4%; RD 30.4pp, Fisher p≈0.15) and **early-life $199 tenure** (median 24d, first-90-day hazard 30.8%; $79 cancels *late* at 244d). Engagement **refuted** (churners more active, 47 vs 39 events); support **null** (2.0 vs 1.5 tickets). Churn is definition-sensitive: logo 7.7% / sub 21.9% / account 38.5% / premium-sub 30.4%.
+- **Confidence:** Medium for price/tenure (full population, not significant at n=7); High for rationalization (account-level, unambiguous); Low for engagement/support/industry.
+- **Tags:** #pro-plan #churn-drivers #price-tier #early-tenure #rationalization #engagement-paradox #subscription-downsizing #small-n #definition-sensitivity
+- **Related:** Rebuild of the user-deleted `pro-plan-churn-drivers_2026-06-03`. Independently re-derived the price-tier + tenure + rationalization story. New `known_issues.md` entry added (products catalog price ≠ subscription price; `product_id` carries no tier signal).
+
 ## 2026-06-03 — PRO Plan Churn Drivers
 - **Path:** `analyses/pro-plan-churn-drivers_2026-06-03_nimrod-fisher/`
 - **Question:** What are the main churn drivers of PRO plan accounts at Pulseboard?

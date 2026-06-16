@@ -54,6 +54,13 @@ Persistent data issues users have reported. Checked before every analysis so Dat
 - **Workaround:** Use `WHERE plan = 'pro'` (lowercase). Affects all analyses that segment by plan tier.
 - **Status:** Open
 
+## products / subscriptions — Catalog price ≠ subscription price; product_id carries no pricing/tier signal
+- **Reported:** 2026-06-14 by nimrod-fisher (surfaced in QA phase of pro-plan-churn-drivers_2026-06-14)
+- **Issue:** `products.price_monthly` holds only catalog values (99 for Products A & C, 49 for Product B) that **never** equal the actual `subscriptions.monthly_price` (29 / 79 / 199). For Pro subs, all 34 mismatch. The *same* `product_id` is sold at multiple subscription prices (e.g., Product C appears at 199, 79 and 29), so neither `product_id` nor product name maps to a price tier.
+- **Impact:** Any pricing, tier-segmentation, or ARPA-by-product analysis that joins to `products` for price will be wrong. The schema also lacks an explicit FK on `subscriptions.product_id`.
+- **Workaround:** Treat **`subscriptions.monthly_price`** as the authoritative price/tier. Do not use `products.price_monthly` or product name as a price proxy.
+- **Status:** Open
+
 ## Mitigated
 
 <!-- Issues with documented workarounds — still relevant to caveat in reports -->

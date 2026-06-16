@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" preserveAspectRatio="xMidYMid meet" font-family="'IBM Plex Mono', monospace">
+  <rect width="720" height="420" fill="#f4efe6"/>
+  <text x="60" y="44" font-size="20" font-weight="700" fill="#14110f">Cancel rate climbs with price tier</text>
+  <text x="60" y="66" font-size="12" fill="#7a7066">Pro subscriptions · canceled / (active + canceled)</text>
+  <!-- axes -->
+  <line x1="120" y1="90" x2="120" y2="340" stroke="#14110f" stroke-width="1.5"/>
+  <line x1="120" y1="340" x2="660" y2="340" stroke="#14110f" stroke-width="1.5"/>
+  <!-- y gridlines 0,10,20,30,40 -->
+  <g font-size="11" fill="#7a7066">
+    <line x1="120" y1="340" x2="660" y2="340" stroke="#ddd2c2"/>
+    <line x1="120" y1="290" x2="660" y2="290" stroke="#ddd2c2"/><text x="112" y="294" text-anchor="end">10%</text>
+    <line x1="120" y1="240" x2="660" y2="240" stroke="#ddd2c2"/><text x="112" y="244" text-anchor="end">20%</text>
+    <line x1="120" y1="190" x2="660" y2="190" stroke="#ddd2c2"/><text x="112" y="194" text-anchor="end">30%</text>
+    <line x1="120" y1="140" x2="660" y2="140" stroke="#ddd2c2"/><text x="112" y="144" text-anchor="end">40%</text>
+    <text x="112" y="344" text-anchor="end">0%</text>
+  </g>
+  <!-- bars: scale 5px per 1% (0->340, 10%->290) -->
+  <!-- $29 = 0% -->
+  <rect x="170" y="338" width="100" height="2" fill="#cdbfa9"/>
+  <text x="220" y="328" text-anchor="middle" font-size="13" font-weight="700" fill="#7a7066">0%</text>
+  <text x="220" y="362" text-anchor="middle" font-size="12" fill="#14110f">$29</text>
+  <text x="220" y="378" text-anchor="middle" font-size="10" fill="#7a7066">n=9</text>
+  <!-- $79 = 28.6% -> height 143 -->
+  <rect x="340" y="197" width="100" height="143" fill="#d98a3d"/>
+  <text x="390" y="187" text-anchor="middle" font-size="13" font-weight="700" fill="#14110f">28.6%</text>
+  <text x="390" y="362" text-anchor="middle" font-size="12" fill="#14110f">$79</text>
+  <text x="390" y="378" text-anchor="middle" font-size="10" fill="#7a7066">n=7</text>
+  <!-- $199 = 31.3% -> height 156 -->
+  <rect x="510" y="184" width="100" height="156" fill="#b8431f"/>
+  <text x="560" y="174" text-anchor="middle" font-size="13" font-weight="700" fill="#14110f">31.3%</text>
+  <text x="560" y="362" text-anchor="middle" font-size="12" fill="#14110f">$199</text>
+  <text x="560" y="378" text-anchor="middle" font-size="10" fill="#7a7066">n=16</text>
+  <text x="60" y="406" font-size="11" fill="#7a7066">$29/mo tier has never churned; $199 is the highest-risk tier.</text>
+</svg>

@@ -1,0 +1,48 @@
+{
+  "analysis": "pro-plan-churn-drivers_2026-06-14_nimrod-fisher",
+  "phase": "data-qa",
+  "date": "2026-06-14",
+  "quality_score": 84,
+  "verdict": "proceed_with_caveats",
+  "scope": {
+    "tables": ["accounts", "subscriptions", "products", "events", "support_tickets", "invoices"],
+    "population": {"pro_accounts": 15, "pro_subscriptions": 34, "active": 25, "canceled": 7, "trialing": 2, "canceled_2025": 5}
+  },
+  "findings_by_severity": {"critical": 0, "high": 1, "medium": 2, "low": 1},
+  "findings": [
+    {
+      "severity": "HIGH",
+      "title": "products table is not the price-tier source",
+      "checks": ["00_qa-product-join", "00_qa-product-mapping"],
+      "evidence": "All 34 Pro subs match a product but all 34 have monthly_price != products.price_monthly; catalog prices only 99/49; same product_id sold at 29/79/199.",
+      "action": "Use subscriptions.monthly_price as the price tier; do not join products for price.",
+      "blocking": false
+    },
+    {
+      "severity": "MEDIUM",
+      "title": "Event coverage excludes most cancellations",
+      "checks": ["00_qa-event-coverage"],
+      "evidence": "Events 2025-03-07..2025-06-06; only 4 of 7 Pro cancels in window, 3 before.",
+      "action": "Treat H3 (engagement) as largely inconclusive; in-coverage subset descriptive only.",
+      "blocking": false
+    },
+    {
+      "severity": "MEDIUM",
+      "title": "17% of Pro support tickets have null category",
+      "checks": ["00_qa-support-coverage"],
+      "evidence": "24 Pro tickets; category null 4/24 (17%); opened_by null 4/24 (expected).",
+      "action": "For H4 use ticket volume; category breakdowns indicative only.",
+      "blocking": false
+    },
+    {
+      "severity": "LOW",
+      "title": "Small population caps confidence",
+      "checks": [],
+      "evidence": "7 canceled Pro subs (5 in 2025); no segment reaches significance.",
+      "action": "Descriptive full-population reporting; confidence Medium (price/tenure), Low (industry/support/engagement).",
+      "blocking": false
+    }
+  ],
+  "clean_checks": ["00_qa-pro-population", "00_qa-subscriptions-completeness", "00_qa-date-logic", "00_qa-referential-integrity"],
+  "blocking_issues": []
+}

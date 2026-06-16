@@ -1,0 +1,6 @@
+status,monthly_price,subs,avg_tenure_days,min_tenure,median_tenure,max_tenure,canceled_le_90d
+active,29,9,181,23,221,359,0
+active,79,5,111,33,85,230,0
+active,199,11,180,28,154,349,0
+canceled,79,2,244,148,243.5,339,0
+canceled,199,5,47,15,24,101,4

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 440" preserveAspectRatio="xMidYMid meet" font-family="'IBM Plex Mono', monospace">
+  <rect width="720" height="440" fill="#f4efe6"/>
+  <text x="60" y="44" font-size="20" font-weight="700" fill="#14110f">$199 cancels are early-life; $79 are late</text>
+  <text x="60" y="66" font-size="12" fill="#7a7066">Median subscription tenure in days · by status and tier</text>
+  <!-- axes -->
+  <line x1="150" y1="90" x2="150" y2="360" stroke="#14110f" stroke-width="1.5"/>
+  <line x1="150" y1="360" x2="660" y2="360" stroke="#14110f" stroke-width="1.5"/>
+  <!-- x scale: 0..360 days over 150..660 px => 1.417 px/day; gridlines every 90d -->
+  <g font-size="11" fill="#7a7066">
+    <line x1="150" y1="90" x2="150" y2="360" stroke="#ddd2c2"/><text x="150" y="378" text-anchor="middle">0</text>
+    <line x1="278" y1="90" x2="278" y2="360" stroke="#ddd2c2"/><text x="278" y="378" text-anchor="middle">90</text>
+    <line x1="405" y1="90" x2="405" y2="360" stroke="#ddd2c2"/><text x="405" y="378" text-anchor="middle">180</text>
+    <line x1="533" y1="90" x2="533" y2="360" stroke="#ddd2c2"/><text x="533" y="378" text-anchor="middle">270</text>
+    <line x1="660" y1="90" x2="660" y2="360" stroke="#ddd2c2"/><text x="660" y="378" text-anchor="middle">360</text>
+    <text x="405" y="398" text-anchor="middle" fill="#14110f">median tenure (days)</text>
+  </g>
+  <!-- 90-day marker emphasis -->
+  <line x1="278" y1="90" x2="278" y2="360" stroke="#b8431f" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="282" y="104" font-size="10" fill="#b8431f">90d</text>
+  <!-- rows: canceled 199, canceled 79, active 199, active 79, active 29 -->
+  <!-- bar = 1.417px/day -->
+  <g font-size="12">
+    <text x="142" y="135" text-anchor="end" fill="#14110f">canceled $199</text>
+    <rect x="150" y="120" width="34" height="22" fill="#b8431f"/>
+    <text x="192" y="136" font-size="11" font-weight="700" fill="#14110f">24d</text>
+
+    <text x="142" y="180" text-anchor="end" fill="#14110f">canceled $79</text>
+    <rect x="150" y="165" width="345" height="22" fill="#d98a3d"/>
+    <text x="503" y="181" font-size="11" font-weight="700" fill="#14110f">244d</text>
+
+    <text x="142" y="232" text-anchor="end" fill="#7a7066">active $199</text>
+    <rect x="150" y="217" width="218" height="22" fill="#2f5d52" opacity="0.55"/>
+    <text x="376" y="233" font-size="11" fill="#14110f">154d</text>
+
+    <text x="142" y="277" text-anchor="end" fill="#7a7066">active $79</text>
+    <rect x="150" y="262" width="120" height="22" fill="#2f5d52" opacity="0.55"/>
+    <text x="278" y="278" font-size="11" fill="#14110f">85d</text>
+
+    <text x="142" y="322" text-anchor="end" fill="#7a7066">active $29</text>
+    <rect x="150" y="307" width="313" height="22" fill="#2f5d52" opacity="0.55"/>
+    <text x="471" y="323" font-size="11" fill="#14110f">221d</text>
+  </g>
+  <text x="60" y="424" font-size="11" fill="#7a7066">4 of 5 $199 cancels happened within 90 days of starting. Active tenure as of 2025-06-17 snapshot.</text>
+</svg>

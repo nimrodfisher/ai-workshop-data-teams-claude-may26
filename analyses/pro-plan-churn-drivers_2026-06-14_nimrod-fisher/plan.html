@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Analysis Plan — Pro Plan Churn Drivers (2025)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spectral:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --ink: #14110f;
+    --paper: #f4efe6;
+    --rust: #b8431f;
+    --amber: #d98a3d;
+    --teal: #2f5d52;
+    --muted: #7a7066;
+    --line: #ddd2c2;
+    --card: #fbf7ef;
+    --shadow: 18px 18px 0 rgba(20,17,15,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Spectral', Georgia, serif;
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(217,138,61,.07), transparent 38%),
+      radial-gradient(circle at 88% 8%, rgba(47,93,82,.06), transparent 40%);
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  /* ---- Masthead ---- */
+  header.masthead {
+    border-bottom: 3px solid var(--ink);
+    padding: 48px 0 28px;
+    margin-bottom: 8px;
+  }
+  .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; letter-spacing: .28em; text-transform: uppercase;
+    color: var(--rust); display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+  }
+  .kicker .dot { width: 5px; height: 5px; background: var(--rust); border-radius: 50%; display:inline-block; }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(38px, 6vw, 76px); line-height: .98; letter-spacing: -.02em;
+    margin: 18px 0 14px; max-width: 16ch;
+  }
+  h1 em { font-style: italic; color: var(--rust); }
+  .standfirst {
+    font-size: 20px; color: #3a342e; max-width: 62ch; font-weight: 300;
+  }
+  .meta-row {
+    margin-top: 24px; display: flex; flex-wrap: wrap; gap: 28px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--muted);
+  }
+  .meta-row b { color: var(--ink); font-weight: 500; }
+
+  /* ---- Section scaffolding ---- */
+  section { padding: 46px 0; border-bottom: 1px solid var(--line); }
+  .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 26px; }
+  .sec-num {
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--rust);
+    border: 1.5px solid var(--rust); border-radius: 50%; width: 38px; height: 38px;
+    display: grid; place-items: center; flex: 0 0 auto;
+  }
+  h2 { font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(26px, 3.4vw, 38px); letter-spacing: -.01em; }
+  h2 + .sub { color: var(--muted); font-size: 15px; font-family:'IBM Plex Mono',monospace; }
+
+  p.lead { font-size: 19px; max-width: 64ch; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  @media (max-width: 720px){ .two-col { grid-template-columns: 1fr; } }
+
+  /* ---- KPI cards ---- */
+  .kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+  @media (max-width: 820px){ .kpis { grid-template-columns: repeat(2,1fr); } }
+  .kpi {
+    background: var(--card); border: 1.5px solid var(--ink); padding: 20px 18px;
+    box-shadow: 6px 6px 0 var(--ink); position: relative;
+  }
+  .kpi .v { font-family:'Fraunces',serif; font-weight: 900; font-size: 40px; line-height: 1; letter-spacing: -.02em; }
+  .kpi .v.sm { font-size: 30px; }
+  .kpi .l { font-family:'IBM Plex Mono',monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+  .kpi.rust .v { color: var(--rust); }
+  .kpi.teal .v { color: var(--teal); }
+
+  /* ---- Tier bars ---- */
+  .tiers { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+  .tier { display: grid; grid-template-columns: 90px 1fr 64px; align-items: center; gap: 14px; }
+  .tier .name { font-family:'IBM Plex Mono',monospace; font-weight:500; }
+  .tier .track { height: 26px; background: #eadfce; border: 1.5px solid var(--ink); position: relative; overflow:hidden; }
+  .tier .fill { height: 100%; background: repeating-linear-gradient(45deg, var(--rust), var(--rust) 7px, #a23a1a 7px, #a23a1a 14px); }
+  .tier .pct { font-family:'Fraunces',serif; font-weight:900; text-align:right; }
+  .tier.zero .fill { background: #cdbfa9; }
+  .tier.zero .pct { color: var(--muted); }
+
+  /* ---- Hypotheses ---- */
+  .hyp { background: var(--card); border-left: 5px solid var(--amber); padding: 20px 24px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .hyp.primary { border-left-color: var(--rust); }
+  .hyp.null { border-left-color: var(--teal); }
+  .hyp h3 { font-family:'Fraunces',serif; font-size: 21px; font-weight: 600; margin-bottom: 6px; }
+  .hyp .tag { font-family:'IBM Plex Mono',monospace; font-size: 10.5px; letter-spacing:.12em; text-transform:uppercase; padding:3px 9px; border:1px solid currentColor; border-radius:20px; }
+  .hyp.primary .tag { color: var(--rust); }
+  .hyp.alt .tag { color: var(--amber); }
+  .hyp.null .tag { color: var(--teal); }
+  .hyp .crit { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; font-size: 15px; }
+  @media (max-width:600px){ .hyp .crit { grid-template-columns:1fr; } }
+  .crit .c { padding: 10px 12px; background: #efe7d8; border-radius: 4px; }
+  .crit .c b { font-family:'IBM Plex Mono',monospace; font-size: 11px; letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .crit .c.yes b { color: var(--teal); }
+  .crit .c.no b { color: var(--rust); }
+
+  /* ---- Phase rail ---- */
+  .phases { counter-reset: ph; display:flex; flex-direction:column; }
+  .phase { display:grid; grid-template-columns: 56px 1fr; gap:20px; padding:18px 0; border-top:1px dashed var(--line); }
+  .phase:first-child { border-top:none; }
+  .phase .pn { font-family:'Fraunces',serif; font-weight:900; font-size:30px; color:var(--amber); }
+  .phase .pt { font-family:'Fraunces',serif; font-weight:600; font-size:19px; }
+  .phase .pd { color:#46403a; font-size:15px; }
+  .phase .out { font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-top:4px; }
+  .phase.active { background: #fbeede; box-shadow: inset 4px 0 0 var(--rust); padding-left:14px; }
+
+  /* ---- chips / scope ---- */
+  .chips { display:flex; flex-wrap:wrap; gap:10px; }
+  .chip { font-family:'IBM Plex Mono',monospace; font-size:12.5px; padding:6px 12px; border:1.5px solid var(--ink); background:var(--card); }
+  .chip.out { border-style:dashed; color:var(--muted); text-decoration:line-through; }
+
+  ul.tick { list-style:none; }
+  ul.tick li { padding-left: 26px; position:relative; margin-bottom:10px; font-size:16px; }
+  ul.tick li::before { content:"▸"; position:absolute; left:0; color:var(--rust); font-size:14px; top:2px; }
+
+  .callout { background: var(--ink); color: #f4efe6; padding: 28px 30px; box-shadow: var(--shadow); }
+  .callout h3 { font-family:'Fraunces',serif; font-weight:600; font-size:23px; margin-bottom:10px; color: var(--amber); }
+  .callout p { font-size:17px; max-width:70ch; color:#e8e0d4; }
+  .callout code { font-family:'IBM Plex Mono',monospace; background: rgba(255,255,255,.1); padding:2px 6px; border-radius:3px; font-size:.85em; }
+
+  .mermaid { background: var(--card); border: 1.5px solid var(--ink); padding: 24px; box-shadow: var(--shadow); overflow-x:auto; }
+
+  footer { padding: 40px 0 64px; color: var(--muted); font-family:'IBM Plex Mono',monospace; font-size:12px; }
+  a.src { color: var(--rust); text-decoration: none; border-bottom:1px solid var(--amber); }
+  .note { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted); margin-top:14px; }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="kicker">
+      <span>Pulseboard · Analyst Workflow</span><span class="dot"></span>
+      <span>Phase 1 — Hypothesis Framing</span><span class="dot"></span>
+      <span>2026-06-14</span>
+    </div>
+    <h1>What drives <em>Pro-plan churn</em> in 2025?</h1>
+    <p class="standfirst">An analysis plan for the seven-phase gated pipeline. Churn is defined as subscription cancellation; drivers are read against the 2025 active Pro base. Grounded in a read-only pull of the live warehouse — every number below is real.</p>
+    <div class="meta-row">
+      <span><b>Analyst</b> &nbsp;Nimrod Fisher</span>
+      <span><b>Slug</b> &nbsp;pro-plan-churn-drivers</span>
+      <span><b>Status</b> &nbsp;In Progress</span>
+      <span><b>Supersedes</b> &nbsp;deleted 2026-06-03 analysis</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 01 QUESTION & DECISION -->
+  <section>
+    <div class="sec-head"><span class="sec-num">01</span><div><h2>The Question &amp; the Decision</h2><span class="sub">Why this analysis exists</span></div></div>
+    <div class="two-col">
+      <div>
+        <p class="lead">What characteristics drive <strong>churn (subscription cancellation)</strong> among Pulseboard <strong>Pro-plan</strong> accounts, viewed against the 2025 active Pro base?</p>
+        <p class="note">Churn = <code>subscriptions.status = 'canceled'</code> where <code>accounts.plan = 'pro'</code>. Matches the canonical <code>churn_rate</code> in metrics.yml.</p>
+      </div>
+      <div class="callout">
+        <h3>Decision this supports</h3>
+        <p>Where to focus Pro retention effort — onboarding, pricing/packaging, or CS outreach — <em>or</em> to conclude no intervention is warranted because 2025 "Pro churn" is subscription rationalization rather than customer loss.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 GROUNDING -->
+  <section>
+    <div class="sec-head"><span class="sec-num">02</span><div><h2>Live Data Grounding</h2><span class="sub">Read-only Supabase pull · 2026-06-14</span></div></div>
+    <div class="kpis">
+      <div class="kpi"><div class="v">15</div><div class="l">Pro accounts</div></div>
+      <div class="kpi"><div class="v">34</div><div class="l">Pro subscriptions</div></div>
+      <div class="kpi rust"><div class="v">7</div><div class="l">Canceled (5 in 2025)</div></div>
+      <div class="kpi teal"><div class="v sm">1 / 7</div><div class="l">True logo exits</div></div>
+    </div>
+
+    <h3 style="font-family:'Fraunces';font-weight:600;font-size:20px;margin:34px 0 6px;">Cancel rate climbs with price</h3>
+    <p class="note" style="margin-bottom:14px;">canceled ÷ (active + canceled), by monthly price tier</p>
+    <div class="tiers">
+      <div class="tier zero"><span class="name">$29 / mo</span><span class="track"><span class="fill" style="width:1%"></span></span><span class="pct">0%</span></div>
+      <div class="tier"><span class="name">$79 / mo</span><span class="track"><span class="fill" style="width:29%"></span></span><span class="pct">29%</span></div>
+      <div class="tier"><span class="name">$199 / mo</span><span class="track"><span class="fill" style="width:31%"></span></span><span class="pct">31%</span></div>
+    </div>
+    <p class="note" style="margin-top:18px;">Tenure of canceled subs: <b style="color:var(--rust)">$199 avg 47 days</b> (early-life) vs <b>$79 avg 244 days</b>. All five 2025 cancellations belong to accounts that still hold an active subscription.</p>
+  </section>
+
+  <!-- 03 HYPOTHESES -->
+  <section>
+    <div class="sec-head"><span class="sec-num">03</span><div><h2>Hypotheses</h2><span class="sub">Criteria pre-registered before deeper analysis</span></div></div>
+
+    <div class="hyp primary alt">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <h3>H1 · Price tier drives churn</h3><span class="tag">Primary</span>
+      </div>
+      <p>Higher-priced Pro subscriptions churn more.</p>
+      <div class="crit">
+        <div class="c yes"><b>Confirms if</b>Cancel rate rises monotonically with tier; $199 ≥ 1.5× the lowest non-zero tier.</div>
+        <div class="c no"><b>Refutes if</b>Cancel rates flat across tiers within noise.</div>
+      </div>
+    </div>
+
+    <div class="hyp primary">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <h3>H2 · Early-life tenure</h3><span class="tag">Primary</span>
+      </div>
+      <p>$199 churn concentrates early in the subscription lifecycle.</p>
+      <div class="crit">
+        <div class="c yes"><b>Confirms if</b>Median canceled-$199 tenure well below active tenure; clusters in first ~90 days.</div>
+        <div class="c no"><b>Refutes if</b>Canceled and active tenure distributions overlap; no early concentration.</div>
+      </div>
+    </div>
+
+    <div class="hyp alt">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <h3>H3 · Engagement decline</h3><span class="tag">Alternative</span>
+      </div>
+      <p>Low / declining product activity precedes churn. <em>Testable only within event coverage (2025-03-07 → 06-06); else inconclusive.</em></p>
+      <div class="crit">
+        <div class="c yes"><b>Confirms if</b>Canceled accounts show materially lower pre-cancel event intensity than active peers.</div>
+        <div class="c no"><b>Refutes if</b>No gap — or canceled accounts more active (the "engagement paradox").</div>
+      </div>
+    </div>
+
+    <div class="hyp alt">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <h3>H4 · Support burden</h3><span class="tag">Alternative</span>
+      </div>
+      <p>More / unresolved support tickets precede churn.</p>
+      <div class="crit">
+        <div class="c yes"><b>Confirms if</b>Canceled accounts show higher ticket volume or open-rate pre-cancel.</div>
+        <div class="c no"><b>Refutes if</b>No separation from retained accounts.</div>
+      </div>
+    </div>
+
+    <div class="hyp null">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <h3>H0 · No driver / rationalization</h3><span class="tag">Null</span>
+      </div>
+      <p>Canceled subs are indistinguishable from retained ones beyond noise, and most "churn" is accounts dropping one subscription while staying active. Live data already shows <b>5/5 of 2025 cancels retained an active sub</b> — deep analysis must quantify this and test whether price/tenure survive once rationalization is separated out.</p>
+    </div>
+  </section>
+
+  <!-- 04 SCOPE & DATA -->
+  <section>
+    <div class="sec-head"><span class="sec-num">04</span><div><h2>Scope &amp; Required Data</h2><span class="sub">From schema.yml &amp; metrics.yml — the single source of truth</span></div></div>
+    <div class="two-col">
+      <div>
+        <h3 style="font-family:'Fraunces';font-weight:600;font-size:18px;margin-bottom:12px;">In scope</h3>
+        <div class="chips">
+          <span class="chip">price tier</span><span class="chip">tenure</span>
+          <span class="chip">engagement*</span><span class="chip">support burden</span>
+          <span class="chip">industry</span><span class="chip">rationalization vs exit</span>
+        </div>
+        <h3 style="font-family:'Fraunces';font-weight:600;font-size:18px;margin:22px 0 12px;">Out of scope</h3>
+        <div class="chips">
+          <span class="chip out">ARR impact</span><span class="chip out">acquisition channels</span>
+          <span class="chip out">non-Pro plans</span>
+        </div>
+        <p class="note">*engagement limited by ~90-day event coverage.</p>
+      </div>
+      <div>
+        <h3 style="font-family:'Fraunces';font-weight:600;font-size:18px;margin-bottom:12px;">Tables &amp; metrics</h3>
+        <ul class="tick">
+          <li><b>subscriptions</b> — status, started_at, canceled_at, monthly_price, product_id</li>
+          <li><b>accounts</b> — plan (lowercase <code>'pro'</code>), industry, created_at</li>
+          <li><b>products</b> · <b>events</b> · <b>support_tickets</b> · <b>invoices</b></li>
+          <li><b>churn_rate</b> = canceled ÷ active (metrics.yml)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 KNOWN ISSUES -->
+  <section>
+    <div class="sec-head"><span class="sec-num">05</span><div><h2>Known Issues Applied</h2><span class="sub">Carried forward from learning/known_issues.md</span></div></div>
+    <ul class="tick">
+      <li><b>plan is lowercase</b> — filter <code>WHERE plan = 'pro'</code>, never <code>'Pro'</code>.</li>
+      <li><b>events cover only ~90 days</b> (2025-03-07 → 06-06) — H3 restricted to in-coverage cancels, else inconclusive.</li>
+      <li><b>SQL rank-tie bug</b> — any rank-sum test uses average-rank <code>(min+max)/2</code>, not <code>RANK()</code>.</li>
+      <li><b>Small n</b> (7 cancels, 5 in 2025) — descriptive full-population reporting; confidence capped Medium (price/tenure), Low (industry/support/engagement).</li>
+    </ul>
+  </section>
+
+  <!-- 06 FLOW -->
+  <section>
+    <div class="sec-head"><span class="sec-num">06</span><div><h2>Analysis Flow</h2><span class="sub">Question → hypotheses → phases → deliverables</span></div></div>
+    <div class="mermaid">
+flowchart TD
+    Q["Q: What drives Pro-plan churn in 2025?"] --> H["Hypotheses H1-H4 + H0"]
+    H --> QA["Phase 2: Data QA"]
+    QA --> E["Phase 3: EDA"]
+    E --> DA["Phase 4: Deep Analysis"]
+    DA --> S["Phase 5: Synthesis"]
+    S --> V["Phase 6: Validation"]
+    V --> D["Phase 7: Deliverables"]
+    H -.-> M["Metrics: churn_rate (metrics.yml)"]
+    QA -.-> T["Tables: accounts, subscriptions, products (schema.yml)"]
+    D --> R["report.html"]
+    D --> P["summary.pdf"]
+    D --> N["notebook.ipynb"]
+    </div>
+  </section>
+
+  <!-- 07 PHASES -->
+  <section>
+    <div class="sec-head"><span class="sec-num">07</span><div><h2>The Seven Phases</h2><span class="sub">Each ends at a checkpoint — silence is not consent</span></div></div>
+    <div class="phases">
+      <div class="phase active">
+        <div class="pn">1</div>
+        <div><div class="pt">Hypothesis Framer <span style="font-family:'IBM Plex Mono';font-size:11px;color:var(--rust)">← you are here</span></div>
+        <div class="pd">Frame the question into testable hypotheses with pre-registered criteria.</div>
+        <div class="out">→ plan.md · plan.html</div></div>
+      </div>
+      <div class="phase">
+        <div class="pn">2</div>
+        <div><div class="pt">Data QA</div>
+        <div class="pd">Pro population counts, completeness, product joins, event-coverage vs each cancel date, referential integrity.</div>
+        <div class="out">→ results/qa/ — qa-report.md · qa-summary.json · *.csv</div></div>
+      </div>
+      <div class="phase">
+        <div class="pn">3</div>
+        <div><div class="pt">EDA</div>
+        <div class="pd">Cancel vs active counts, price/tenure distributions, cancel timeline, industry split, coverage-limited engagement.</div>
+        <div class="out">→ results/eda/ — eda-findings.md · charts · *.csv</div></div>
+      </div>
+      <div class="phase">
+        <div class="pn">4</div>
+        <div><div class="pt">Deep Analysis</div>
+        <div class="pd">Quantify H1 (rate by tier) &amp; H2 (tenure / first-90-day share); separate true logo exits from rationalization.</div>
+        <div class="out">→ results/deep-analysis/ — deep-analysis.md · charts · *.csv</div></div>
+      </div>
+      <div class="phase">
+        <div class="pn">5</div>
+        <div><div class="pt">Synthesis</div>
+        <div class="pd">Map evidence to each hypothesis; render verdict and evidence strength.</div>
+        <div class="out">→ results/synthesis/synthesis.md</div></div>
+      </div>
+      <div class="phase">
+        <div class="pn">6</div>
+        <div><div class="pt">Validation</div>
+        <div class="pd">Sensitivity to churn definition, small-n caveats, confounders, coverage bias, alternative explanations.</div>
+        <div class="out">→ results/validation/ — validation.md · *.csv</div></div>
+      </div>
+      <div class="phase">
+        <div class="pn">7</div>
+        <div><div class="pt">Data Storytelling</div>
+        <div class="pd">Interactive report, executive PDF, debug notebook; then update learning/analyses.md.</div>
+        <div class="out">→ deliverables/ — report.html · summary.pdf · notebook.ipynb</div></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  Pulseboard AI Analyst Workflow · Plan generated 2026-06-14 · Ground truth: <a class="src" href="#">schema.yml</a> + <a class="src" href="#">metrics.yml</a> · Numbers sourced from live read-only warehouse pull. No figures invented.
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: 'IBM Plex Mono, monospace',
+      primaryColor: '#fbf7ef',
+      primaryBorderColor: '#14110f',
+      primaryTextColor: '#14110f',
+      lineColor: '#b8431f',
+      secondaryColor: '#efe7d8',
+      tertiaryColor: '#fbeede'
+    }
+  });
+</script>
+</body>
+</html>

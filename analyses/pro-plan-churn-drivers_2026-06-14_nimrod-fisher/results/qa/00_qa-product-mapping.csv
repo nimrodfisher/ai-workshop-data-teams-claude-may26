@@ -1,0 +1,10 @@
+product_name,catalog_price,sub_price,subs
+Product C,99,199,8
+Product A,99,199,7
+Product C,99,79,5
+Product C,99,29,4
+Product A,99,29,3
+Product B,49,199,2
+Product B,49,29,2
+Product A,99,79,2
+Product B,49,79,1

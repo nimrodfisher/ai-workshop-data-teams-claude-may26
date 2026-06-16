@@ -1,0 +1,6 @@
+industry,n_canceled,canceled_prices,n_active,active_prices,last_cancel,outcome
+eCommerce,1,199,0,,2024-07-09,true_logo_exit
+MarTech,1,199,2,29 + 79,2024-08-01,rationalized
+FinTech,2,79 + 199,1,199,2025-04-07,rationalized
+MarTech,1,199,3,29 + 29 + 79,2025-04-21,rationalized
+SaaS,2,79 + 199,3,79 + 199 + 199,2025-05-26,rationalized

@@ -1,0 +1,3 @@
+segment,accounts,avg_events_in_window,median_events,min_events,max_events
+has_canceled_sub,5,47,43,39,60
+no_cancel,8,39,37.5,32,48

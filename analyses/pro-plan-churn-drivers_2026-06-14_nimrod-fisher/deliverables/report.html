@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pro Plan Churn Drivers (2025) — Pulseboard Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Spectral:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#14110f; --paper:#f4efe6; --rust:#b8431f; --amber:#d98a3d;
+    --teal:#2f5d52; --muted:#7a7066; --line:#ddd2c2; --card:#fbf7ef;
+    --shadow:14px 14px 0 rgba(20,17,15,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:'Spectral',Georgia,serif;line-height:1.62;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(circle at 10% 12%,rgba(217,138,61,.07),transparent 38%),radial-gradient(circle at 90% 6%,rgba(47,93,82,.06),transparent 40%);}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 32px}
+  /* hero */
+  header.hero{border-bottom:3px solid var(--ink);padding:52px 0 32px}
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--rust);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .kicker .dot{width:5px;height:5px;background:var(--rust);border-radius:50%}
+  h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(36px,5.6vw,68px);line-height:1.0;letter-spacing:-.02em;margin:16px 0 10px;max-width:17ch}
+  h1 em{font-style:italic;color:var(--rust)}
+  .answer{font-size:21px;color:#352f29;max-width:64ch;font-weight:300;margin-top:14px}
+  .answer b{font-weight:600;color:var(--ink)}
+  .meta-row{margin-top:22px;display:flex;flex-wrap:wrap;gap:26px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted)}
+  .meta-row b{color:var(--ink);font-weight:500}
+  /* sections */
+  section{padding:44px 0;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust);margin-bottom:10px}
+  h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(25px,3.2vw,34px);letter-spacing:-.01em;margin-bottom:8px}
+  p.lead{font-size:18px;max-width:66ch;margin-top:8px}
+  /* KPI strip */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
+  @media(max-width:780px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--card);border:1.5px solid var(--ink);padding:18px 16px;box-shadow:5px 5px 0 var(--ink)}
+  .kpi .v{font-family:'Fraunces',serif;font-weight:900;font-size:34px;line-height:1;letter-spacing:-.02em}
+  .kpi .v.sm{font-size:26px}
+  .kpi .l{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+  .kpi.rust .v{color:var(--rust)} .kpi.teal .v{color:var(--teal)}
+  /* finding cards */
+  .card{background:var(--card);border:1.5px solid var(--ink);box-shadow:var(--shadow);padding:26px 28px;margin-top:22px}
+  .card svg{width:100%;height:auto;max-width:100%;display:block;margin:6px 0}
+  .card h3{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin-bottom:4px}
+  .card .verdict{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border:1px solid currentColor;border-radius:20px;display:inline-block;margin-bottom:12px}
+  .v-strong{color:var(--teal)} .v-mod{color:var(--amber)} .v-ref{color:var(--rust)} .v-null{color:var(--muted)}
+  .card p{font-size:16px;margin-top:8px}
+  /* definition table */
+  table{border-collapse:collapse;width:100%;margin-top:10px;font-size:15px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+  th{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  td.big{font-family:'Fraunces',serif;font-weight:900;font-size:20px}
+  tr.hi td{background:#fbeede}
+  /* recommendations */
+  ol.rec{list-style:none;counter-reset:r;margin-top:8px}
+  ol.rec li{counter-increment:r;position:relative;padding:16px 0 16px 56px;border-top:1px dashed var(--line)}
+  ol.rec li:first-child{border-top:none}
+  ol.rec li::before{content:counter(r);position:absolute;left:0;top:14px;font-family:'Fraunces',serif;font-weight:900;font-size:26px;color:var(--amber)}
+  ol.rec b{font-weight:600}
+  /* caveats */
+  ul.cav{list-style:none;margin-top:6px}
+  ul.cav li{padding-left:24px;position:relative;margin-bottom:10px;font-size:16px}
+  ul.cav li::before{content:"!";position:absolute;left:0;top:0;font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--rust)}
+  .callout{background:var(--ink);color:#f0e8db;padding:26px 30px;box-shadow:var(--shadow);margin-top:8px}
+  .callout h3{font-family:'Fraunces',serif;color:var(--amber);font-size:22px;margin-bottom:8px}
+  .callout p{font-size:17px;color:#e8e0d4;max-width:72ch}
+  code{font-family:'IBM Plex Mono',monospace;background:#efe7d8;padding:2px 6px;border-radius:3px;font-size:.85em}
+  details{margin-top:14px;background:var(--card);border:1.5px solid var(--line);padding:14px 20px}
+  summary{font-family:'IBM Plex Mono',monospace;font-size:13px;cursor:pointer;color:var(--rust);letter-spacing:.04em}
+  details[open]{box-shadow:var(--shadow)}
+  details ul{margin:12px 0 4px 18px;font-size:14px}
+  details li{margin-bottom:6px}
+  footer{padding:36px 0 60px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:12px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="hero"><div class="wrap">
+  <div class="kicker"><span>Pulseboard · Retention Analysis</span><span class="dot"></span><span>Nimrod Fisher</span><span class="dot"></span><span>2026-06-16</span></div>
+  <h1>Pro-plan "churn" in 2025 is <em>downsizing</em>, not loss</h1>
+  <p class="answer"><b>Zero of 15 Pro accounts fully left Pulseboard in 2025.</b> The cancellations that did happen are concentrated in the <b>$199 subscription tier within its first 90 days</b> — while the <b>$29 entry tier has never churned</b>. Four of five cancelling accounts kept an active subscription. The drivers describe <b>which subscriptions get trimmed, not which customers leave</b>.</p>
+  <div class="meta-row">
+    <span><b>Question</b> &nbsp;What drives Pro-plan churn in 2025?</span>
+    <span><b>Population</b> &nbsp;15 Pro accounts · 34 subscriptions</span>
+    <span><b>Confidence</b> &nbsp;Medium (small sample)</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+  <!-- WHY IT MATTERS -->
+  <section>
+    <div class="eyebrow">Why this matters</div>
+    <h2>The decision this supports</h2>
+    <div class="callout">
+      <h3>Don't fight a churn fire that isn't burning</h3>
+      <p>If leadership reads "30% Pro churn" and launches a broad retention program, they'd be aiming at the wrong target. True customer loss (logo churn) among Pro accounts in 2025 is <b>zero</b>. The real, narrow opportunity is <b>value-realization for new $199 subscriptions in their first quarter</b> — a packaging and onboarding problem, not an engagement or support crisis.</p>
+    </div>
+  </section>
+
+  <!-- CHURN DEFINITION -->
+  <section>
+    <div class="eyebrow">Read this first</div>
+    <h2>"Churn" depends entirely on how you count it</h2>
+    <p class="lead">The same data yields four very different headline rates. Every number in this report names its definition; quoting one alone is misleading.</p>
+    <table>
+      <tr><th>Definition</th><th>Rate</th><th>What it counts</th></tr>
+      <tr class="hi"><td>Logo churn (true exit)</td><td class="big" style="color:var(--teal)">7.7%</td><td>Accounts that fully left — 1 of 13 (in 2024). <b>0 in 2025.</b></td></tr>
+      <tr><td>Subscription churn</td><td class="big">21.9%</td><td>Canceled subs ÷ (active+canceled) — 7 of 32.</td></tr>
+      <tr><td>Account-any-cancel</td><td class="big">38.5%</td><td>Accounts that canceled ≥1 sub — 5 of 13.</td></tr>
+      <tr><td>Premium-tier sub churn</td><td class="big" style="color:var(--rust)">30.4%</td><td>The "$79+$199" slice — 7 of 23. The widely-quoted figure.</td></tr>
+    </table>
+  </section>
+
+  <!-- KPIs -->
+  <section>
+    <div class="eyebrow">At a glance</div>
+    <h2>The shape of it</h2>
+    <div class="kpis">
+      <div class="kpi teal"><div class="v">0</div><div class="l">True logo exits in 2025</div></div>
+      <div class="kpi rust"><div class="v">31%</div><div class="l">$199 first-90-day cancel hazard</div></div>
+      <div class="kpi"><div class="v">24d</div><div class="l">Median tenure of $199 cancels</div></div>
+      <div class="kpi"><div class="v sm">4 / 5</div><div class="l">Cancels that kept an active sub</div></div>
+    </div>
+  </section>
+
+  <!-- FINDING 1 — PRICE -->
+  <section>
+    <div class="eyebrow">Finding 1 · Hypothesis H1</div>
+    <h2>The $29 tier never churns; everything above runs ~30%</h2>
+    <div class="card">
+      <span class="verdict v-mod">Evidence: Moderate</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" preserveAspectRatio="xMidYMid meet" font-family="'IBM Plex Mono',monospace">
+        <text x="70" y="44" font-size="19" font-weight="700" fill="#14110f">Cancel rate climbs with price tier</text>
+        <text x="70" y="66" font-size="12" fill="#7a7066">Pro subscriptions · canceled / (active + canceled)</text>
+        <line x1="130" y1="92" x2="130" y2="340" stroke="#14110f" stroke-width="1.5"/>
+        <line x1="130" y1="340" x2="700" y2="340" stroke="#14110f" stroke-width="1.5"/>
+        <g font-size="11" fill="#7a7066">
+          <line x1="130" y1="290" x2="700" y2="290" stroke="#ddd2c2"/><text x="122" y="294" text-anchor="end">10%</text>
+          <line x1="130" y1="240" x2="700" y2="240" stroke="#ddd2c2"/><text x="122" y="244" text-anchor="end">20%</text>
+          <line x1="130" y1="190" x2="700" y2="190" stroke="#ddd2c2"/><text x="122" y="194" text-anchor="end">30%</text>
+          <line x1="130" y1="140" x2="700" y2="140" stroke="#ddd2c2"/><text x="122" y="144" text-anchor="end">40%</text>
+          <text x="122" y="344" text-anchor="end">0%</text>
+        </g>
+        <rect x="190" y="338" width="110" height="2" fill="#cdbfa9"/>
+        <text x="245" y="328" text-anchor="middle" font-size="13" font-weight="700" fill="#7a7066">0%</text>
+        <text x="245" y="362" text-anchor="middle" font-size="12" fill="#14110f">$29</text>
+        <text x="245" y="380" text-anchor="middle" font-size="10" fill="#7a7066">n=9</text>
+        <rect x="370" y="197" width="110" height="143" fill="#d98a3d"/>
+        <text x="425" y="187" text-anchor="middle" font-size="13" font-weight="700" fill="#14110f">28.6%</text>
+        <text x="425" y="362" text-anchor="middle" font-size="12" fill="#14110f">$79</text>
+        <text x="425" y="380" text-anchor="middle" font-size="10" fill="#7a7066">n=7</text>
+        <rect x="550" y="184" width="110" height="156" fill="#b8431f"/>
+        <text x="605" y="174" text-anchor="middle" font-size="13" font-weight="700" fill="#14110f">31.3%</text>
+        <text x="605" y="362" text-anchor="middle" font-size="12" fill="#14110f">$199</text>
+        <text x="605" y="380" text-anchor="middle" font-size="10" fill="#7a7066">n=16</text>
+      </svg>
+      <p>The entry tier ($29/mo) has <b>never lost a subscription</b> (0/9), while both paid-up tiers churn around 30%. The robust statement is a cliff — <b>$29 vs everything above</b> — not a smooth gradient ($79 and $199 are statistically indistinguishable). Direction is strong and the gap is economically large (risk difference 30.4pp), but with 7 cancellations it is not statistically significant (Fisher's exact p≈0.15). We ruled out a product confound (the same product is sold at all three prices) and a newer-cohort confound (the tiers are the same age).</p>
+    </div>
+  </section>
+
+  <!-- FINDING 2 — TENURE -->
+  <section>
+    <div class="eyebrow">Finding 2 · Hypothesis H2</div>
+    <h2>$199 subscriptions that fail, fail fast</h2>
+    <div class="card">
+      <span class="verdict v-mod">Evidence: Moderate</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" preserveAspectRatio="xMidYMid meet" font-family="'IBM Plex Mono',monospace">
+        <text x="70" y="44" font-size="19" font-weight="700" fill="#14110f">$199 cancels are early-life; $79 are late</text>
+        <text x="70" y="66" font-size="12" fill="#7a7066">Median subscription tenure in days · by status and tier</text>
+        <line x1="170" y1="92" x2="170" y2="350" stroke="#14110f" stroke-width="1.5"/>
+        <line x1="170" y1="350" x2="700" y2="350" stroke="#14110f" stroke-width="1.5"/>
+        <g font-size="11" fill="#7a7066">
+          <text x="170" y="368" text-anchor="middle">0</text>
+          <line x1="303" y1="92" x2="303" y2="350" stroke="#ddd2c2"/><text x="303" y="368" text-anchor="middle">90</text>
+          <line x1="435" y1="92" x2="435" y2="350" stroke="#ddd2c2"/><text x="435" y="368" text-anchor="middle">180</text>
+          <line x1="567" y1="92" x2="567" y2="350" stroke="#ddd2c2"/><text x="567" y="368" text-anchor="middle">270</text>
+          <line x1="700" y1="92" x2="700" y2="350" stroke="#ddd2c2"/><text x="700" y="368" text-anchor="middle">360</text>
+          <text x="435" y="392" text-anchor="middle" fill="#14110f">median tenure (days)</text>
+        </g>
+        <line x1="303" y1="92" x2="303" y2="350" stroke="#b8431f" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="308" y="106" font-size="10" fill="#b8431f">90d</text>
+        <g font-size="12">
+          <text x="160" y="140" text-anchor="end" fill="#14110f">canceled $199</text>
+          <rect x="170" y="125" width="35" height="22" fill="#b8431f"/><text x="213" y="141" font-size="11" font-weight="700" fill="#14110f">24d</text>
+          <text x="160" y="185" text-anchor="end" fill="#14110f">canceled $79</text>
+          <rect x="170" y="170" width="358" height="22" fill="#d98a3d"/><text x="536" y="186" font-size="11" font-weight="700" fill="#14110f">244d</text>
+          <text x="160" y="237" text-anchor="end" fill="#7a7066">active $199</text>
+          <rect x="170" y="222" width="226" height="22" fill="#2f5d52" opacity="0.55"/><text x="404" y="238" font-size="11" fill="#14110f">154d</text>
+          <text x="160" y="282" text-anchor="end" fill="#7a7066">active $79</text>
+          <rect x="170" y="267" width="125" height="22" fill="#2f5d52" opacity="0.55"/><text x="303" y="283" font-size="11" fill="#14110f">85d</text>
+          <text x="160" y="327" text-anchor="end" fill="#7a7066">active $29</text>
+          <rect x="170" y="312" width="324" height="22" fill="#2f5d52" opacity="0.55"/><text x="502" y="328" font-size="11" fill="#14110f">221d</text>
+        </g>
+        <text x="70" y="416" font-size="11" fill="#7a7066">4 of 5 $199 cancels happened within 90 days of starting · 90-day hazard 30.8%.</text>
+      </svg>
+      <p>Among canceled $199 subscriptions the median time-to-cancel is just <b>24 days</b>, and <b>4 of 5</b> canceled within 90 days (first-90-day hazard 30.8%). The $79 tier shows the <b>opposite</b> pattern — its cancellations come late (median 244 days). So early-life churn is specific to the top price point: it is a <b>first-quarter value-realization</b> problem, not a Pro-wide one.</p>
+    </div>
+  </section>
+
+  <!-- FINDING 3 — RATIONALIZATION -->
+  <section>
+    <div class="eyebrow">Finding 3 · Hypothesis H0 — the headline</div>
+    <h2>Cancelling ≠ leaving</h2>
+    <div class="card">
+      <span class="verdict v-strong">Evidence: Strong</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" preserveAspectRatio="xMidYMid meet" font-family="'IBM Plex Mono',monospace">
+        <text x="70" y="44" font-size="19" font-weight="700" fill="#14110f">Most Pro "churn" is rationalization</text>
+        <text x="70" y="66" font-size="12" fill="#7a7066">5 Pro accounts canceled a subscription · what happened to the account</text>
+        <rect x="90" y="110" width="380" height="150" rx="6" fill="#2f5d52"/>
+        <text x="280" y="172" text-anchor="middle" font-size="54" font-weight="700" fill="#f4efe6">4</text>
+        <text x="280" y="206" text-anchor="middle" font-size="14" fill="#e8e0d4">still active (rationalized)</text>
+        <text x="280" y="230" text-anchor="middle" font-size="11" fill="#bcd0c8">dropped a sub, account retained</text>
+        <rect x="490" y="110" width="180" height="150" rx="6" fill="#b8431f"/>
+        <text x="580" y="172" text-anchor="middle" font-size="54" font-weight="700" fill="#f4efe6">1</text>
+        <text x="580" y="206" text-anchor="middle" font-size="14" fill="#f4efe6">true logo exit</text>
+        <text x="580" y="230" text-anchor="middle" font-size="11" fill="#f0c9bb">(in 2024, not 2025)</text>
+        <text x="90" y="300" font-size="13" font-weight="700" fill="#14110f">2025 cancellations: 3 accounts, all kept an active subscription &#8594; 0 true exits.</text>
+        <text x="90" y="324" font-size="11" fill="#7a7066">Every cancelling account dropped a $199 sub. Logo churn in 2025 = 0 of 15 Pro accounts.</text>
+      </svg>
+      <p>Of the five Pro accounts that canceled a subscription, <b>four kept an active subscription</b> and only one fully left — and that exit was in 2024. A SaaS account dropped $79+$199 but kept $79+$199+$199; a FinTech account dropped $79+$199 but kept $199. This is customers <b>trimming their subscription mix</b>, not abandoning Pulseboard.</p>
+    </div>
+  </section>
+
+  <!-- FINDING 4 — NON-DRIVERS -->
+  <section>
+    <div class="eyebrow">Finding 4 · Hypotheses H3 & H4</div>
+    <h2>What does <em>not</em> predict churn</h2>
+    <div class="two">
+      <div class="card" style="margin-top:0">
+        <span class="verdict v-ref">H3 · Refuted</span>
+        <h3>Engagement</h3>
+        <p>Cancelling accounts were <b>more</b> active, not less — 47 vs 39 events in the coverage window. The "disengagement precedes churn" idea is the opposite of what the data shows. <b>Do not build an engagement-decline alert.</b> <span style="color:var(--muted)">(Coverage-limited: 4 of 7 cancels in window.)</span></p>
+      </div>
+      <div class="card" style="margin-top:0">
+        <span class="verdict v-null">H4 · Null</span>
+        <h3>Support burden</h3>
+        <p>Ticket volume barely differs — 2.0 vs 1.5 tickets per account on tiny counts. Support load does <b>not</b> distinguish churners, consistent with prior Pulseboard analyses. No support-volume churn rule is warranted.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECOMMENDATIONS -->
+  <section>
+    <div class="eyebrow">Now what</div>
+    <h2>Recommendations</h2>
+    <ol class="rec">
+      <li><b>Target the $199 first-90-day window.</b> Stand up a value-realization play for new $199 subscriptions — a CS check-in by day 30 and day 60 focused on activation, since that is where ~31% are lost.</li>
+      <li><b>Reframe internal "Pro churn" reporting.</b> Separate subscription downsizing from logo churn. Logo churn in 2025 is zero; reporting a single ~30% figure mis-signals a crisis.</li>
+      <li><b>Review the $199 packaging, not the product.</b> The same product sells fine at $29/$79; the failure is concentrated at the top price's perceived first-quarter value. Treat as pricing/packaging, not feature gaps.</li>
+      <li><b>Do not invest in engagement- or support-based churn alerts</b> for Pro — neither carries signal here (engagement runs the wrong way).</li>
+      <li><b>Revisit when more cancellations accrue.</b> At n=7, nothing is statistically conclusive. Re-run once the Pro cancel count roughly doubles, or instrument onboarding to test the value-realization hypothesis directly.</li>
+    </ol>
+  </section>
+
+  <!-- CAVEATS -->
+  <section>
+    <div class="eyebrow">Honest limits</div>
+    <h2>Caveats</h2>
+    <ul class="cav">
+      <li><b>Small sample.</b> 7 cancellations (5 in 2025). All findings are descriptive over the full population; none reach statistical significance.</li>
+      <li><b>Definition-sensitive.</b> Churn ranges 7.7%–38.5% by definition — always read the rate with its definition.</li>
+      <li><b>Durability of "0 exits" unknown.</b> The frozen 2025-06-17 snapshot can't see whether rationalized accounts later churn fully. This is the key open question.</li>
+      <li><b>Engagement is coverage-limited.</b> Event data spans only 2025-03-07 → 06-06; only 4 of 7 cancels fall inside it.</li>
+      <li><b>Industry not readable.</b> 1–3 Pro accounts per vertical — no reliable industry signal.</li>
+      <li><b>Data note.</b> 2 of 15 Pro accounts have no subscription rows at all; the product catalog price never matches the real subscription price (price tier taken from <code>subscriptions.monthly_price</code>).</li>
+    </ul>
+  </section>
+
+  <!-- APPENDIX -->
+  <section style="border-bottom:none">
+    <div class="eyebrow">Appendix</div>
+    <h2>Methodology &amp; hypotheses</h2>
+    <p class="lead">Seven-phase gated pipeline: hypothesis-framing → data QA → EDA → deep analysis → synthesis → validation → reporting. Ground truth from versioned <code>schema.yml</code> / <code>metrics.yml</code>; churn defined per <code>metrics.yml</code>.</p>
+    <details>
+      <summary>Hypothesis verdicts</summary>
+      <ul>
+        <li><b>H1 Price tier — Moderate (supported).</b> $29 0% vs premium 30.4%; RD 30.4pp; Fisher p≈0.15.</li>
+        <li><b>H2 Tenure — Moderate (supported, $199-specific).</b> Median 24d; 90-day hazard 30.8%.</li>
+        <li><b>H3 Engagement — Refuted/Inconclusive.</b> Canceled accounts more active (47 vs 39).</li>
+        <li><b>H4 Support — Null.</b> 2.0 vs 1.5 tickets/account.</li>
+        <li><b>H0 Rationalization — Strong (confirmed).</b> 4/5 retained an active sub; 0 true exits in 2025.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>Data QA summary (score 84/100)</summary>
+      <ul>
+        <li>Core churn data pristine — 0 nulls, 0 invalid dates, 0 orphans, 0 duplicate IDs.</li>
+        <li>HIGH: <code>products.price_monthly</code> carries no price signal → use <code>subscriptions.monthly_price</code>.</li>
+        <li>MEDIUM: event coverage excludes 3/7 cancels; 17% null support categories.</li>
+        <li>LOW: small n caps confidence.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>Queries &amp; evidence files</summary>
+      <ul>
+        <li>QA: <code>queries/00_qa-*.sql</code> → <code>results/qa/</code></li>
+        <li>EDA: <code>queries/01–07_eda-*.sql</code> → <code>results/eda/</code></li>
+        <li>Deep analysis: <code>queries/08–10_da-*.sql</code> → <code>results/deep-analysis/</code></li>
+        <li>Validation: <code>queries/11–13_val-*.sql</code> → <code>results/validation/</code></li>
+        <li>Every query saves a matching <code>.csv</code>; the debug notebook reloads them with no DB connection.</li>
+      </ul>
+    </details>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  Pulseboard AI Analyst Workflow · Pro Plan Churn Drivers (2025) · Nimrod Fisher · 2026-06-16 · All figures traced to saved CSVs; price tier = subscriptions.monthly_price; no figures invented.
+</footer>
+</body>
+</html>

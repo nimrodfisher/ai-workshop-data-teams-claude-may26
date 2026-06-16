@@ -1,0 +1,3 @@
+segment,accounts,total_tickets,avg_tickets_per_account,total_open_tickets
+has_canceled_sub,5,10,2.00,4
+no_cancel,8,12,1.50,5
