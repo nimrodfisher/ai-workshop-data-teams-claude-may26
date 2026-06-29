@@ -1,0 +1,232 @@
+version: 2
+
+models:
+  - name: dw_fact_transaction
+    meta:
+      context_file: 05_data-and-metrics/semantic-model/dw_fact_transaction.yml
+    database: NEEMA_BI
+    schema: DW_FACT
+    description: |
+      Central financial-ledger fact. One row per transaction line in the Neema
+      wallet ledger (~55.5M rows). Covers every money movement type — deposits,
+      remittances, P2P, card, salary, currency exchange, bonuses, fees, etc.
+      Deposits and remittances are also broken out into their own dedicated fact
+      tables (dw_fact_deposit, dw_fact_remittance); use the IS_DEPOSITS /
+      IS_REMITTANCE flags to identify those subsets here.
+    synonyms: [transactions, ledger, wallet ledger, money movements, fact transaction]
+    columns:
+      - name: TRANSACTION_SOURCE_ID
+        description: Source system / platform the transaction originated from.
+        data_type: NUMBER
+        synonyms: [source id, source system]
+        sample_values: [1, 2, 3, 4, 5]
+      - name: TRANSACTION_UNIQUE_ID
+        description: Surrogate primary key. Unique per ledger row.
+        data_type: NUMBER
+        synonyms: [transaction unique id, row id, surrogate key]
+        constraints:
+          - type: primary_key
+          - type: not_null
+      - name: TRANSACTION_ID
+        description: Natural transaction UUID (16-byte binary). Not unique — cancelling/reversal rows can share the original id.
+        data_type: BINARY
+        synonyms: [transaction id, txn id, transaction uuid]
+        sample_values: ["56BE26710C9D448D966863691F0B5473", "84D0792D3CD341EDA808D1A9CC2EDEF0"]
+      - name: EXTERNAL_TRANSACTION_ID
+        description: Identifier of the transaction in the external/originating system.
+        data_type: BINARY
+        synonyms: [external transaction id, external id]
+      - name: BLOB_ID
+        description: Reference to the raw source payload (blob) for the transaction.
+        data_type: NUMBER
+        synonyms: [blob id, payload id]
+      - name: PAYOUT_ID
+        description: Payout UUID linking the transaction to a remittance payout. Foreign key to dw_fact_remittance.PAYOUT_ID.
+        data_type: BINARY
+        synonyms: [payout id, remittance payout id]
+      - name: USER_ID
+        description: Owning user UUID. Foreign key to dw_dim_user.USER_ID.
+        data_type: BINARY
+        synonyms: [user id, customer id, user uuid]
+        sample_values: ["3A6B654BD1494570BC59D0685D4C7E6B", "1A08C9D1D41C4AC7A9E67A6E0F212430"]
+      - name: NEEMA_ID
+        description: Owning user's numeric Neema id. Foreign key to dw_dim_user.NEEMA_ID.
+        data_type: NUMBER
+        synonyms: [neema id, customer number, user number]
+        sample_values: [54433, 23236, 156147]
+      - name: PAYER_ID
+        description: UUID of the paying party (for P2P / incoming transfers).
+        data_type: BINARY
+        synonyms: [payer id, sender id]
+      - name: R2P_ID
+        description: Request-to-pay UUID, when the transaction is tied to an R2P flow.
+        data_type: BINARY
+        synonyms: [r2p id, request to pay id]
+      - name: TRANSACTION_DATE
+        description: Timestamp the transaction occurred (no time zone). Data spans 2023-01 to present.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [transaction date, txn date, transaction timestamp, when]
+        sample_values: ["2023-01-12", "2025-07-17"]
+      - name: TRANSACTION_TYPE_ID
+        description: Numeric transaction-type code. Maps to DW_DIM_TRANSACTION_TYPE_* dimensions.
+        data_type: NUMBER
+        synonyms: [transaction type id, type id]
+        sample_values: [0, 1, 2, 17, 32, 41, 82, 92]
+      - name: TRANSACTION_TYPE_NAME
+        description: Human-readable transaction type.
+        data_type: TEXT
+        synonyms: [transaction type, type, type name, kind]
+        sample_values: [Deposit, Remittance, P2P, Salary, Card Load, Card Fee, Cashback, Refund, Withdraw, CurrencyExchangeSource, CurrencyExchangeTarget, Referral, Bonus]
+      - name: BANK_IL_CREDIT_TYPE
+        description: Israeli-bank credit classification for the transaction.
+        data_type: TEXT
+        synonyms: [bank il credit type, credit type]
+        sample_values: [SALARY]
+      - name: IS_DEPOSITS
+        description: True when the transaction is a deposit (also represented in dw_fact_deposit).
+        data_type: BOOLEAN
+        synonyms: [is deposit, deposit flag]
+        sample_values: [true, false]
+      - name: IS_REMITTANCE
+        description: True when the transaction is a remittance (also represented in dw_fact_remittance).
+        data_type: BOOLEAN
+        synonyms: [is remittance, remittance flag]
+        sample_values: [true, false]
+      - name: IS_ACTIVE
+        description: True when the transaction is active (not cancelled / reversed); used to define "active" volume.
+        data_type: BOOLEAN
+        synonyms: [is active, active flag]
+        sample_values: [true, false]
+      - name: CANCELLED
+        description: True when the transaction was cancelled.
+        data_type: BOOLEAN
+        synonyms: [cancelled, is cancelled, voided]
+        sample_values: [true, false]
+      - name: CANCELLING_TRANSACTION_ID
+        description: UUID of the transaction that cancels this one, if any.
+        data_type: BINARY
+        synonyms: [cancelling transaction id, reversal id]
+      - name: CANCELLING
+        description: True when this row is itself a cancelling/reversal transaction.
+        data_type: BOOLEAN
+        synonyms: [cancelling, is reversal]
+        sample_values: [true, false]
+      - name: TRANSACTION_CURRENCY_ID
+        description: Currency of the transaction amount. 1=USD, 3=THB, 4=ILS, 5=EUR, 8=LKR, 33=GBP.
+        data_type: NUMBER
+        synonyms: [transaction currency, currency id, currency]
+        sample_values: [1, 3, 4, 5, 8, 33]
+      - name: TRANSACTION_XE_RATE_USD
+        description: FX rate used to convert the transaction amount to USD.
+        data_type: NUMBER
+        synonyms: [usd fx rate, transaction exchange rate usd]
+      - name: TRANSACTION_XE_RATE_ILS
+        description: FX rate used to convert the transaction amount to ILS.
+        data_type: NUMBER
+        synonyms: [ils fx rate, transaction exchange rate ils]
+      - name: TRANSACTION_AMOUNT
+        description: Transaction amount in its original currency.
+        data_type: NUMBER
+        synonyms: [amount, transaction amount, value]
+      - name: TRANSACTION_AMOUNT_USD
+        description: Transaction amount converted to USD. Can be negative for debits/reversals.
+        data_type: NUMBER
+        synonyms: [amount usd, transaction amount usd, usd value]
+        sample_values: [5.8085, 102.4709, -148.72]
+      - name: TRANSACTION_AMOUNT_ILS
+        description: Transaction amount converted to ILS.
+        data_type: NUMBER
+        synonyms: [amount ils, transaction amount ils, shekel value]
+      - name: FEE_CURRENCY_ID
+        description: Currency of the fee amount (see currency_id mapping).
+        data_type: NUMBER
+        synonyms: [fee currency, fee currency id]
+        sample_values: [1, 4, 5, 33]
+      - name: FEE_XE_RATE_USD
+        description: FX rate used to convert the fee to USD.
+        data_type: NUMBER
+        synonyms: [fee fx rate usd]
+      - name: FEE_XE_RATE_ILS
+        description: FX rate used to convert the fee to ILS.
+        data_type: NUMBER
+        synonyms: [fee fx rate ils]
+      - name: FEE_AMOUNT
+        description: Fee charged in its original currency.
+        data_type: NUMBER
+        synonyms: [fee, fee amount]
+      - name: FEE_AMOUNT_USD
+        description: Fee converted to USD.
+        data_type: NUMBER
+        synonyms: [fee usd, fee amount usd]
+      - name: FEE_AMOUNT_ILS
+        description: Fee converted to ILS.
+        data_type: NUMBER
+        synonyms: [fee ils, fee amount ils]
+      - name: FX_FEE_CURRENCY_ID
+        description: Currency of the FX (currency-conversion) fee (see currency_id mapping).
+        data_type: NUMBER
+        synonyms: [fx fee currency, fx fee currency id]
+      - name: FX_FEE_XE_RATE_USD
+        description: FX rate used to convert the FX fee to USD.
+        data_type: NUMBER
+        synonyms: [fx fee fx rate usd]
+      - name: FX_FEE_XE_RATE_ILS
+        description: FX rate used to convert the FX fee to ILS.
+        data_type: NUMBER
+        synonyms: [fx fee fx rate ils]
+      - name: FX_FEE_AMOUNT
+        description: FX fee in its original currency.
+        data_type: NUMBER
+        synonyms: [fx fee, fx fee amount]
+      - name: FX_FEE_AMOUNT_USD
+        description: FX fee converted to USD.
+        data_type: NUMBER
+        synonyms: [fx fee usd]
+      - name: FX_FEE_AMOUNT_ILS
+        description: FX fee converted to ILS.
+        data_type: NUMBER
+        synonyms: [fx fee ils]
+      - name: REFERENCED_TRANSACTION_ID
+        description: UUID of a related/parent transaction this row references.
+        data_type: BINARY
+        synonyms: [referenced transaction id, parent transaction id]
+      - name: N2N_INCOMING
+        description: True when this is the incoming side of a Neema-to-Neema (N2N) transfer.
+        data_type: BOOLEAN
+        synonyms: [n2n incoming, neema to neema incoming]
+        sample_values: [true, false]
+      - name: N2N_COMMENT
+        description: Free-text note attached to a Neema-to-Neema transfer (user supplied, multilingual).
+        data_type: TEXT
+        synonyms: [n2n comment, transfer note, p2p note]
+        sample_values: [Gift, Birthday, Groceries, Raffle]
+      - name: IS_NEEMA_PAY
+        description: True when the transaction is part of Neema Pay.
+        data_type: BOOLEAN
+        synonyms: [is neema pay, neema pay flag]
+        sample_values: [true, false]
+      - name: DW_UPDATE_DATE
+        description: Timestamp this row was last loaded/updated by the data warehouse.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [dw update date, etl load date, last updated]
+    relationships:
+      - from_model: dw_fact_transaction
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: Each transaction belongs to one user.
+      - from_model: dw_fact_transaction
+        from_column: NEEMA_ID
+        to_model: dw_dim_user
+        to_column: NEEMA_ID
+        description: Alternate user join on the numeric Neema id.
+      - from_model: dw_fact_transaction
+        from_column: TRANSACTION_UNIQUE_ID
+        to_model: dw_fact_remittance
+        to_column: TRANSACTION_UNIQUE_ID
+        description: Remittance transactions (extended) link to their transactions.
+      - from_model: dw_fact_transaction
+        from_column: TRANSACTION_UNIQUE_ID
+        to_model: dw_fact_deposit
+        to_column: DEPOSIT_UNIQUE_ID
+        description: Deposit transactions (extended) link to their transactions.

@@ -1,0 +1,170 @@
+version: 2
+
+models:
+  - name: dw_fact_max_transaction
+    meta:
+      context_file: 05_data-and-metrics/semantic-model/dw_fact_max_transaction.yml
+    database: NEEMA_BI
+    schema: DW_FACT
+    description: |
+      Max (Kasefet) card transaction fact. One row per physical or virtual
+      card transaction processed by the Max / LeumiCard network, covering
+      both Mastercard (sub-group 09603) and Visa (sub-groups 00608 / 00610)
+      card programmes.  Sourced from daily clearance files delivered by Max
+      and enriched with Neema user identity via the dw_dim_max_cards card
+      master.  Amounts are provided in both the original transaction currency
+      and the account charge currency; merchant details, MCC, and VAT/
+      commission breakdowns are included.
+    synonyms: [max card transactions, card transactions, kasefet transactions, debit card transactions, max transactions, credit card transactions]
+    columns:
+      - name: MAX_TRANSACTION_ID
+        description: Surrogate primary key. Composite key built from card serial (CID), authorization code, file date, and sub-group program name.
+        data_type: TEXT
+        synonyms: [max transaction id, card transaction id, row id, surrogate key]
+        constraints:
+          - type: primary_key
+          - type: not_null
+      - name: USER_ID
+        description: Owning user UUID, resolved via the card master. Foreign key to dw_dim_user.USER_ID.
+        data_type: BINARY
+        synonyms: [user id, customer id, cardholder id]
+      - name: NEEMA_ID
+        description: Owning user's numeric Neema id. Foreign key to dw_dim_user.NEEMA_ID.
+        data_type: NUMBER
+        synonyms: [neema id, customer number, cardholder neema id]
+      - name: CARD_SERIAL_CID
+        description: Physical card serial / CID number (leading zeros stripped). Used to join to dw_dim_max_cards.CID.
+        data_type: TEXT
+        synonyms: [card serial cid, cid, card serial, card number]
+      - name: CARD_ID
+        description: Internal Neema card identifier. Foreign key to dw_dim_max_cards.CARD_ID.
+        data_type: TEXT
+        synonyms: [card id, neema card id]
+      - name: SUB_GROUP_PROGRAM_NAME
+        description: Card programme code identifying the card scheme. 09603=Mastercard, 00608/00610=Visa.
+        data_type: TEXT
+        synonyms: [sub group program name, card programme, card scheme, card program code]
+        sample_values: ["09603", "00608", "00610"]
+      - name: CURRENCY_TYPE
+        description: Original currency code of the transaction as reported by the card scheme.
+        data_type: TEXT
+        synonyms: [currency type, original currency]
+      - name: AUTHORIZATION_CODE
+        description: Authorization code assigned by the issuer during approval.
+        data_type: TEXT
+        synonyms: [authorization code, auth code, approval code]
+      - name: TRANSACTION_STATUS
+        description: Settlement/processing status of the card transaction.
+        data_type: TEXT
+        synonyms: [transaction status, status, card transaction status]
+        sample_values: [Approved, Declined, Reversed]
+      - name: TRANSACTION_EXECUTION_DATE
+        description: Timestamp the transaction was executed / presented (no time zone).
+        data_type: TIMESTAMP_NTZ
+        synonyms: [transaction execution date, execution date, transaction date, when]
+      - name: TRANSACTION_RECEIPT_DATE_LEUMI_CARD
+        description: Timestamp Max / LeumiCard received and processed the transaction record.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [transaction receipt date leumi card, receipt date, clearing date, settlement date]
+      - name: MOVEMENT_CODE
+        description: Numeric movement/transaction type code from the Max clearance file.
+        data_type: TEXT
+        synonyms: [movement code, transaction type code, movement type]
+      - name: MOVEMENT_CODE_DESCRIPTION
+        description: Human-readable description of the movement code.
+        data_type: TEXT
+        synonyms: [movement code description, movement description, transaction type description]
+        sample_values: [Purchase, Refund, "Cash Advance", "Balance Inquiry"]
+      - name: CARD_USAGE_METHOD_CODE
+        description: Numeric code identifying how the card was presented for the transaction.
+        data_type: TEXT
+        synonyms: [card usage method code, usage method code, card presentation code]
+      - name: CARD_USAGE_METHOD_DESCRIPTION
+        description: Human-readable description of how the card was used.
+        data_type: TEXT
+        synonyms: [card usage method description, card usage, presentation method]
+        sample_values: [Chip, Contactless, "Magnetic Stripe", Online, "Manual Entry"]
+      - name: SMART_TRANSACTION_INDICATOR
+        description: True when the transaction was flagged as a smart (tokenised / contactless) transaction.
+        data_type: BOOLEAN
+        synonyms: [smart transaction indicator, is smart transaction, contactless flag]
+        sample_values: [true, false]
+      - name: TRANSACTION_CURRENCY
+        description: ISO currency code of the transaction amount as charged.
+        data_type: TEXT
+        synonyms: [transaction currency, charge currency, billing currency]
+        sample_values: [ILS, USD, EUR, GBP, THB]
+      - name: AMOUNT_SOURCE_CURRENCY
+        description: Transaction amount in the original (source) currency — the currency the merchant charged in.
+        data_type: NUMBER
+        synonyms: [amount source currency, original amount, foreign currency amount]
+      - name: AMOUNT_CHARGE_CURRENCY
+        description: Transaction amount in the account/charge currency (ILS for most Neema cards).
+        data_type: NUMBER
+        synonyms: [amount charge currency, charge amount, billed amount, amount ils]
+      - name: EXCHANGE_RATE
+        description: FX rate applied to convert the source-currency amount to the charge currency.
+        data_type: NUMBER
+        synonyms: [exchange rate, fx rate, conversion rate]
+      - name: MERCHANT_NUMBER
+        description: Merchant identifier assigned by the acquiring bank.
+        data_type: TEXT
+        synonyms: [merchant number, merchant id, acquirer merchant id]
+      - name: MERCHANT_NAME
+        description: Merchant name as reported in the clearance file (Hebrew / local language).
+        data_type: TEXT
+        synonyms: [merchant name, store name, business name]
+      - name: MERCHANT_NAME_ENGLISH_TRANSACTION
+        description: Merchant name in English as reported in the clearance (transaction) file.
+        data_type: TEXT
+        synonyms: [merchant name english transaction, merchant name english, merchant english]
+      - name: UNIFIED_ADDRESS
+        description: Merchant's unified address string.
+        data_type: TEXT
+        synonyms: [unified address, merchant address, address]
+      - name: CITY
+        description: City where the merchant is located.
+        data_type: TEXT
+        synonyms: [city, merchant city, location city]
+      - name: COUNTRY
+        description: Country where the merchant is located.
+        data_type: TEXT
+        synonyms: [country, merchant country, location country]
+        sample_values: [Israel, "United States", Thailand, Philippines, India, Germany]
+      - name: MCC4_CODE
+        description: 4-digit Merchant Category Code (MCC) identifying the merchant's industry.
+        data_type: TEXT
+        synonyms: [mcc4 code, mcc, merchant category code, merchant category]
+        sample_values: ["5411", "5541", "5812", "5999", "6011"]
+      - name: VAT_AMOUNT
+        description: VAT component of the transaction in the charge currency.
+        data_type: NUMBER
+        synonyms: [vat amount, tax amount, vat]
+      - name: COMMISSION_AMOUNT
+        description: Commission / interchange component charged on the transaction.
+        data_type: NUMBER
+        synonyms: [commission amount, commission, interchange amount]
+      - name: TOTAL_AMOUNT
+        description: Total billed amount (principal + VAT + commission) in the charge currency.
+        data_type: NUMBER
+        synonyms: [total amount, total, billed amount, final amount]
+      - name: DW_UPDATE_DATE
+        description: Timestamp this row was last loaded/updated by the data warehouse.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [dw update date, etl load date, last updated]
+    relationships:
+      - from_model: dw_fact_max_transaction
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: Each card transaction belongs to one cardholder (Neema user).
+      - from_model: dw_fact_max_transaction
+        from_column: NEEMA_ID
+        to_model: dw_dim_user
+        to_column: NEEMA_ID
+        description: Alternate cardholder join on the numeric Neema id.
+      - from_model: dw_fact_max_transaction
+        from_column: CARD_ID
+        to_model: dw_dim_max_cards
+        to_column: CARD_ID
+        description: Each card transaction links to the card master record.

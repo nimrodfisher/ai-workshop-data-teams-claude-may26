@@ -1,0 +1,354 @@
+version: 2
+
+models:
+  - name: dw_fact_remittance
+    meta:
+      context_file: 05_data-and-metrics/semantic-model/dw_fact_remittance.yml
+    database: NEEMA_BI
+    schema: DW_FACT
+    description: |
+      Remittance / payout fact. One row per remittance payout attempt — outbound cross-border transfers to a beneficiary via a provider.
+      Includes amounts (account, received, fees, FX fees), provider routing and
+      the dynamic-routing decision, and the payout status lifecycle.
+    synonyms: [remittances, payouts, fact remittance]
+    columns:
+      - name: TRANSACTION_SOURCE_ID
+        description: Source system / platform the remittance originated from.
+        data_type: NUMBER
+        synonyms: [source id, source system]
+        sample_values: [1, 4]
+      - name: TRANSACTION_ID
+        description: Underlying ledger transaction UUID. Foreign key to dw_fact_transaction.TRANSACTION_ID. Not unique here (multiple payout rows per transaction).
+        data_type: BINARY
+        synonyms: [transaction id, txn id]
+      - name: TRANSACTION_UNIQUE_ID
+        description: Surrogate primary key. Unique per remittance row.
+        data_type: NUMBER
+        synonyms: [transaction unique id, row id, surrogate key]
+        constraints:
+          - type: primary_key
+          - type: not_null
+      - name: PAYOUT_ID
+        description: Payout UUID. Not unique — a payout can have multiple rows (e.g. routing attempts).
+        data_type: BINARY
+        synonyms: [payout id, payout uuid]
+      - name: USER_ID
+        description: Sending user's UUID. Foreign key to dw_dim_user.USER_ID.
+        data_type: BINARY
+        synonyms: [user id, sender id, customer id]
+      - name: NEEMA_ID
+        description: Sending user's numeric Neema id. Foreign key to dw_dim_user.NEEMA_ID.
+        data_type: NUMBER
+        synonyms: [neema id, customer number]
+      - name: PAYER_NAME
+        description: Name of the payer/sender (PII — free text personal name).
+        data_type: TEXT
+        synonyms: [payer name, sender name]
+      - name: BENEFICIARY_ID
+        description: UUID of the receiving beneficiary.
+        data_type: BINARY
+        synonyms: [beneficiary id, recipient id, receiver id]
+      - name: PROVIDER_ID
+        description: Numeric id of the remittance provider used.
+        data_type: NUMBER
+        synonyms: [provider id, partner id]
+      - name: PROVIDER_NAME
+        description: Name of the remittance provider used.
+        data_type: TEXT
+        synonyms: [provider, provider name, partner, partner name]
+        sample_values: [TerraPay, Thunes, Rapyd, Transpay, Paysend, DeeMoney, IntelExpress, Privat, Sampath, Alipay, UnionPay, "Neema IL"]
+      - name: RECEIVER_COUNTRY_ID
+        description: Numeric id of the destination (receiver) country.
+        data_type: NUMBER
+        synonyms: [receiver country id, destination country id]
+      - name: RECEIVER_COUNTRY_NAME
+        description: Destination (receiver) country name.
+        data_type: TEXT
+        synonyms: [receiver country, destination country, payout country]
+        sample_values: [India, Philippines, Thailand, "Sri Lanka", China, Nigeria, Kenya, Nepal, Ghana, Ukraine, Israel]
+      - name: PLATFORM_PROVIDER_DESTINATIONS_UNIQUE_ID
+        description: Surrogate id for the platform/provider/destination routing combination.
+        data_type: NUMBER
+        synonyms: [provider destination id, routing combination id]
+      - name: END_POINT_NAME
+        description: Specific payout endpoint — bank, wallet, or pickup network at the destination.
+        data_type: TEXT
+        synonyms: [end point, endpoint, payout endpoint, bank or wallet]
+        sample_values: [GCash, "M. Lhuillier", "Cebuana Lhuillier", "STATE BANK OF INDIA", "All Banks", "All Cards", "MTN Mobile Money", "AliPay"]
+      - name: PARTNER_SERVICE_TYPE_NAME
+        description: Type of payout service (delivery method).
+        data_type: TEXT
+        synonyms: [service type, partner service type, delivery method]
+        sample_values: [BankAccount, Cards, CashPickup, MobileWallet, InstitutionPayment, Pix, PushToCard, Upi]
+      - name: CONTACT_COUNTRY_ID
+        description: Numeric id of the beneficiary contact's country.
+        data_type: NUMBER
+        synonyms: [contact country id]
+      - name: CONTACT_COUNTRY_NAME
+        description: Beneficiary contact's country name.
+        data_type: TEXT
+        synonyms: [contact country]
+      - name: SENDER_COUNTRY_ID
+        description: Numeric id of the sender's country.
+        data_type: NUMBER
+        synonyms: [sender country id, origin country id]
+      - name: SENDER_COUNTRY_NAME
+        description: Sender's country name.
+        data_type: TEXT
+        synonyms: [sender country, origin country]
+        sample_values: [Israel, Thailand, Philippines, India, "United States", England, Germany]
+      - name: PAYMENT_TYPE
+        description: Payment classification by party type.
+        data_type: TEXT
+        synonyms: [payment type, transfer type]
+        sample_values: [B2B, B2C, C2B, C2C]
+      - name: TRANSACTION_DATE
+        description: Timestamp the remittance transaction occurred (no time zone).
+        data_type: TIMESTAMP_NTZ
+        synonyms: [transaction date, remittance date, when]
+      - name: PAYOUT_CREATED_AT
+        description: Timestamp the payout was created.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [payout created at, payout creation time]
+      - name: CANCELLED
+        description: True when the remittance was cancelled.
+        data_type: BOOLEAN
+        synonyms: [cancelled, is cancelled]
+        sample_values: [true, false]
+      - name: ACCOUNT_CURRENCY_ID
+        description: Currency debited from the sender's account (see currency_id mapping).
+        data_type: NUMBER
+        synonyms: [account currency, account currency id, send currency]
+      - name: ACCOUNT_AMOUNT
+        description: Amount debited from the sender's account, in the account currency.
+        data_type: NUMBER
+        synonyms: [account amount, sent amount, debit amount]
+      - name: ACCOUNT_AMOUNT_USD
+        description: Account (sent) amount converted to USD.
+        data_type: NUMBER
+        synonyms: [account amount usd, sent amount usd]
+      - name: ACCOUNT_AMOUNT_ILS
+        description: Account (sent) amount converted to ILS.
+        data_type: NUMBER
+        synonyms: [account amount ils, sent amount ils]
+      - name: RECEIVED_CURRENCY_ID
+        description: Currency the beneficiary receives (see currency_id mapping / RECEIVED_CURRENCY_NAME).
+        data_type: NUMBER
+        synonyms: [received currency id, payout currency id]
+      - name: RECEIVED_CURRENCY_NAME
+        description: ISO code of the currency the beneficiary receives.
+        data_type: TEXT
+        synonyms: [received currency, payout currency, destination currency]
+        sample_values: [INR, PHP, THB, LKR, NGN, KES, NPR, GHS, USD, EUR, ILS]
+      - name: RECEIVED_AMOUNT
+        description: Amount the beneficiary receives, in the received currency.
+        data_type: NUMBER
+        synonyms: [received amount, payout amount, amount received]
+      - name: REMITTANCE_AMOUNT_EXCLUDE_FEE_USD
+        description: Remittance principal in USD, excluding fees.
+        data_type: NUMBER
+        synonyms: [remittance amount excluding fee usd, principal usd]
+      - name: RECEIVED_XE_RATE
+        description: FX rate applied between the account currency and the received currency.
+        data_type: NUMBER
+        synonyms: [received fx rate, payout exchange rate]
+      - name: PAYER_CHARGE_EXCLUDE_FEE_CURRENCY_ID
+        description: Currency id of the payer charge excluding fee (see currency_id mapping).
+        data_type: NUMBER
+        synonyms: [payer charge currency id]
+      - name: PAYER_CHARGE_EXCLUDE_FEE_CURRENCY
+        description: Currency (ISO/text) of the payer charge excluding fee.
+        data_type: TEXT
+        synonyms: [payer charge currency]
+      - name: PAYER_CHARGE_AMOUNT_EXCLUDE_FEE
+        description: Amount charged to the payer excluding fees.
+        data_type: NUMBER
+        synonyms: [payer charge amount, payer charge excluding fee]
+      - name: PROVIDER_CHARGE_EXCLUDE_FEE_CURRENCY_ID
+        description: Currency id of the provider charge excluding fee (see currency_id mapping).
+        data_type: NUMBER
+        synonyms: [provider charge currency id]
+      - name: PROVIDER_CHARGE_AMOUNT_EXCLUDE_FEE
+        description: Amount the provider charges Neema excluding fees, in the provider charge currency.
+        data_type: NUMBER
+        synonyms: [provider charge amount, provider cost]
+      - name: PROVIDER_CHARGE_AMOUNT_EXCLUDE_FEE_USD
+        description: Provider charge excluding fee, converted to USD.
+        data_type: NUMBER
+        synonyms: [provider charge amount usd, provider cost usd]
+      - name: FEE_CURRENCY_ID
+        description: Currency of the fee charged to the user (see currency_id mapping).
+        data_type: NUMBER
+        synonyms: [fee currency id]
+      - name: FEE_AMOUNT
+        description: Fee charged to the user in its original currency.
+        data_type: NUMBER
+        synonyms: [fee, fee amount]
+      - name: FEE_AMOUNT_USD
+        description: User fee converted to USD.
+        data_type: NUMBER
+        synonyms: [fee usd, fee amount usd]
+      - name: FEE_AMOUNT_ILS
+        description: User fee converted to ILS.
+        data_type: NUMBER
+        synonyms: [fee ils, fee amount ils]
+      - name: FX_FEE_CURRENCY_ID
+        description: Currency of the FX fee (see currency_id mapping).
+        data_type: NUMBER
+        synonyms: [fx fee currency id]
+      - name: FX_FEE_AMOUNT
+        description: FX fee in its original currency.
+        data_type: NUMBER
+        synonyms: [fx fee, fx fee amount]
+      - name: FX_FEE_AMOUNT_USD
+        description: FX fee converted to USD.
+        data_type: NUMBER
+        synonyms: [fx fee usd]
+      - name: FX_FEE_AMOUNT_ILS
+        description: FX fee converted to ILS.
+        data_type: NUMBER
+        synonyms: [fx fee ils]
+      - name: PICKUP_CODE
+        description: Cash-pickup reference code (PII / sensitive — present for cash pickup payouts).
+        data_type: TEXT
+        synonyms: [pickup code, cash pickup code]
+      - name: REFERENCE_CODE
+        description: Provider/transaction reference code.
+        data_type: TEXT
+        synonyms: [reference code, ref code]
+      - name: POST_TRANSACTION_ID
+        description: Provider transaction id assigned after submission.
+        data_type: TEXT
+        synonyms: [post transaction id, provider transaction id]
+      - name: PRE_TRANSACTION_ID
+        description: Provider transaction id assigned before/at submission.
+        data_type: TEXT
+        synonyms: [pre transaction id]
+      - name: EXTERNAL_ID
+        description: External identifier for the payout in the provider's system.
+        data_type: TEXT
+        synonyms: [external id]
+      - name: ACCOUNT_NUMBER
+        description: Beneficiary account number (PII / sensitive).
+        data_type: TEXT
+        synonyms: [account number, beneficiary account]
+      - name: EXTRA_VALUE
+        description: Provider-specific extra payout attribute (free text).
+        data_type: TEXT
+        synonyms: [extra value, extra attribute]
+      - name: PAYER_STATUS
+        description: Payout status as reported by the payer/provider.
+        data_type: TEXT
+        synonyms: [payer status, provider status]
+        sample_values: [Created, Sent, Paid, PAID, Bounced, Invalid, Refunded, Rejected, Unknown]
+      - name: PAYER_STATUS_TS
+        description: Timestamp of the latest payer status.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [payer status time, payer status timestamp]
+      - name: EXECUTION_STATUS
+        description: Internal execution status of the payout.
+        data_type: TEXT
+        synonyms: [execution status]
+        sample_values: [CREATED, SENT, PAID, FAILED, AVAILABLE_FOR_PICK_UP, PENDING_CANCELLATION, NOT_FOUND, UNKNOWN]
+      - name: EXECUTION_STATUS_TS
+        description: Timestamp of the latest execution status.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [execution status time]
+      - name: TRANSITION_STATUS
+        description: Lifecycle transition status of the payout.
+        data_type: TEXT
+        synonyms: [transition status, lifecycle status]
+        sample_values: [CREATED, SENT, PAID, FAILED, ON_HOLD, CANCELLATION_REQUESTED]
+      - name: TRANSITION_STATUS_TS
+        description: Timestamp of the latest transition status.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [transition status time]
+      - name: PAYOUT_ERROR
+        description: Error code/category when a payout fails.
+        data_type: TEXT
+        synonyms: [payout error, error code]
+      - name: PAYOUT_ERROR_MESSAGE
+        description: Human-readable error message when a payout fails.
+        data_type: TEXT
+        synonyms: [payout error message, error message]
+      - name: PROVIDER_EXECUTION_ERROR
+        description: Error reported by the provider during execution.
+        data_type: TEXT
+        synonyms: [provider execution error, provider error]
+      - name: DYNAMIC_ROUTING_FEATURE_FLAG
+        description: True when the dynamic-routing feature was enabled for this payout.
+        data_type: BOOLEAN
+        synonyms: [dynamic routing flag, dynamic routing enabled]
+        sample_values: [true, false]
+      - name: ROUTING_STRATEGY
+        description: Strategy used to select the provider — COST (cheapest) or PRIORITY (back-office priority).
+        data_type: TEXT
+        synonyms: [routing strategy, routing mode]
+        sample_values: [COST, PRIORITY]
+      - name: ROUTING_OCCURRED
+        description: True when dynamic routing actually ran for this payout.
+        data_type: BOOLEAN
+        synonyms: [routing occurred, routing happened]
+        sample_values: [true, false]
+      - name: IS_SUCCESSFUL
+        description: True when the payout completed successfully.
+        data_type: BOOLEAN
+        synonyms: [is successful, success flag, succeeded]
+        sample_values: [true, false]
+      - name: SELECTED_PROVIDER_RANK
+        description: Rank of the selected provider within the routing candidate list.
+        data_type: NUMBER
+        synonyms: [selected provider rank, provider rank]
+      - name: BACKOFFICE_HIGHEST_PRIORITY_PROVIDER_NAME
+        description: Name of the highest-priority provider per back-office configuration.
+        data_type: TEXT
+        synonyms: [backoffice highest priority provider, top priority provider]
+      - name: BACKOFFICE_HIGHEST_PRIORITY_PROVIDER_RANK
+        description: Rank of the back-office highest-priority provider.
+        data_type: NUMBER
+        synonyms: [backoffice priority provider rank]
+      - name: BACKOFFICE_HIGHEST_PRIORITY_PROVIDER_COST_INCLUDING_FEE
+        description: Cost (including fee) of the back-office highest-priority provider, original currency.
+        data_type: NUMBER
+        synonyms: [backoffice priority provider cost]
+      - name: BACKOFFICE_HIGHEST_PRIORITY_PROVIDER_COST_INCLUDING_FEE_USD
+        description: Cost (including fee) of the back-office highest-priority provider, in USD.
+        data_type: NUMBER
+        synonyms: [backoffice priority provider cost usd]
+      - name: SELECTED_PROVIDER_NAME
+        description: Name of the provider actually selected by routing.
+        data_type: TEXT
+        synonyms: [selected provider, chosen provider]
+        sample_values: [TerraPay, Thunes, Rapyd, Transpay, Paysend, DeeMoney, IntelExpress, Privat, Sampath, NeemaIL]
+      - name: SELECTED_PROVIDER_FEE
+        description: Fee of the selected provider in its original currency.
+        data_type: NUMBER
+        synonyms: [selected provider fee]
+      - name: SELECTED_PROVIDER_FEE_USD
+        description: Fee of the selected provider in USD.
+        data_type: NUMBER
+        synonyms: [selected provider fee usd]
+      - name: COST_GAIN_USD
+        description: USD cost saving (gain) from dynamic routing versus the back-office priority provider.
+        data_type: NUMBER
+        synonyms: [cost gain usd, routing savings usd, savings]
+      - name: DW_UPDATE_DATE
+        description: Timestamp this row was last loaded/updated by the data warehouse.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [dw update date, etl load date, last updated]
+    relationships:
+      - from_model: dw_fact_remittance
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: Each remittance is sent by one user.
+      - from_model: dw_fact_remittance
+        from_column: NEEMA_ID
+        to_model: dw_dim_user
+        to_column: NEEMA_ID
+        description: Alternate user join on the numeric Neema id.
+      - from_model: dw_fact_remittance
+        from_column: TRANSACTION_ID
+        to_model: dw_fact_transaction
+        to_column: TRANSACTION_ID
+        description: Each remittance maps to its underlying ledger transaction.

@@ -1,0 +1,183 @@
+version: 2
+
+models:
+  - name: dw_fact_user_monthly_kpis
+    meta:
+      context_file: 05_data-and-metrics/semantic-model/dw_fact_user_monthly_kpis.yml
+    database: NEEMA_BI
+    schema: DW_FACT
+    description: |
+      User-level KPI fact aggregated by calendar month. One row per
+      (user, month) with counts and amounts for transactions, deposits,
+      remittances, fees, salary, logins, and active products for that month.
+      Unlike the all-time dw_fact_user_kpis table, this table includes
+      months where the user was inactive (zero-filled rows are present for
+      the full calendar range).  Also carries three consecutive-month streak
+      columns (engagement, activity, inactivity) useful for cohort and
+      churn analysis.
+    synonyms: [user monthly kpis, monthly kpis, monthly user metrics, user monthly summary, fact user monthly kpis, monthly performance]
+    columns:
+      - name: USER_ID
+        description: User UUID. Composite primary key (USER_ID + KPI_MONTH). Foreign key to dw_dim_user.USER_ID.
+        data_type: BINARY
+        synonyms: [user id, customer id, user uuid]
+        constraints:
+          - type: not_null
+      - name: NEEMA_ID
+        description: Numeric Neema id for the user. Foreign key to dw_dim_user.NEEMA_ID.
+        data_type: NUMBER
+        synonyms: [neema id, customer number, user number]
+      - name: KPI_MONTH
+        description: First day of the calendar month this KPI row covers. Composite primary key (USER_ID + KPI_MONTH).
+        data_type: DATE
+        synonyms: [kpi month, month, period, reporting month]
+        constraints:
+          - type: not_null
+      - name: TOTAL_TRANSACTIONS
+        description: Total count of all transactions (active + cancelled) in the month.
+        data_type: NUMBER
+        synonyms: [total transactions, transaction count, transactions]
+      - name: CANCELLED_TRANSACTIONS
+        description: Count of cancelled transactions in the month.
+        data_type: NUMBER
+        synonyms: [cancelled transactions, cancelled txns]
+      - name: ACTIVE_TRANSACTIONS
+        description: Count of active (non-cancelled) transactions in the month.
+        data_type: NUMBER
+        synonyms: [active transactions, active txns, completed transactions]
+      - name: TOTAL_TRANSACTION_AMOUNT_USD
+        description: Total active transaction amount in the month, in USD.
+        data_type: NUMBER
+        synonyms: [total transaction amount usd, transaction volume usd, monthly volume usd]
+      - name: TOTAL_TRANSACTION_AMOUNT_ILS
+        description: Total active transaction amount in the month, in ILS.
+        data_type: NUMBER
+        synonyms: [total transaction amount ils, transaction volume ils, monthly volume ils]
+      - name: TOTAL_FEE_AMOUNT_USD
+        description: Total fees charged in the month, in USD.
+        data_type: NUMBER
+        synonyms: [total fee amount usd, monthly fees usd]
+      - name: TOTAL_FEE_AMOUNT_ILS
+        description: Total fees charged in the month, in ILS.
+        data_type: NUMBER
+        synonyms: [total fee amount ils, monthly fees ils]
+      - name: TOTAL_FX_FEE_AMOUNT_USD
+        description: Total FX fees charged in the month, in USD.
+        data_type: NUMBER
+        synonyms: [total fx fee amount usd, monthly fx fees usd]
+      - name: TOTAL_FX_FEE_AMOUNT_ILS
+        description: Total FX fees charged in the month, in ILS.
+        data_type: NUMBER
+        synonyms: [total fx fee amount ils, monthly fx fees ils]
+      - name: TOTAL_DEPOSITS
+        description: Total count of deposits in the month (active + cancelled).
+        data_type: NUMBER
+        synonyms: [total deposits, deposit count, deposits]
+      - name: CANCELLED_DEPOSITS
+        description: Count of cancelled deposits in the month.
+        data_type: NUMBER
+        synonyms: [cancelled deposits]
+      - name: TOTAL_DEPOSIT_AMOUNT_USD
+        description: Total deposit amount in the month, in USD.
+        data_type: NUMBER
+        synonyms: [total deposit amount usd, monthly deposit usd, deposit volume usd]
+      - name: TOTAL_DEPOSIT_AMOUNT_ILS
+        description: Total deposit amount in the month, in ILS.
+        data_type: NUMBER
+        synonyms: [total deposit amount ils, monthly deposit ils, deposit volume ils]
+      - name: DEPOSIT_FEE_AMOUNT_USD
+        description: Total deposit fees in the month, in USD.
+        data_type: NUMBER
+        synonyms: [deposit fee amount usd, monthly deposit fees usd]
+      - name: DEPOSIT_FEE_AMOUNT_ILS
+        description: Total deposit fees in the month, in ILS.
+        data_type: NUMBER
+        synonyms: [deposit fee amount ils, monthly deposit fees ils]
+      - name: TOTAL_REMITTANCES
+        description: Total count of remittances in the month (active + cancelled).
+        data_type: NUMBER
+        synonyms: [total remittances, remittance count, remittances]
+      - name: CANCELLED_REMITTANCES
+        description: Count of cancelled remittances in the month.
+        data_type: NUMBER
+        synonyms: [cancelled remittances]
+      - name: REMITTANCE_AMOUNT_USD
+        description: Total remittance (sent) amount in the month, in USD.
+        data_type: NUMBER
+        synonyms: [remittance amount usd, monthly remittance usd, sent amount usd]
+      - name: REMITTANCE_AMOUNT_ILS
+        description: Total remittance (sent) amount in the month, in ILS.
+        data_type: NUMBER
+        synonyms: [remittance amount ils, monthly remittance ils, sent amount ils]
+      - name: REMITTANCE_FEE_AMOUNT_USD
+        description: Total remittance fees in the month, in USD.
+        data_type: NUMBER
+        synonyms: [remittance fee amount usd, monthly remittance fees usd]
+      - name: REMITTANCE_FX_FEE_AMOUNT_USD
+        description: Total remittance FX fees in the month, in USD.
+        data_type: NUMBER
+        synonyms: [remittance fx fee amount usd, monthly remittance fx fees usd]
+      - name: NEEMA_PLUS_SALARY_AMOUNT_USD
+        description: Total Neema Plus salary received in the month, in USD.
+        data_type: NUMBER
+        synonyms: [neema plus salary amount usd, monthly salary usd, salary usd]
+      - name: NEEMA_PLUS_SALARY_AMOUNT_ILS
+        description: Total Neema Plus salary received in the month, in ILS.
+        data_type: NUMBER
+        synonyms: [neema plus salary amount ils, monthly salary ils, salary ils]
+      - name: MAX_ACTIVE_TRANSACTION_AMOUNT_USD
+        description: Largest single active transaction amount in the month, in USD.
+        data_type: NUMBER
+        synonyms: [max active transaction amount usd, largest transaction usd, max transaction usd]
+      - name: MAX_ACTIVE_TRANSACTION_AMOUNT_ILS
+        description: Largest single active transaction amount in the month, in ILS.
+        data_type: NUMBER
+        synonyms: [max active transaction amount ils, largest transaction ils, max transaction ils]
+      - name: TOTAL_LOGINS
+        description: Total login count across all devices in the month.
+        data_type: NUMBER
+        synonyms: [total logins, monthly logins, login count]
+      - name: TOTAL_DEVICES
+        description: Count of distinct devices used in the month.
+        data_type: NUMBER
+        synonyms: [total devices, monthly devices, device count]
+      - name: DEVICES_TOTAL_LOGINS
+        description: Array of per-device login counts for the month (each element contains device_id and login count).
+        data_type: ARRAY
+        synonyms: [devices total logins, logins per device, device login breakdown]
+      - name: TOTAL_ACTIVE_PRODUCTS
+        description: Count of distinct active products used in the month.
+        data_type: NUMBER
+        synonyms: [total active products, monthly active products, product count]
+      - name: ACTIVE_PRODUCTS
+        description: Array of distinct active product names used in the month.
+        data_type: ARRAY
+        synonyms: [active products, monthly products, products used]
+        sample_values: [Deposit, Remittance, Card, P2P, "Currency Exchange", "Card Deposit", Withdraw, "Neema Plus", Salary, R2P]
+      - name: ENGAGEMENT_CONSECUTIVE_MONTH
+        description: Number of consecutive calendar months (up to and including KPI_MONTH) in which the user had any engagement — login or transaction activity.
+        data_type: NUMBER
+        synonyms: [engagement consecutive month, consecutive engagement months, engagement streak]
+      - name: ACTIVITY_CONSECUTIVE_MONTH
+        description: Number of consecutive calendar months (up to and including KPI_MONTH) in which the user had at least one active transaction.
+        data_type: NUMBER
+        synonyms: [activity consecutive month, consecutive active months, activity streak]
+      - name: INACTIVITY_CONSECUTIVE_MONTH
+        description: Number of consecutive calendar months (up to and including KPI_MONTH) without any active transaction. Resets to 0 whenever the user is active.
+        data_type: NUMBER
+        synonyms: [inactivity consecutive month, consecutive inactive months, inactivity streak, months inactive]
+      - name: DW_UPDATE_DATE
+        description: Timestamp this row was last loaded/updated by the data warehouse.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [dw update date, etl load date, last updated]
+    relationships:
+      - from_model: dw_fact_user_monthly_kpis
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: Each monthly KPI row belongs to one user.
+      - from_model: dw_fact_user_monthly_kpis
+        from_column: NEEMA_ID
+        to_model: dw_dim_user
+        to_column: NEEMA_ID
+        description: Alternate user join on the numeric Neema id.

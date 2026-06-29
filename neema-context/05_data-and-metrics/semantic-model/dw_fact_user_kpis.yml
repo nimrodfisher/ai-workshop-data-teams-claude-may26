@@ -1,0 +1,187 @@
+version: 2
+
+models:
+  - name: dw_fact_user_kpis
+    meta:
+      context_file: 05_data-and-metrics/semantic-model/dw_fact_user_kpis.yml
+    database: NEEMA_BI
+    schema: DW_FACT
+    description: |
+      Per-user KPI summary fact. One row per user holding
+      pre-aggregated lifetime and last-3-month (L3M) metrics: transaction /
+      deposit / remittance counts and amounts, fees, salary, logins, devices,
+      and active products. Effectively a one-to-one companion to dw_dim_user
+      for analytics that need ready-made user totals.
+    synonyms: [user kpis, user metrics, user summary, customer kpis, fact user kpis]
+    columns:
+      - name: USER_ID
+        description: User UUID. Primary key. Foreign key to dw_dim_user.USER_ID.
+        data_type: BINARY
+        synonyms: [user id, customer id]
+        constraints:
+          - type: primary_key
+          - type: not_null
+      - name: NEEMA_ID
+        description: Numeric Neema id for the user. Foreign key to dw_dim_user.NEEMA_ID.
+        data_type: NUMBER
+        synonyms: [neema id, customer number]
+      - name: TOTAL_TRANSACTIONS
+        description: Lifetime count of all transactions.
+        data_type: NUMBER
+        synonyms: [total transactions, transaction count]
+      - name: CANCELLED_TRANSACTIONS
+        description: Lifetime count of cancelled transactions.
+        data_type: NUMBER
+        synonyms: [cancelled transactions]
+      - name: ACTIVE_TRANSACTIONS
+        description: Lifetime count of active (non-cancelled) transactions.
+        data_type: NUMBER
+        synonyms: [active transactions]
+      - name: TOTAL_TRANSACTION_AMOUNT_ILS
+        description: Lifetime total transaction amount, in ILS.
+        data_type: NUMBER
+        synonyms: [total transaction amount ils]
+      - name: TOTAL_FEE_AMOUNT_USD
+        description: Lifetime total fees, in USD.
+        data_type: NUMBER
+        synonyms: [total fee amount usd, total fees usd]
+      - name: TOTAL_FEE_AMOUNT_ILS
+        description: Lifetime total fees, in ILS.
+        data_type: NUMBER
+        synonyms: [total fee amount ils, total fees ils]
+      - name: TOTAL_FX_FEE_AMOUNT_USD
+        description: Lifetime total FX fees, in USD.
+        data_type: NUMBER
+        synonyms: [total fx fee amount usd]
+      - name: TOTAL_FX_FEE_AMOUNT_ILS
+        description: Lifetime total FX fees, in ILS.
+        data_type: NUMBER
+        synonyms: [total fx fee amount ils]
+      - name: TOTAL_DEPOSITS
+        description: Lifetime count of deposits.
+        data_type: NUMBER
+        synonyms: [total deposits, deposit count]
+      - name: CANCELLED_DEPOSITS
+        description: Lifetime count of cancelled deposits.
+        data_type: NUMBER
+        synonyms: [cancelled deposits]
+      - name: TOTAL_DEPOSIT_AMOUNT_USD
+        description: Lifetime total deposit amount, in USD.
+        data_type: NUMBER
+        synonyms: [total deposit amount usd]
+      - name: TOTAL_DEPOSIT_AMOUNT_ILS
+        description: Lifetime total deposit amount, in ILS.
+        data_type: NUMBER
+        synonyms: [total deposit amount ils]
+      - name: DEPOSIT_FEE_AMOUNT_USD
+        description: Lifetime total deposit fees, in USD.
+        data_type: NUMBER
+        synonyms: [deposit fee amount usd]
+      - name: DEPOSIT_FEE_AMOUNT_ILS
+        description: Lifetime total deposit fees, in ILS.
+        data_type: NUMBER
+        synonyms: [deposit fee amount ils]
+      - name: TOTAL_REMITTANCES
+        description: Lifetime count of remittances.
+        data_type: NUMBER
+        synonyms: [total remittances, remittance count]
+      - name: CANCELLED_REMITTANCES
+        description: Lifetime count of cancelled remittances.
+        data_type: NUMBER
+        synonyms: [cancelled remittances]
+      - name: REMITTANCE_AMOUNT_USD
+        description: Lifetime total remittance amount, in USD.
+        data_type: NUMBER
+        synonyms: [remittance amount usd, total remittance amount usd]
+      - name: REMITTANCE_AMOUNT_ILS
+        description: Lifetime total remittance amount, in ILS.
+        data_type: NUMBER
+        synonyms: [remittance amount ils, total remittance amount ils]
+      - name: REMITTANCE_FEE_AMOUNT_USD
+        description: Lifetime total remittance fees, in USD.
+        data_type: NUMBER
+        synonyms: [remittance fee amount usd]
+      - name: REMITTANCE_FX_FEE_AMOUNT_USD
+        description: Lifetime total remittance FX fees, in USD.
+        data_type: NUMBER
+        synonyms: [remittance fx fee amount usd]
+      - name: NEEMA_PLUS_SALARY_AMOUNT_USD
+        description: Lifetime total Neema Plus salary received, in USD.
+        data_type: NUMBER
+        synonyms: [neema plus salary amount usd, salary usd]
+      - name: NEEMA_PLUS_SALARY_AMOUNT_ILS
+        description: Lifetime total Neema Plus salary received, in ILS.
+        data_type: NUMBER
+        synonyms: [neema plus salary amount ils, salary ils]
+      - name: MAX_ACTIVE_TRANSACTION_AMOUNT_USD
+        description: Largest single active transaction amount, in USD.
+        data_type: NUMBER
+        synonyms: [max active transaction amount usd, largest transaction usd]
+      - name: MAX_ACTIVE_TRANSACTION_AMOUNT_ILS
+        description: Largest single active transaction amount, in ILS.
+        data_type: NUMBER
+        synonyms: [max active transaction amount ils]
+      - name: TOTAL_DEPOSIT_AMOUNT_ILS_L3M
+        description: Total deposit amount in the last 3 months, in ILS.
+        data_type: NUMBER
+        synonyms: [total deposit amount ils l3m, deposits last 3 months ils]
+      - name: AVG_DEPOSIT_AMOUNT_ILS_L3M
+        description: Average deposit amount in the last 3 months, in ILS.
+        data_type: NUMBER
+        synonyms: [avg deposit amount ils l3m, average deposit l3m]
+      - name: STDEV_DEPOSIT_AMOUNT_ILS_L3M
+        description: Standard deviation of deposit amount in the last 3 months, in ILS.
+        data_type: FLOAT
+        synonyms: [stdev deposit amount ils l3m, deposit stddev l3m]
+      - name: DEPOSIT_FREQUENCY_L3M
+        description: Number of deposits in the last 3 months.
+        data_type: NUMBER
+        synonyms: [deposit frequency l3m, deposits per period l3m]
+      - name: TOTAL_LOGINS
+        description: Lifetime count of logins.
+        data_type: NUMBER
+        synonyms: [total logins, login count]
+      - name: TOTAL_DEVICES
+        description: Lifetime count of distinct devices used.
+        data_type: NUMBER
+        synonyms: [total devices, device count]
+      - name: DEVICES_TOTAL_LOGINS
+        description: Array of per-device login counts.
+        data_type: ARRAY
+        synonyms: [devices total logins, logins per device]
+      - name: TOTAL_DEVICES_L3M
+        description: Count of distinct devices used in the last 3 months.
+        data_type: NUMBER
+        synonyms: [total devices l3m, devices last 3 months]
+      - name: ACTIVE_PRODUCTS
+        description: Array of products the user is active on.
+        data_type: ARRAY
+        synonyms: [active products, products used]
+        sample_values: [Deposit, Remittance, Card, P2P, "Currency Exchange", "Card Deposit", Withdraw, "Neema Plus", Salary, R2P, "Bit Deposit", "Wire Deposit", "External Payment", "Home Deposit", "Sim Package"]
+      - name: TOTAL_ACTIVE_PRODUCTS
+        description: Count of products the user is active on (lifetime).
+        data_type: NUMBER
+        synonyms: [total active products, number of products]
+      - name: TOTAL_ACTIVE_PRODUCTS_L3M
+        description: Count of products the user was active on in the last 3 months.
+        data_type: NUMBER
+        synonyms: [total active products l3m]
+      - name: ACTIVITY_FREQUENCY_PERCENTAGE
+        description: Activity frequency as a percentage (engagement metric).
+        data_type: NUMBER
+        synonyms: [activity frequency percentage, engagement percentage]
+      - name: DW_UPDATE_DATE
+        description: Timestamp this row was last loaded/updated by the data warehouse.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [dw update date, etl load date, last updated]
+    relationships:
+      - from_model: dw_fact_user_kpis
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: One-to-one — each KPI row corresponds to exactly one user.
+      - from_model: dw_fact_user_kpis
+        from_column: NEEMA_ID
+        to_model: dw_dim_user
+        to_column: NEEMA_ID
+        description: Alternate one-to-one join on the numeric Neema id.

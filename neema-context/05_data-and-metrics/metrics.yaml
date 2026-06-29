@@ -1,0 +1,121 @@
+metrics:
+  - name: Active_Users
+    synonyms:
+      - Actives
+      - לקוחות אקטיביים
+      - משתמשים אקטיביים
+    description: |-
+      A user is counted in Active Users for month M if they had at least one valid active transaction in month M (the same month). We are counting Active users per each month.
+
+      Example — Active Users for March 2026:
+      TRANSACTION_DATE >= '2026-03-01' AND TRANSACTION_DATE < '2026-04-01'
+      AND cancelled = FALSE AND cancelling = FALSE AND transaction_source_id = 1 AND is_active = TRUE
+      COUNT(DISTINCT neema_id)
+    expr: count(distinct neema_id)
+    access_modifier: public_access
+
+  - name: ATD
+    synonyms:
+      - About To Die
+    description: |-
+      ATD (About To Die)
+      A user is classified as ATD in month M if they are part of the Customer Base in month M (active in M, M-1, or M-2), but have not transacted in month M or M-1 — meaning their last activity was in M-2 only.
+      In other words: still counted as a customer, but showing early signs of inactivity.
+
+      Example:
+      For M = May 2026, a user whose last transaction was in March 2026 is ATD — they are still in the Customer Base (March = M-2), but have been inactive for the last two months.
+      A user whose last transaction was in April 2026 is not ATD — they were active in M-1.
+
+      Calculation:
+      Find all distinct users whose most recent valid transaction falls within M-2 (and no valid transaction exists in M-1 or M).
+
+      Example — ATD for May 2026:
+      WITH base AS (
+          SELECT neema_id, transaction_date
+          FROM neema_bi.dw_fact.dw_fact_transaction
+          WHERE cancelled = FALSE
+            AND cancelling = FALSE
+            AND transaction_source_id = 1
+            AND is_active = TRUE
+      )
+      SELECT COUNT(DISTINCT neema_id) AS atd_users
+      FROM base
+      WHERE transaction_date < '2026-06-01'        -- end of M
+      GROUP BY neema_id
+      HAVING MAX(transaction_date) >= '2026-03-01' -- active in M-2
+         AND MAX(transaction_date) <  '2026-04-01' -- not active in M-1 or M
+    expr: count(distinct neema_id)
+    access_modifier: public_access
+
+  - name: BFD
+    synonyms:
+      - back from churn
+      - Back From Dead
+    description: |-
+      A user is BFD in month M if they transacted in M, but were churned before M — meaning their last transaction before M was in M-3 or earlier.
+
+      Example: For M = May 2026, a user whose last transaction before May was in February 2026 or earlier came back in May → BFD.
+
+      Calculation:
+      FROM neema_bi.dw_fact.dw_fact_transaction
+      WHERE cancelled = FALSE
+        AND cancelling = FALSE
+        AND transaction_source_id = 1
+        AND is_active = TRUE
+        AND transaction_date >= '2026-05-01'   -- active in M
+        AND transaction_date <  '2026-06-01'
+      AND neema_id IN (
+          SELECT neema_id
+          FROM neema_bi.dw_fact.dw_fact_transaction
+          WHERE cancelled = FALSE
+            AND cancelling = FALSE
+            AND transaction_source_id = 1
+            AND is_active = TRUE
+            AND transaction_date < '2026-05-01'
+          GROUP BY neema_id
+          HAVING MAX(TRANSACTION_DATE) < '2026-03-01'   -- last txn was M-3 or earlier
+      )
+      → COUNT(DISTINCT neema_id)
+    expr: COUNT(DISTINCT neema_id)
+    access_modifier: public_access
+
+  - name: CHURN
+    synonyms:
+      - Churned Users
+      - Churned Customers
+    description: |-
+      A user is classified as Churned in month M if their last transaction was exactly in M-3 — meaning they had no activity in M-2, M-1, or M. Churn is determined at the start of M.
+
+      Example: For M = May 2026, a user whose last transaction was in February 2026 is Churned — no activity in March, April, or May.
+
+      Calculation:
+      FROM neema_bi.dw_fact.dw_fact_transaction
+      WHERE cancelled = FALSE
+        AND cancelling = FALSE
+        AND transaction_source_id = 1
+        AND is_active = TRUE
+        AND transaction_date < '2026-05-01'   -- exclude M entirely
+      GROUP BY neema_id
+      HAVING MAX(TRANSACTION_DATE) >= '2026-02-01'   -- active in M-3
+         AND MAX(TRANSACTION_DATE) <  '2026-03-01'   -- not active in M-2, M-1, or M
+      → COUNT(DISTINCT neema_id)
+    expr: COUNT(DISTINCT neema_id)
+    access_modifier: public_access
+
+  - name: CUSTOMER_BASE
+    synonyms:
+      - Customer Base
+      - User Base
+    description: |-
+      A user is counted in the Customer Base for month M if they had at least one valid transaction in month M, M-1, or M-2 (rolling 3-month window).
+
+      Example — Customer Base for March 2026:
+      TRANSACTION_DATE >= '2026-01-01' AND TRANSACTION_DATE < '2026-04-01'
+      AND cancelled = FALSE AND cancelling = FALSE AND transaction_source_id = 1 AND is_active = TRUE
+      COUNT(DISTINCT neema_id)
+    expr: COUNT(DISTINCT neema_id)
+    access_modifier: public_access
+
+primary_key:
+  columns:
+    - TRANSACTION_UNIQUE_ID

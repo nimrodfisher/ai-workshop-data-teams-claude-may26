@@ -1,0 +1,117 @@
+version: 2
+
+models:
+  - name: dw_fact_user_campaign_event
+    meta:
+      context_file: 05_data-and-metrics/semantic-model/dw_fact_user_campaign_event.yml
+    database: NEEMA_BI
+    schema: DW_FACT
+    description: |
+      Campaign event fact. One row per user-campaign interaction across all
+      marketing channels — Braze campaigns, Braze canvases, messaging
+      (SMS / email / push / in-app / webhook), and referrer incentives.
+      Captures the send/impression event, the campaign taxonomy (name, type,
+      cost category), and the associated bonus transaction when a reward was
+      credited to the user.  CAMPAIGN_SOURCE_ID identifies the originating
+      platform: 1=messaging, 2=braze_campaign, 3=braze_canvas,
+      4=referrer_incentive_users, 5=referrer_incentive_agents.
+    synonyms: [campaign events, user campaigns, marketing campaigns, fact user campaign event, campaign interactions, incentive events]
+    columns:
+      - name: USER_CAMPAIGN_UNIQUE_ID
+        description: Surrogate primary key. MD5 hash of USER_ID and EVENT_ID, unique per campaign interaction row.
+        data_type: TEXT
+        synonyms: [user campaign unique id, campaign event id, row id, surrogate key]
+        constraints:
+          - type: primary_key
+          - type: not_null
+      - name: CAMPAIGN_SOURCE_ID
+        description: Numeric source-system code identifying the campaign platform. 1=messaging, 2=braze_campaign, 3=braze_canvas, 4=referrer_incentive_users, 5=referrer_incentive_agents.
+        data_type: NUMBER
+        synonyms: [campaign source id, source id, campaign platform id]
+        sample_values: [1, 2, 3, 4, 5]
+      - name: EVENT_ID
+        description: Unique event identifier from the originating platform (e.g. Braze event UUID).
+        data_type: TEXT
+        synonyms: [event id, braze event id, platform event id]
+      - name: USER_ID
+        description: Owning user UUID. Foreign key to dw_dim_user.USER_ID.
+        data_type: BINARY
+        synonyms: [user id, customer id, user uuid]
+      - name: NEEMA_ID
+        description: Owning user's numeric Neema id. Foreign key to dw_dim_user.NEEMA_ID.
+        data_type: NUMBER
+        synonyms: [neema id, customer number, user number]
+      - name: EVENT_CREATED_AT
+        description: Timestamp the campaign event was fired (send / impression time, no time zone).
+        data_type: TIMESTAMP_NTZ
+        synonyms: [event created at, event time, campaign event timestamp, send time, when]
+      - name: CHANNEL
+        description: Communication channel of the campaign event.
+        data_type: TEXT
+        synonyms: [channel, campaign channel, communication channel, medium]
+        sample_values: [email, push, sms, webhook, impression, referral]
+      - name: CAMPAIGN_NAME
+        description: Name of the campaign, canvas, or incentive program.
+        data_type: TEXT
+        synonyms: [campaign name, campaign, name]
+      - name: CAMPAIGN_TYPE
+        description: Classification / type of the campaign (e.g. promotional, transactional, lifecycle).
+        data_type: TEXT
+        synonyms: [campaign type, type, campaign category]
+      - name: COST_CATEGORY
+        description: Budget / cost category assigned to the campaign (used for marketing spend attribution).
+        data_type: TEXT
+        synonyms: [cost category, budget category, campaign cost type]
+      - name: CAMPAIGN_ID
+        description: Platform-level campaign or canvas identifier (Braze campaign_id or canvas_id).
+        data_type: TEXT
+        synonyms: [campaign id, braze campaign id, canvas id]
+      - name: STEP_ID
+        description: Canvas step UUID. Populated only for Braze canvas events (CAMPAIGN_SOURCE_ID=3); NULL for all other sources.
+        data_type: TEXT
+        synonyms: [step id, canvas step id]
+      - name: STEP_NAME
+        description: Canvas step name. Populated only for Braze canvas events; NULL for all other sources.
+        data_type: TEXT
+        synonyms: [step name, canvas step name]
+      - name: BONUS_TRANSACTION_ID
+        description: UUID of the bonus/reward transaction credited to the user as a result of this campaign event. Foreign key to dw_fact_transaction.TRANSACTION_ID. NULL when no bonus was paid.
+        data_type: BINARY
+        synonyms: [bonus transaction id, incentive transaction id, campaign bonus id, reward transaction id]
+      - name: BONUS_AMOUNT_ILS
+        description: Bonus amount credited to the user in ILS. NULL when no bonus was paid.
+        data_type: NUMBER
+        synonyms: [bonus amount ils, incentive amount ils, reward ils, bonus ils]
+      - name: BONUS_AMOUNT_USD
+        description: Bonus amount credited to the user in USD. NULL when no bonus was paid.
+        data_type: NUMBER
+        synonyms: [bonus amount usd, incentive amount usd, reward usd, bonus usd]
+      - name: CAMPAIGN_BONUS_RECEIVED_AT
+        description: Timestamp the campaign bonus transaction was received by the user (no time zone). NULL when no bonus was paid.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [campaign bonus received at, bonus received at, incentive received at, reward received at]
+      - name: CANCELLED
+        description: True when the campaign event's associated bonus transaction was cancelled.
+        data_type: BOOLEAN
+        synonyms: [cancelled, is cancelled, voided]
+        sample_values: [true, false]
+      - name: DW_UPDATE_DATE
+        description: Timestamp this row was last loaded/updated by the data warehouse.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [dw update date, etl load date, last updated]
+    relationships:
+      - from_model: dw_fact_user_campaign_event
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: Each campaign event belongs to one user.
+      - from_model: dw_fact_user_campaign_event
+        from_column: NEEMA_ID
+        to_model: dw_dim_user
+        to_column: NEEMA_ID
+        description: Alternate user join on the numeric Neema id.
+      - from_model: dw_fact_user_campaign_event
+        from_column: BONUS_TRANSACTION_ID
+        to_model: dw_fact_transaction
+        to_column: TRANSACTION_ID
+        description: Campaign bonus events link to their underlying wallet credit transaction.

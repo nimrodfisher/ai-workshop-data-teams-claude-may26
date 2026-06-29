@@ -1,0 +1,458 @@
+version: 2
+
+models:
+  - name: dw_dim_user
+    meta:
+      context_file: 05_data-and-metrics/semantic-model/dw_dim_user.yml
+    database: NEEMA_BI
+    schema: DW_DIM
+    description: |
+      User dimension — the customer master. One row per user.
+      Holds identity/KYC attributes plus a wide set of denormalized "profile"
+      metrics: balances per currency, first/last/favorite deposit & remittance,
+      RFM segmentation, lifecycle dates, card status, and acquisition source.
+    synonyms: [users, customers, user dimension]
+    columns:
+      - name: USER_ID
+        description: User UUID. Primary key.
+        data_type: BINARY
+        synonyms: [user id, customer id, user uuid]
+        constraints:
+          - type: primary_key
+          - type: not_null
+      - name: NEEMA_ID
+        description: Numeric Neema id for the user. Unique business key.
+        data_type: NUMBER
+        synonyms: [neema id, customer number, user number]
+        constraints:
+          - type: not_null
+      - name: CREATED
+        description: Timestamp the user account was created.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [created, signup date, registration date, onboarded at]
+      - name: NATIONALITY
+        description: User's nationality (country).
+        data_type: TEXT
+        synonyms: [nationality, citizenship, country of origin]
+        sample_values: [Israel, Philippines, India, Thailand, "Sri Lanka", Nigeria, China, Ukraine, Nepal, Kenya]
+      - name: FIRST_NAME
+        description: User's first name (PII).
+        data_type: TEXT
+        synonyms: [first name, given name]
+      - name: LAST_NAME
+        description: User's last name (PII).
+        data_type: TEXT
+        synonyms: [last name, surname, family name]
+      - name: PHONE_NUMBER
+        description: User's phone number (PII).
+        data_type: TEXT
+        synonyms: [phone number, mobile, phone]
+      - name: EMAIL
+        description: User's email address (PII).
+        data_type: TEXT
+        synonyms: [email, email address]
+      - name: DATE_OF_BIRTH
+        description: User's date of birth (PII).
+        data_type: TIMESTAMP_NTZ
+        synonyms: [date of birth, dob, birth date]
+      - name: GENDER
+        description: User's gender (free text, values not fully normalized — e.g. Male/MALE/male).
+        data_type: TEXT
+        synonyms: [gender, sex]
+        sample_values: [Male, Female, MALE, female]
+      - name: ID_EXPIRY_DATE
+        description: Expiry date of the user's identity document.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [id expiry date, document expiry]
+      - name: NEEMA_EMPLOYEE
+        description: True when the user is a Neema employee.
+        data_type: BOOLEAN
+        synonyms: [neema employee, is employee, staff]
+        sample_values: [true, false]
+      - name: IS_FINANCE_RED_LIST
+        description: True when the user is on the finance red list.
+        data_type: BOOLEAN
+        synonyms: [finance red list, is finance red list]
+        sample_values: [true, false]
+      - name: IS_COMPLIANCE_RED_LIST
+        description: True when the user is on the compliance red list.
+        data_type: BOOLEAN
+        synonyms: [compliance red list, is compliance red list]
+        sample_values: [true, false]
+      - name: RED_LIST_REASONS
+        description: Reason(s) the user is red-listed (free text, may be combined).
+        data_type: TEXT
+        synonyms: [red list reasons, red list reason, restriction reason]
+        sample_values: ["Only Withdrawals", "Closed Account", "Unanswered Compliance Request", "Forbid Only Remittance", "Harmful Application Use"]
+      - name: KYC_STATUS
+        description: Current KYC (know-your-customer) status.
+        data_type: TEXT
+        synonyms: [kyc status, verification status]
+        sample_values: [APPROVED, Declined, START_REGISTRATION, FINISH_REGISTRATION, "Redo Requested", EMPLOYEE_KYC]
+      - name: KYC_PASS_DATE
+        description: Date the user passed KYC.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [kyc pass date, kyc approved date]
+      - name: EKYC_PASS_DATE
+        description: Date the user passed enhanced KYC (eKYC).
+        data_type: TIMESTAMP_NTZ
+        synonyms: [ekyc pass date]
+      - name: FIRST_EKYC_PASS_DATE
+        description: Date the user first passed eKYC.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [first ekyc pass date]
+      - name: EKYC_REASON
+        description: Reason eKYC was triggered.
+        data_type: TEXT
+        synonyms: [ekyc reason]
+        sample_values: ["Self start", "Deposit limit", "Card requested", "Neema plus requested", Remittance, Nationality, "Manually(Employers)"]
+      - name: EKYC_STATUS
+        description: Current eKYC status.
+        data_type: TEXT
+        synonyms: [ekyc status]
+        sample_values: [Completed, Pending, "In Progress", Required, Rejected, "Redo Requested", Reviewed, Closed, Empty]
+      - name: COMPLETED_REGISTRATION
+        description: Timestamp the user completed registration.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [completed registration, registration completed date]
+      - name: TAGS
+        description: Array of free-form tags attached to the user.
+        data_type: ARRAY
+        synonyms: [tags, labels]
+      - name: SMS_SUBSCRIBE
+        description: SMS subscription status.
+        data_type: TEXT
+        synonyms: [sms subscribe, sms opt in, sms status]
+        sample_values: [opted-in, unsubscribed]
+      - name: COMPLIACE_RATING
+        description: Compliance risk rating (numeric). NOTE source column is misspelled "COMPLIACE".
+        data_type: NUMBER
+        synonyms: [compliance rating, risk rating]
+      - name: COMPLIACE_RATING_REASON
+        description: Reason for the compliance rating (free text). NOTE source column is misspelled "COMPLIACE".
+        data_type: TEXT
+        synonyms: [compliance rating reason, risk rating reason]
+      - name: ID_IMAGE_UPLOAD_SKIPPED_AT
+        description: Timestamp the user skipped uploading an ID image.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [id image upload skipped at]
+      - name: NEEMA_PLUS_OPT_IN_DATE
+        description: Date the user opted in to Neema Plus.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [neema plus opt in date]
+      - name: NEEMA_PLUS_STATUS
+        description: User's Neema Plus subscription status.
+        data_type: TEXT
+        synonyms: [neema plus status, plus status]
+        sample_values: [Activated, Eligible, "Not eligible", Opt-in]
+      - name: RFMCLASS
+        description: 3-digit RFM class (Recency-Frequency-Monetary), each digit 1-5.
+        data_type: TEXT
+        synonyms: [rfm class, rfmclass]
+        sample_values: ["555", "111", "543", "321", "455"]
+      - name: RFM
+        description: RFM segment label derived from RFMCLASS.
+        data_type: TEXT
+        synonyms: [rfm, rfm segment]
+      - name: FIRST_ACTIVE_TRANSACTION_DATE
+        description: Date of the user's first active transaction.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [first active transaction date, first transaction date]
+      - name: FIRST_ACTIVE_TRANSACTION_TYPE
+        description: Type of the user's first active transaction.
+        data_type: TEXT
+        synonyms: [first active transaction type]
+      - name: FIRST_ACTIVE_TRANSACTION_CURRENCY
+        description: Currency of the user's first active transaction.
+        data_type: TEXT
+        synonyms: [first active transaction currency]
+      - name: FIRST_ACTIVE_TRANSACTION_AMOUNT
+        description: Amount of the user's first active transaction.
+        data_type: NUMBER
+        synonyms: [first active transaction amount]
+      - name: FIRST_ACTIVE_TRANSACTION_FEE_AMOUNT
+        description: Fee of the user's first active transaction.
+        data_type: NUMBER
+        synonyms: [first active transaction fee]
+      - name: FIRST_ACTIVE_TRANSACTION_FX_FEE_AMOUNT
+        description: FX fee of the user's first active transaction.
+        data_type: NUMBER
+        synonyms: [first active transaction fx fee]
+      - name: LAST_ACTIVE_TRANSACTION_DATE
+        description: Date of the user's most recent active transaction.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [last active transaction date, last transaction date]
+      - name: LAST_ACTIVE_TRANSACTION_TYPE
+        description: Type of the user's most recent active transaction.
+        data_type: TEXT
+        synonyms: [last active transaction type]
+      - name: LAST_ACTIVE_TRANSACTION_CURRENCY
+        description: Currency of the user's most recent active transaction.
+        data_type: TEXT
+        synonyms: [last active transaction currency]
+      - name: LAST_ACTIVE_TRANSACTION_AMOUNT
+        description: Amount of the user's most recent active transaction.
+        data_type: NUMBER
+        synonyms: [last active transaction amount]
+      - name: LAST_ACTIVE_TRANSACTION_FEE_AMOUNT
+        description: Fee of the user's most recent active transaction.
+        data_type: NUMBER
+        synonyms: [last active transaction fee]
+      - name: LAST_ACTIVE_TRANSACTION_FX_FEE_AMOUNT
+        description: FX fee of the user's most recent active transaction.
+        data_type: NUMBER
+        synonyms: [last active transaction fx fee]
+      - name: USD_BALANCE
+        description: Current wallet balance in USD.
+        data_type: NUMBER
+        synonyms: [usd balance, dollar balance]
+      - name: GBP_BALANCE
+        description: Current wallet balance in GBP.
+        data_type: NUMBER
+        synonyms: [gbp balance, pound balance]
+      - name: ILS_BALANCE
+        description: Current wallet balance in ILS.
+        data_type: NUMBER
+        synonyms: [ils balance, shekel balance]
+      - name: EUR_BALANCE
+        description: Current wallet balance in EUR.
+        data_type: NUMBER
+        synonyms: [eur balance, euro balance]
+      - name: LKR_BALANCE
+        description: Current wallet balance in LKR.
+        data_type: NUMBER
+        synonyms: [lkr balance, sri lankan rupee balance]
+      - name: TOTAL_FEE_USD
+        description: Lifetime total fees paid by the user, in USD.
+        data_type: NUMBER
+        synonyms: [total fee usd, lifetime fees usd]
+      - name: TOTAL_FEE_ILS
+        description: Lifetime total fees paid by the user, in ILS.
+        data_type: NUMBER
+        synonyms: [total fee ils, lifetime fees ils]
+      - name: TOTAL_FX_FEE_USD
+        description: Lifetime total FX fees paid by the user, in USD.
+        data_type: NUMBER
+        synonyms: [total fx fee usd]
+      - name: TOTAL_FX_FEE_ILS
+        description: Lifetime total FX fees paid by the user, in ILS.
+        data_type: NUMBER
+        synonyms: [total fx fee ils]
+      - name: FIRST_DEPOSIT_CHANNEL
+        description: Channel of the user's first deposit.
+        data_type: TEXT
+        synonyms: [first deposit channel]
+        sample_values: [Agent, Branch, "Card Deposit", "Bit Deposit", "Home Deposit", Salary, Wire, "Neema Plus Deposit"]
+      - name: FIRST_DEPOSIT_SUB_CATEGORY
+        description: Sub-category (agent/merchant) of the user's first deposit.
+        data_type: TEXT
+        synonyms: [first deposit sub category]
+      - name: FIRST_DEPOSIT_DATE
+        description: Date of the user's first deposit.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [first deposit date]
+      - name: FIRST_DEPOSIT_AMOUNT
+        description: Amount of the user's first deposit.
+        data_type: NUMBER
+        synonyms: [first deposit amount]
+      - name: LAST_DEPOSIT_CHANNEL
+        description: Channel of the user's most recent deposit.
+        data_type: TEXT
+        synonyms: [last deposit channel]
+      - name: LAST_DEPOSIT_SUB_CATEGORY
+        description: Sub-category (agent/merchant) of the user's most recent deposit.
+        data_type: TEXT
+        synonyms: [last deposit sub category]
+      - name: LAST_DEPOSIT_DATE
+        description: Date of the user's most recent deposit.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [last deposit date]
+      - name: LAST_DEPOSIT_AMOUNT
+        description: Amount of the user's most recent deposit.
+        data_type: NUMBER
+        synonyms: [last deposit amount]
+      - name: FAVORITE_DEPOSIT_CHANNEL
+        description: User's most-used deposit channel.
+        data_type: TEXT
+        synonyms: [favorite deposit channel, preferred deposit channel]
+      - name: FAVORITE_DEPOSIT_CHANNEL_WEIGHT
+        description: Share/weight of the favorite deposit channel in the user's deposits.
+        data_type: NUMBER
+        synonyms: [favorite deposit channel weight]
+      - name: SECONDARY_FAVORITE_DEPOSIT_CHANNEL
+        description: User's second most-used deposit channel.
+        data_type: TEXT
+        synonyms: [secondary favorite deposit channel]
+      - name: FAVORITE_DEPOSIT_SUB_CATEGORY
+        description: User's most-used deposit sub-category (agent/merchant).
+        data_type: TEXT
+        synonyms: [favorite deposit sub category]
+      - name: FAVORITE_DEPOSIT_SUB_CATEGORY_DETAILED
+        description: Detailed version of the favorite deposit sub-category.
+        data_type: TEXT
+        synonyms: [favorite deposit sub category detailed]
+      - name: TOTAL_DEPOSIT_CHANNELS
+        description: Count of distinct deposit channels the user has used.
+        data_type: NUMBER
+        synonyms: [total deposit channels, number of deposit channels]
+      - name: DCI
+        description: Deposit Channel Index — internal metric of deposit-channel diversity.
+        data_type: NUMBER
+        synonyms: [dci, deposit channel index]
+      - name: DFI
+        description: Deposit Frequency Index — internal metric of deposit frequency.
+        data_type: NUMBER
+        synonyms: [dfi, deposit frequency index]
+      - name: CUSTOMER_TYPE
+        description: Customer type classification.
+        data_type: TEXT
+        synonyms: [customer type, segment]
+        sample_values: [B2B2C, B2C2B, Other]
+      - name: HAVE_ACTIVE_CC
+        description: Flag/count indicating the user has an active credit/Neema card.
+        data_type: NUMBER
+        synonyms: [have active cc, has active card]
+      - name: EVER_HAD_A_CID
+        description: Flag/count indicating the user ever had a card id (CID).
+        data_type: NUMBER
+        synonyms: [ever had a cid, ever had card]
+      - name: CREDIT_CARD_TYPE
+        description: Type of the user's card.
+        data_type: TEXT
+        synonyms: [credit card type, card type]
+        sample_values: [Mastercard, Visa]
+      - name: ACTIVE_CARD_EXPIRE_DATE
+        description: Expiry date of the user's active card.
+        data_type: DATE
+        synonyms: [active card expire date, card expiry]
+      - name: ACTIVE_ORDER_STATUS
+        description: Status of the user's active card order.
+        data_type: TEXT
+        synonyms: [active order status, card order status]
+        sample_values: [Created, Approved, "Delivery Pending", Delivered, "Picked Up", Rejected]
+      - name: FIRST_REMITTANCE_DATE
+        description: Date of the user's first remittance.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [first remittance date]
+      - name: FIRST_REMITTANCE_COUNTRY_NAME
+        description: Destination country of the user's first remittance.
+        data_type: TEXT
+        synonyms: [first remittance country]
+      - name: FIRST_REMITTANCE_CURRENCY_NAME
+        description: Received currency of the user's first remittance.
+        data_type: TEXT
+        synonyms: [first remittance currency]
+      - name: FIRST_REMITTANCE_AMOUNT
+        description: Amount of the user's first remittance.
+        data_type: NUMBER
+        synonyms: [first remittance amount]
+      - name: FIRST_REMITTANCE_FEE_AMOUNT
+        description: Fee of the user's first remittance.
+        data_type: NUMBER
+        synonyms: [first remittance fee]
+      - name: FIRST_REMITTANCE_FX_FEE_AMOUNT
+        description: FX fee of the user's first remittance.
+        data_type: NUMBER
+        synonyms: [first remittance fx fee]
+      - name: LAST_REMITTANCE_DATE
+        description: Date of the user's most recent remittance.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [last remittance date]
+      - name: LAST_REMITTANCE_COUNTRY_NAME
+        description: Destination country of the user's most recent remittance.
+        data_type: TEXT
+        synonyms: [last remittance country]
+      - name: LAST_REMITTANCE_CURRENCY_NAME
+        description: Received currency of the user's most recent remittance.
+        data_type: TEXT
+        synonyms: [last remittance currency]
+      - name: LAST_REMITTANCE_AMOUNT
+        description: Amount of the user's most recent remittance.
+        data_type: NUMBER
+        synonyms: [last remittance amount]
+      - name: LAST_REMITTANCE_FEE_AMOUNT
+        description: Fee of the user's most recent remittance.
+        data_type: NUMBER
+        synonyms: [last remittance fee]
+      - name: LAST_REMITTANCE_FX_FEE_AMOUNT
+        description: FX fee of the user's most recent remittance.
+        data_type: NUMBER
+        synonyms: [last remittance fx fee]
+      - name: FAVORITE_REMITTANCE_RECEIVER_COUNTRY
+        description: User's most-frequent remittance destination country.
+        data_type: TEXT
+        synonyms: [favorite remittance country, preferred destination country]
+      - name: FAVORITE_BENEFICIARY_FIRST_NAME
+        description: First name of the user's most-frequent beneficiary (PII).
+        data_type: TEXT
+        synonyms: [favorite beneficiary first name]
+      - name: FAVORITE_BENEFICIARY_LAST_NAME
+        description: Last name of the user's most-frequent beneficiary (PII).
+        data_type: TEXT
+        synonyms: [favorite beneficiary last name]
+      - name: INSTALL_CAMPAIGN_NAME
+        description: Marketing campaign attributed to the app install.
+        data_type: TEXT
+        synonyms: [install campaign, acquisition campaign]
+      - name: INSTALL_MEDIA_SOURCE
+        description: Media source attributed to the app install.
+        data_type: TEXT
+        synonyms: [install media source, acquisition source]
+      - name: INSTALL_SOURCE_TYPE
+        description: Acquisition source type for the install.
+        data_type: TEXT
+        synonyms: [install source type, acquisition type]
+        sample_values: [Organic, Paid, Other]
+      - name: CHURN_DATE
+        description: Date the user is considered churned, if applicable.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [churn date, churned at]
+      - name: BFD_DATE
+        description: Business-defined lifecycle date (BFD).
+        data_type: TIMESTAMP_NTZ
+        synonyms: [bfd date]
+      - name: OCCUPATION_NAME
+        description: User's declared occupation/industry.
+        data_type: TEXT
+        synonyms: [occupation, occupation name, industry, job]
+        sample_values: [Agriculture, Construction, "Cleaning Services", "Food Services", Healthcare, Hospitality, Manufacturing, "Transportation & Delivery", Other]
+      - name: DW_UPDATE_DATE
+        description: Timestamp this row was last loaded/updated by the data warehouse.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [dw update date, etl load date, last updated]
+    relationships:
+      - from_model: dw_fact_transaction
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: A user has many transactions.
+      - from_model: dw_fact_deposit
+        from_column: DEPOSIT_CUTOMER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: A user has many deposits.
+      - from_model: dw_fact_remittance
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: A user has many remittances.
+      - from_model: dw_fact_user_kpis
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: One-to-one — each user has exactly one KPI summary row.
+      - from_model: dw_fact_user_campaign_event
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: A user has many campaign interaction events.
+      - from_model: dw_fact_max_transaction
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: A user has many card transactions.
+      - from_model: dw_dim_user_loan_score_scd
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: A user has a slowly-changing loan score history.

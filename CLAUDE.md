@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Context Router
+
+Before answering any analyst question, read `neema-context/router.md` and load ONLY the files it points to. Never read the full `semantic_model.yml` — use the per-table splits under `neema-context/05_data-and-metrics/semantic-model/`.
+
 ## What This Project Is
 
 An **AI Analyst workflow system** for data teams. It turns an AI assistant into a disciplined analyst that executes business questions through a 7-phase gated pipeline, producing HTML reports, PDFs, and Jupyter notebooks. The data source is a Supabase PostgreSQL database for a fictitious company called **Pulseboard** (Series A B2B analytics platform, ~50 customers across 7 industries).

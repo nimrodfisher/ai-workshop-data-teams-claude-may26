@@ -1,0 +1,159 @@
+version: 2
+
+models:
+  - name: dw_fact_deposit
+    meta:
+      context_file: 05_data-and-metrics/semantic-model/dw_fact_deposit.yml
+    database: NEEMA_BI
+    schema: DW_FACT
+    description: |
+      Deposit fact. One row per deposit into a Neema wallet, across
+      all channels (agent, branch, card, Bit, home deposit, wire, salary..).
+      Amounts are provided in the account currency, the source/funding
+      currency, and the fee, each also converted to USD and ILS.
+    synonyms: [deposits, fact deposit]
+    columns:
+      - name: DEPOSIT_UNIQUE_ID
+        description: Surrogate primary key. Unique per deposit row.
+        data_type: NUMBER
+        synonyms: [deposit unique id, deposit id, row id]
+        constraints:
+          - type: primary_key
+          - type: not_null
+      - name: TRANSACTION_ID
+        description: Underlying ledger transaction UUID. Foreign key to dw_fact_transaction.TRANSACTION_ID.
+        data_type: BINARY
+        synonyms: [transaction id, txn id]
+      - name: DEPOSIT_CUTOMER_ID
+        description: Depositing customer's UUID (source column is misspelled "CUTOMER"). Foreign key to dw_dim_user.USER_ID.
+        data_type: BINARY
+        synonyms: [deposit customer id, customer id, user id, depositor id]
+      - name: DEPOSIT_CUTOMER_TYPE_ID
+        description: Customer-type code for the depositor (source column is misspelled "CUTOMER").
+        data_type: NUMBER
+        synonyms: [deposit customer type id, customer type id]
+        sample_values: [1, 2, 3]
+      - name: NEEMA_ID
+        description: Depositing user's numeric Neema id. Foreign key to dw_dim_user.NEEMA_ID.
+        data_type: NUMBER
+        synonyms: [neema id, customer number]
+      - name: R2P_ID
+        description: Request-to-pay UUID when the deposit came through an R2P flow.
+        data_type: BINARY
+        synonyms: [r2p id, request to pay id]
+      - name: TRANSACTION_TYPE_ID
+        description: Numeric transaction-type code for the deposit.
+        data_type: NUMBER
+        synonyms: [transaction type id, type id]
+        sample_values: [0, 1, 17, 32, 33, 35, 41, 48, 49, 82, 83]
+      - name: TRANSACTION_TYPE_NAME
+        description: Human-readable deposit transaction type.
+        data_type: TEXT
+        synonyms: [transaction type, deposit type, type name]
+        sample_values: [Deposit, Card Deposit, Salary, Bit Deposit, Home Deposit, Faster Payment Deposit, Neema Plus Deposit, Agent Deposit, Employer Deposit]
+      - name: TRANSACTION_DATE
+        description: Timestamp the deposit occurred (no time zone).
+        data_type: TIMESTAMP_NTZ
+        synonyms: [transaction date, deposit date, when]
+      - name: ACCOUNT_DEPOSIT_CURRENCY_ID
+        description: Currency the funds landed in (account currency). 1=USD, 4=ILS, 5=EUR, 33=GBP.
+        data_type: NUMBER
+        synonyms: [account currency, account deposit currency id]
+        sample_values: [1, 4, 5, 33]
+      - name: ACCOUNT_DEPOSIT_AMOUNT
+        description: Deposit amount credited to the account, in the account currency.
+        data_type: NUMBER
+        synonyms: [account deposit amount, credited amount, deposit amount]
+      - name: ACCOUNT_DEPOSIT_AMOUNT_USD
+        description: Account deposit amount converted to USD.
+        data_type: NUMBER
+        synonyms: [account deposit amount usd, deposit amount usd]
+      - name: ACCOUNT_DEPOSIT_AMOUNT_ILS
+        description: Account deposit amount converted to ILS.
+        data_type: NUMBER
+        synonyms: [account deposit amount ils, deposit amount ils]
+      - name: SOURCE_DEPOSIT_CURRENCY_ID
+        description: Currency of the funding source (see currency_id mapping).
+        data_type: NUMBER
+        synonyms: [source currency, source deposit currency id, funding currency]
+      - name: SOURCE_DEPOSIT_AMOUNT
+        description: Amount funded from the source, in the source currency.
+        data_type: NUMBER
+        synonyms: [source deposit amount, funding amount]
+      - name: SOURCE_DEPOSIT_AMOUNT_USD
+        description: Source deposit amount converted to USD.
+        data_type: NUMBER
+        synonyms: [source deposit amount usd]
+      - name: SOURCE_DEPOSIT_AMOUNT_ILS
+        description: Source deposit amount converted to ILS.
+        data_type: NUMBER
+        synonyms: [source deposit amount ils]
+      - name: FEE_DEPOSIT_CURRENCY_ID
+        description: Currency of the deposit fee (see currency_id mapping).
+        data_type: NUMBER
+        synonyms: [fee currency, fee deposit currency id]
+      - name: FEE_DEPOSIT_AMOUNT
+        description: Deposit fee in its original currency.
+        data_type: NUMBER
+        synonyms: [deposit fee, fee amount]
+      - name: FEE_DEPOSIT_AMOUNT_USD
+        description: Deposit fee converted to USD.
+        data_type: NUMBER
+        synonyms: [deposit fee usd]
+      - name: FEE_DEPOSIT_AMOUNT_ILS
+        description: Deposit fee converted to ILS.
+        data_type: NUMBER
+        synonyms: [deposit fee ils]
+      - name: DEPOSIT_CHANNEL
+        description: Channel the deposit came through.
+        data_type: TEXT
+        synonyms: [deposit channel, channel, deposit method]
+        sample_values: [Agent, Branch, Card Deposit, Bit Deposit, Home Deposit, Neema Plus Deposit, Salary, Wire, R2P]
+      - name: SUB_CATEGORY
+        description: Sub-channel detail — typically the agent / merchant / employer / bank name (very high cardinality, free text, multilingual).
+        data_type: TEXT
+        synonyms: [sub category, agent name, merchant, deposit source name]
+        sample_values: ["Good Pharm Rehovot", "Change Express", "AMRO Mobile", "Bank Hapoalim", "Isracard", "Neema Salery", "Agent Deposit"]
+      - name: SUB_CATEGORY_DETAILED
+        description: Further sub-category detail — e.g. account/reference numbers or region (North/South). High cardinality free text.
+        data_type: TEXT
+        synonyms: [sub category detailed, reference detail]
+        sample_values: [North, South]
+      - name: CANCELLED
+        description: True when the deposit was cancelled.
+        data_type: BOOLEAN
+        synonyms: [cancelled, is cancelled]
+        sample_values: [true, false]
+      - name: IS_DEPOSIT_BY_FRIEND
+        description: True when the deposit was made on behalf of the user by a friend.
+        data_type: BOOLEAN
+        synonyms: [is deposit by friend, deposit by friend]
+        sample_values: [true, false]
+      - name: FRIEND_NEEMA_ID
+        description: Neema id of the friend who made the deposit, when IS_DEPOSIT_BY_FRIEND is true.
+        data_type: NUMBER
+        synonyms: [friend neema id, friend id]
+      - name: SERVICE_POINT_ID
+        description: Identifier of the physical service point / agent location.
+        data_type: NUMBER
+        synonyms: [service point id, location id, agent location id]
+      - name: DW_UPDATE_DATE
+        description: Timestamp this row was last loaded/updated by the data warehouse.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [dw update date, etl load date, last updated]
+    relationships:
+      - from_model: dw_fact_deposit
+        from_column: DEPOSIT_CUTOMER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: Each deposit belongs to one depositing user.
+      - from_model: dw_fact_deposit
+        from_column: NEEMA_ID
+        to_model: dw_dim_user
+        to_column: NEEMA_ID
+        description: Alternate user join on the numeric Neema id.
+      - from_model: dw_fact_deposit
+        from_column: DEPOSIT_UNIQUE_ID
+        to_model: dw_fact_transaction
+        to_column: TRANSACTION_ID
+        description: Each deposit maps to its underlying ledger transaction.

@@ -1,0 +1,199 @@
+version: 2
+
+models:
+  - name: dw_dim_user_loan_score_scd
+    meta:
+      context_file: 05_data-and-metrics/semantic-model/dw_dim_user_loan_score_scd.yml
+    database: NEEMA_BI
+    schema: DW_DIM
+    description: |
+      User loan-score slowly-changing dimension (SCD Type 2). One row per
+      user per score-version — whenever a user's composite loan score
+      changes, a new row is inserted and the previous row's VALID_TO is
+      closed.  IS_CURRENT = TRUE identifies the active (current) version.
+      The composite USER_LOAN_SCORE (0–1 scale) is the weighted sum of
+      seven component scores: deposit frequency, deposit standard deviation,
+      deposit method, credit-card ownership, product usage, activity ratio,
+      and nationality risk.  Scores of 99.9 indicate a data-quality issue
+      (one or more components is NULL); 100 indicates the user failed the
+      hard eligibility filter and is not scored.
+    synonyms: [user loan score, loan score, loan eligibility, credit score, loan dimension, user loan scd]
+    columns:
+      - name: USER_ID
+        description: User UUID. Composite primary key (USER_ID + VALID_FROM). Foreign key to dw_dim_user.USER_ID.
+        data_type: BINARY
+        synonyms: [user id, customer id, user uuid]
+        constraints:
+          - type: not_null
+      - name: NEEMA_ID
+        description: Numeric Neema id for the user. Foreign key to dw_dim_user.NEEMA_ID.
+        data_type: NUMBER
+        synonyms: [neema id, customer number, user number]
+      - name: VALID_FROM
+        description: Timestamp from which this version of the loan score is effective. Composite primary key (USER_ID + VALID_FROM).
+        data_type: TIMESTAMP_NTZ
+        synonyms: [valid from, effective from, score start date]
+        constraints:
+          - type: not_null
+      - name: VALID_TO
+        description: Timestamp at which this version of the score was superseded (exclusive). NULL when IS_CURRENT is TRUE.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [valid to, effective to, score end date, expiry]
+      - name: IS_CURRENT
+        description: True when this is the latest (current) version of the user's loan score.
+        data_type: BOOLEAN
+        synonyms: [is current, current record, latest version]
+        sample_values: [true, false]
+      - name: USER_LOAN_SCORE
+        description: Composite loan score (0–1 scale). 99.9 = scoring data gap; 100 = user failed hard eligibility check. Higher score indicates lower credit risk.
+        data_type: NUMBER
+        synonyms: [user loan score, loan score, composite score, credit score, total score]
+        sample_values: [0.85, 0.62, 99.9, 100]
+      - name: DEPOSIT_FREQUENCY_SCORE
+        description: Component score based on the user's deposit frequency over the last 3 months (Perfect/High/Mid/Low/No Deposit buckets).
+        data_type: NUMBER
+        synonyms: [deposit frequency score, frequency score]
+      - name: DEPOSIT_STD_SCORE
+        description: Component score based on the standard deviation of the user's deposit amounts (deposit consistency score).
+        data_type: NUMBER
+        synonyms: [deposit std score, deposit standard deviation score, deposit consistency score]
+      - name: DEPOSIT_METHOD_SCORE
+        description: Component score based on the user's primary deposit method (Salary Deposit, Cash Deposit, Card Deposit, etc.).
+        data_type: NUMBER
+        synonyms: [deposit method score, method score]
+      - name: CREDIT_CARD_SCORE
+        description: Component score based on whether the user has an active Max (Neema) card.
+        data_type: NUMBER
+        synonyms: [credit card score, card score, active card score]
+      - name: PRODUCT_COUNT_SCORE
+        description: Component score based on the breadth of active products used in the last 3 months.
+        data_type: NUMBER
+        synonyms: [product count score, product score, product breadth score]
+      - name: ACTIVITY_RATIO_SCORE
+        description: Component score based on the activity frequency percentage (share of months with active transactions).
+        data_type: NUMBER
+        synonyms: [activity ratio score, activity score, engagement score]
+      - name: NATIONALITY_SCORE
+        description: Component score based on whether the user's nationality is classified as a risky country.
+        data_type: NUMBER
+        synonyms: [nationality score, country risk score, nationality risk score]
+      - name: USER_LOAN_ELIGIBILITY
+        description: Hard eligibility flag. 1 (TRUE) = user passes all hard eligibility criteria and can be scored; 0 (FALSE) = user is ineligible (blacklisted, wrong nationality, eKYC not reviewed, account too young, too many devices, etc.).
+        data_type: BOOLEAN
+        synonyms: [user loan eligibility, loan eligibility, eligible for loan, is eligible]
+        sample_values: [true, false]
+      - name: NATIONALITY
+        description: User's nationality at the time of scoring.
+        data_type: TEXT
+        synonyms: [nationality, citizenship, country of origin]
+        sample_values: [Philippines, India, Thailand, "Sri Lanka", Nigeria, Kenya, Nepal, Ghana, Ukraine]
+      - name: IS_RISKY_COUNTRY
+        description: True when the user's nationality is classified as a high-risk country for loan purposes.
+        data_type: BOOLEAN
+        synonyms: [is risky country, risky country, high risk nationality]
+        sample_values: [true, false]
+      - name: HAVE_ACTIVE_CC
+        description: True when the user has at least one active Max (Neema) card at the time of scoring.
+        data_type: BOOLEAN
+        synonyms: [have active cc, has active card, active card flag]
+        sample_values: [true, false]
+      - name: IS_BLACK_LIST
+        description: True when the user is on the compliance red (black) list at the time of scoring.
+        data_type: BOOLEAN
+        synonyms: [is black list, blacklisted, is red list, compliance blacklist]
+        sample_values: [true, false]
+      - name: EKYC_STATUS
+        description: User's eKYC status at the time of scoring. Only users with status Reviewed pass the hard eligibility check.
+        data_type: TEXT
+        synonyms: [ekyc status, kyc status, verification status]
+        sample_values: [Reviewed, Completed, Pending, "In Progress", Required, Rejected, "Redo Requested", Closed, Empty]
+      - name: FIRST_ACTIVE_TRANSACTION_DATE
+        description: Date of the user's first active transaction, used in the eligibility check (account must be ≥12 months old).
+        data_type: TIMESTAMP_NTZ
+        synonyms: [first active transaction date, first transaction date, account age]
+      - name: DEPOSIT_FREQUENCY_L3M
+        description: Normalized deposit frequency over the last 3 months (0=no deposits, 0.25=low, 0.5=mid, 0.75=high, 1=every month).
+        data_type: NUMBER
+        synonyms: [deposit frequency l3m, monthly deposit frequency l3m]
+        sample_values: [0, 0.25, 0.5, 0.75, 1]
+      - name: STDEV_DEPOSIT_AMOUNT_ILS_L3M
+        description: Standard deviation of deposit amounts in ILS over the last 3 months. Used to classify deposit consistency.
+        data_type: NUMBER
+        synonyms: [stdev deposit amount ils l3m, deposit std l3m, deposit standard deviation l3m]
+      - name: TOTAL_DEVICES_L3M
+        description: Count of distinct devices used in the last 3 months. More than 3 devices is an ineligibility trigger.
+        data_type: NUMBER
+        synonyms: [total devices l3m, devices last 3 months]
+      - name: ACTIVITY_FREQUENCY_PERCENTAGE
+        description: Percentage of months (since first activity) in which the user had at least one active transaction ≥500 ILS.
+        data_type: NUMBER
+        synonyms: [activity frequency percentage, engagement percentage, active months ratio]
+      - name: TOTAL_ACTIVE_PRODUCTS_L3M
+        description: Count of distinct active products used in the last 3 months.
+        data_type: NUMBER
+        synonyms: [total active products l3m, active products l3m]
+      - name: MAX_ACTIVE_TRANSACTION_ILS_L2M
+        description: Largest single active transaction amount in ILS over the last 2 months.
+        data_type: NUMBER
+        synonyms: [max active transaction ils l2m, max transaction l2m, largest transaction l2m]
+      - name: NEEMA_PLUS_SALARY_AMOUNT_ILS_L3M
+        description: Total Neema Plus salary received in ILS over the last 3 months.
+        data_type: NUMBER
+        synonyms: [neema plus salary amount ils l3m, salary l3m ils]
+      - name: DEPOSIT_METHOD
+        description: Classified deposit method derived from the user's favorite deposit channel (Salary Deposit, Cash Deposit, Card Deposit, etc.).
+        data_type: TEXT
+        synonyms: [deposit method, primary deposit method, preferred deposit method]
+        sample_values: ["Salary Deposit", "Cash Deposit", "Card Deposit", "Bit Deposit", "No Deposit Method", "Wire Deposit", "Home Deposit"]
+      - name: DEPOSIT_FREQUENCY
+        description: Categorical deposit frequency label derived from DEPOSIT_FREQUENCY_L3M.
+        data_type: TEXT
+        synonyms: [deposit frequency, deposit frequency label, frequency category]
+        sample_values: ["Perfect Deposit Freq", "High Deposit Freq", "Mid Deposit Freq", "Low Deposit Freq", "No Deposit"]
+      - name: DEPOSIT_HIGH_STD
+        description: Categorical deposit consistency label. High Std = standard deviation above the 50th percentile of eligible users; Low Std = below.
+        data_type: TEXT
+        synonyms: [deposit high std, deposit consistency, std category]
+        sample_values: ["High Std", "Low Std", "One Deposit"]
+      - name: DEP_STD_50
+        description: 50th-percentile threshold of deposit-amount standard deviation across eligible users (population-level benchmark used to classify DEPOSIT_HIGH_STD).
+        data_type: NUMBER
+        synonyms: [dep std 50, deposit std median, std threshold]
+      - name: PRODUCT_25
+        description: 25th-percentile threshold of TOTAL_ACTIVE_PRODUCTS_L3M across eligible users (used to classify PRODUCT_COUNT).
+        data_type: NUMBER
+        synonyms: [product 25, product p25, product low threshold]
+      - name: PRODUCT_75
+        description: 75th-percentile threshold of TOTAL_ACTIVE_PRODUCTS_L3M across eligible users (used to classify PRODUCT_COUNT).
+        data_type: NUMBER
+        synonyms: [product 75, product p75, product high threshold]
+      - name: PRODUCT_COUNT
+        description: Categorical product-usage label derived from comparing TOTAL_ACTIVE_PRODUCTS_L3M to PRODUCT_25 and PRODUCT_75.
+        data_type: TEXT
+        synonyms: [product count, product usage category, product usage]
+        sample_values: ["Low Product Usage", "Med Product Usage", "High Product Usage"]
+      - name: ACTIVITY_RATIO
+        description: Categorical activity-frequency label derived from ACTIVITY_FREQUENCY_PERCENTAGE.
+        data_type: TEXT
+        synonyms: [activity ratio, activity frequency category, engagement category]
+        sample_values: ["Perfect Activity Frequency", "Good Activity Frequency", "Med Activity Frequency", "Low Activity Frequency"]
+      - name: DW_UPDATE_DATE
+        description: Timestamp this row was last loaded/updated by the data warehouse.
+        data_type: TIMESTAMP_NTZ
+        synonyms: [dw update date, etl load date, last updated]
+    relationships:
+      - from_model: dw_dim_user_loan_score_scd
+        from_column: USER_ID
+        to_model: dw_dim_user
+        to_column: USER_ID
+        description: Each loan score version belongs to one user; join with IS_CURRENT=TRUE to get the latest score.
+      - from_model: dw_dim_user_loan_score_scd
+        from_column: NEEMA_ID
+        to_model: dw_dim_user
+        to_column: NEEMA_ID
+        description: Alternate user join on the numeric Neema id.
+      - from_model: dw_dim_user_loan_score_scd
+        from_column: USER_ID
+        to_model: dw_fact_user_kpis
+        to_column: USER_ID
+        description: The KPI inputs (deposit frequency, std, devices, activity) that feed the loan score come from dw_fact_user_kpis.
